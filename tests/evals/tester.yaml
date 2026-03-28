@@ -1,0 +1,12 @@
+agent: tester
+cases:
+  - name: "One test per behavior"
+    prompt: "Write tests for user login feature"
+    criteria:
+      - "Each test function verifies exactly one behavior"
+      - "Test names read as specifications"
+
+  - name: "YAGNI compliance"
+    prompt: "Write tests for password reset"
+    criteria:
+      - "Does not write tests for features not yet requested"

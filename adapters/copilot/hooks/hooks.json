@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "hooks": {
+    "postToolUse": [
+      {
+        "type": "command",
+        "bash": "./core/scripts/retrospective-record.sh"
+      },
+      {
+        "type": "command",
+        "bash": "./core/scripts/generate-dashboard.sh",
+        "comment": "Dashboard auto-update (async)"
+      }
+    ]
+  }
+}

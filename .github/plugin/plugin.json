@@ -1,0 +1,33 @@
+{
+  "name": "heartbeat",
+  "description": "XP-driven AI agent team for TDD-based development",
+  "version": "2.0.0",
+  "publisher": {
+    "name": "NakaG"
+  },
+  "agents": [
+    "adapters/copilot/agents/pdm.agent.md",
+    "adapters/copilot/agents/context-manager.agent.md",
+    "adapters/copilot/agents/designer.agent.md",
+    "adapters/copilot/agents/architect.agent.md",
+    "adapters/copilot/agents/tester.agent.md",
+    "adapters/copilot/agents/implementer.agent.md",
+    "adapters/copilot/agents/refactor.agent.md",
+    "adapters/copilot/agents/reviewer.agent.md",
+    "adapters/copilot/agents/qa.agent.md"
+  ],
+  "skills": [
+    "adapters/copilot/skills/heartbeat",
+    "adapters/copilot/skills/heartbeat-backlog",
+    "adapters/copilot/skills/xp-values",
+    "adapters/copilot/skills/xp-retro",
+    "adapters/copilot/skills/browser-testing"
+  ],
+  "hooks": "adapters/copilot/hooks/hooks.json",
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
+  }
+}

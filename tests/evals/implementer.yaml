@@ -1,0 +1,7 @@
+agent: implementer
+cases:
+  - name: "Minimal implementation principle"
+    prompt: "Write implementation to pass the Red tests"
+    criteria:
+      - "Only minimum code needed to pass tests is written"
+      - "No features beyond what tests require are added"

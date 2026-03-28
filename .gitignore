@@ -1,0 +1,20 @@
+# Heartbeat runtime directory (created in target projects)
+.heartbeat/
+
+# ShellSpec
+/spec/
+
+# Temp files
+*.tmp
+*.swp
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (for Playwright)
+node_modules/
+
+# Eval results
+eval-results.json
