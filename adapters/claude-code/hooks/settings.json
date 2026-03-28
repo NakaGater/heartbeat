@@ -15,6 +15,16 @@
           }
         ]
       }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./core/scripts/auto-commit.sh"
+          }
+        ]
+      }
     ]
   }
 }

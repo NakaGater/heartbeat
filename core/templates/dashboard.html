@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heartbeat Dashboard</title>
+<style>
+:root {
+  --bg: #f8fafc;
+  --bg-panel: #ffffff;
+  --bg-card: #f1f5f9;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  --radius: 8px;
+  --bubble-human: #dbeafe;
+  --bubble-agent: #f1f5f9;
+  --red-border: #ef4444;
+  --accent: #3b82f6;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --bg-panel: #1e293b;
+    --bg-card: #334155;
+    --text: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border: #334155;
+    --shadow: 0 1px 3px rgba(0,0,0,0.4);
+    --bubble-human: #1e3a5f;
+    --bubble-agent: #334155;
+  }
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+#app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+header h1 { font-size: 1.25rem; font-weight: 700; }
+.refresh-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  color: var(--text);
+  font-size: 0.875rem;
+}
+.refresh-btn:hover { background: var(--bg-card); }
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px;
+  overflow: visible;
+}
+.panel-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Backlog Board */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  min-height: 120px;
+}
+.kanban-col { display: flex; flex-direction: column; gap: 6px; }
+.kanban-col-header {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--border);
+  text-align: center;
+}
+.kanban-card {
+  background: var(--bg-card);
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.8rem;
+}
+.kanban-card .card-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+.kanban-card .card-points {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* Velocity Chart */
+.chart-container { width: 100%; overflow-x: auto; }
+.chart-container svg { display: block; width: 100%; height: auto; }
+.chart-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Story Detail */
+.story-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.story-select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.875rem;
+}
+.gantt-container {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 16px;
+}
+.gantt-container svg { display: block; }
+.tasks-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.task-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: var(--bg-card);
+  border-radius: 16px;
+  font-size: 0.8rem;
+}
+
+/* Agent Messages */
+.messages {
+  max-height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.msg-row { display: flex; gap: 8px; }
+.msg-row.human { flex-direction: row-reverse; }
+.msg-bubble {
+  max-width: 75%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  background: var(--bubble-agent);
+}
+.msg-row.human .msg-bubble { background: var(--bubble-human); }
+.msg-bubble.alert { border: 2px solid var(--red-border); }
+.msg-agent {
+  font-weight: 600;
+  font-size: 0.7rem;
+  margin-bottom: 2px;
+}
+.msg-action {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.msg-note { margin-top: 4px; }
+.msg-time {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .top-row { grid-template-columns: 1fr; }
+  .kanban { grid-template-columns: repeat(2, 1fr); }
+  .msg-bubble { max-width: 90%; }
+}
+@media (max-width: 480px) {
+  .kanban { grid-template-columns: 1fr; }
+  #app { padding: 8px; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>Heartbeat Dashboard</h1>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <label style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer;">
+        <input type="checkbox" id="auto-reload" checked> Auto (5s)
+      </label>
+      <button class="refresh-btn" onclick="location.reload()">&#x1f504;</button>
+    </div>
+  </header>
+
+  <div class="top-row">
+    <div class="panel">
+      <div class="panel-title">&#x1f4cb; Backlog Board</div>
+      <div id="backlog-board" class="kanban"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">&#x1f4ca; Velocity Chart</div>
+      <div id="velocity-chart" class="chart-container"></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom:16px;">
+    <div class="story-header">
+      <div class="panel-title" style="margin-bottom:0;">&#x1f504; Current Story</div>
+      <select id="story-select" class="story-select" onchange="renderStoryDetail()"></select>
+    </div>
+    <div id="gantt-chart" class="gantt-container"></div>
+    <div class="panel-title" style="font-size:0.75rem;">Tasks</div>
+    <div id="task-list" class="tasks-list"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">&#x1f4ac; Agent Messages</div>
+    <div id="agent-messages" class="messages"></div>
+  </div>
+</div>
+
+<script>
+const BACKLOG_DATA = {{BACKLOG_DATA}};
+const STORIES_DATA = {{STORIES_DATA}};
+const AGENT_COLORS = {{AGENT_COLORS}};
+</script>
+<script>
+(function() {
+  'use strict';
+
+  function esc(str) {
+    if (str == null) return '';
+    var d = document.createElement('div');
+    d.textContent = String(str);
+    return d.innerHTML;
+  }
+
+  function formatTime(ts) {
+    if (!ts) return '';
+    var d = new Date(ts);
+    if (isNaN(d)) return String(ts);
+    return d.toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function agentColor(name) {
+    return (AGENT_COLORS && AGENT_COLORS[name]) || '#6B7280';
+  }
+
+  // ── Backlog Board ──
+  function renderBacklog() {
+    var el = document.getElementById('backlog-board');
+    var cols = { draft: [], ready: [], in_progress: [], done: [] };
+    (BACKLOG_DATA || []).forEach(function(item) {
+      var s = (item.status || 'draft').toLowerCase();
+      if (cols[s]) cols[s].push(item);
+    });
+    var labels = { draft: 'Draft', ready: 'Ready', in_progress: 'In Progress', done: 'Done' };
+    var html = '';
+    ['draft','ready','in_progress','done'].forEach(function(key) {
+      html += '<div class="kanban-col"><div class="kanban-col-header">' + labels[key] + '</div>';
+      cols[key].forEach(function(item) {
+        html += '<div class="kanban-card"><div class="card-title">' + esc(item.title || item.story_id) + '</div>';
+        html += '<div class="card-points">' + (item.points != null ? item.points + ' pts' : '—') + '</div></div>';
+      });
+      if (cols[key].length === 0) html += '<div style="font-size:0.7rem;color:var(--text-muted);text-align:center;padding:8px;">—</div>';
+      html += '</div>';
+    });
+    el.innerHTML = html;
+  }
+
+  // ── Velocity Chart ──
+  function renderVelocity() {
+    var el = document.getElementById('velocity-chart');
+    var iterMap = {};
+    (BACKLOG_DATA || []).forEach(function(item) {
+      if (item.iteration != null && item.status === 'done' && item.points != null) {
+        var k = item.iteration;
+        iterMap[k] = (iterMap[k] || 0) + item.points;
+      }
+    });
+    var iters = Object.keys(iterMap).map(Number).sort(function(a,b){return a-b;});
+    if (iters.length === 0) {
+      el.innerHTML = '<div class="chart-fallback">Collecting data…</div>';
+      return;
+    }
+    var values = iters.map(function(i){ return iterMap[i]; });
+    var maxVal = Math.max.apply(null, values);
+    var avg = values.reduce(function(a,b){return a+b;}, 0) / values.length;
+    var barW = 40, gap = 16, padL = 40, padR = 16, padT = 16, padB = 32;
+    var w = padL + iters.length * (barW + gap) + padR;
+    var h = 160;
+    var chartH = h - padT - padB;
+    var scale = maxVal > 0 ? chartH / (maxVal * 1.1) : 1;
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">';
+    // Y-axis
+    svg += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="1"/>';
+    // X-axis
+    svg += '<line x1="' + padL + '" y1="' + (h - padB) + '" x2="' + (w - padR) + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="1"/>';
+    // Bars
+    iters.forEach(function(iter, i) {
+      var val = iterMap[iter];
+      var barH = val * scale;
+      var x = padL + i * (barW + gap) + gap / 2;
+      var y = h - padB - barH;
+      svg += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + barH + '" fill="var(--accent)" rx="3"/>';
+      svg += '<text x="' + (x + barW / 2) + '" y="' + (y - 4) + '" text-anchor="middle" font-size="10" fill="var(--text)">' + val + '</text>';
+      svg += '<text x="' + (x + barW / 2) + '" y="' + (h - padB + 14) + '" text-anchor="middle" font-size="10" fill="var(--text-muted)">Iter ' + iter + '</text>';
+    });
+    // Average line
+    var avgY = h - padB - avg * scale;
+    svg += '<line x1="' + padL + '" y1="' + avgY + '" x2="' + (w - padR) + '" y2="' + avgY + '" stroke="var(--red-border)" stroke-width="1" stroke-dasharray="4,3"/>';
+    svg += '<text x="' + (w - padR - 2) + '" y="' + (avgY - 4) + '" text-anchor="end" font-size="9" fill="var(--red-border)">avg ' + avg.toFixed(1) + '</text>';
+    svg += '</svg>';
+    el.innerHTML = svg;
+  }
+
+  // ── Story Detail (Gantt + Tasks) ──
+  function populateStorySelect() {
+    var sel = document.getElementById('story-select');
+    var stories = STORIES_DATA || [];
+    if (stories.length === 0) {
+      sel.innerHTML = '<option>No stories</option>';
+      return;
+    }
+    sel.innerHTML = '';
+    stories.forEach(function(s) {
+      var opt = document.createElement('option');
+      opt.value = s.story_id;
+      opt.textContent = s.story_id;
+      sel.appendChild(opt);
+    });
+  }
+
+  function getSelectedStory() {
+    var id = document.getElementById('story-select').value;
+    return (STORIES_DATA || []).find(function(s){ return s.story_id === id; });
+  }
+
+  window.renderStoryDetail = function() {
+    renderGantt();
+    renderTasks();
+    renderMessages();
+  };
+
+  function renderGantt() {
+    var el = document.getElementById('gantt-chart');
+    var story = getSelectedStory();
+    if (!story || !story.board || story.board.length === 0) {
+      el.innerHTML = '<div class="chart-fallback">No board data</div>';
+      return;
+    }
+    var entries = story.board.filter(function(e){ return e.from; });
+    if (entries.length === 0) {
+      el.innerHTML = '<div class="chart-fallback">No board data</div>';
+      return;
+    }
+
+    // Backfill missing timestamps from surrounding entries
+    var withTs = entries.filter(function(e){ return e.timestamp; });
+    withTs.sort(function(a,b){ return new Date(a.timestamp) - new Date(b.timestamp); });
+    if (withTs.length > 0) {
+      var lastKnown = withTs[withTs.length - 1].timestamp;
+      entries.forEach(function(e) {
+        if (!e.timestamp) e.timestamp = lastKnown;
+      });
+    }
+    entries.sort(function(a,b){ return new Date(a.timestamp) - new Date(b.timestamp); });
+
+    // All agents from AGENT_COLORS (excluding human/orchestrator)
+    var agents = Object.keys(AGENT_COLORS).filter(function(a) {
+      return a !== 'human' && a !== 'orchestrator';
+    });
+
+    var tMin = new Date(entries[0].timestamp).getTime();
+    var tMax = new Date(entries[entries.length - 1].timestamp).getTime();
+    if (tMax <= tMin) tMax = tMin + 3600000; // at least 1hr span
+
+    var padL = 110, padR = 16, padT = 24, padB = 32;
+    var rowH = 28, barH = 16;
+    var chartW = 600;
+    var w = padL + chartW + padR;
+    var h = padT + agents.length * rowH + padB;
+    var tScale = chartW / (tMax - tMin);
+
+    var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg" style="min-width:' + w + 'px;">';
+
+    // Agent labels and rows
+    agents.forEach(function(agent, i) {
+      var y = padT + i * rowH;
+      if (i % 2 === 0) {
+        svg += '<rect x="0" y="' + y + '" width="' + w + '" height="' + rowH + '" fill="var(--bg-card)" opacity="0.3"/>';
+      }
+      svg += '<text x="' + (padL - 8) + '" y="' + (y + rowH / 2 + 4) + '" text-anchor="end" font-size="11" fill="' + agentColor(agent) + '">' + esc(agent) + '</text>';
+    });
+
+    // Time axis labels
+    var ticks = 5;
+    for (var t = 0; t <= ticks; t++) {
+      var tx = padL + (chartW / ticks) * t;
+      var tVal = new Date(tMin + ((tMax - tMin) / ticks) * t);
+      svg += '<text x="' + tx + '" y="' + (h - 8) + '" text-anchor="middle" font-size="9" fill="var(--text-muted)">' + formatTime(tVal) + '</text>';
+      svg += '<line x1="' + tx + '" y1="' + padT + '" x2="' + tx + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="0.5" opacity="0.5"/>';
+    }
+
+    // Bars: each entry spans from its timestamp to the next entry's timestamp (or tMax)
+    for (var ei = 0; ei < entries.length; ei++) {
+      var e = entries[ei];
+      var agentIdx = agents.indexOf(e.from);
+      var start = new Date(e.timestamp).getTime();
+      var end = tMax;
+      // Find next entry from same agent or global next entry
+      for (var ni = ei + 1; ni < entries.length; ni++) {
+        end = new Date(entries[ni].timestamp).getTime();
+        break;
+      }
+      var x = padL + (start - tMin) * tScale;
+      var bw = Math.max((end - start) * tScale, 2);
+      var by = padT + agentIdx * rowH + (rowH - barH) / 2;
+      var isRework = e.status === 'rework';
+      svg += '<rect x="' + x + '" y="' + by + '" width="' + bw + '" height="' + barH + '" fill="' + agentColor(e.from) + '" rx="3" opacity="0.8"';
+      if (isRework) svg += ' stroke="' + agentColor(e.from) + '" stroke-dasharray="4,2" fill-opacity="0.4"';
+      svg += '/>';
+    }
+
+    svg += '</svg>';
+    el.innerHTML = svg;
+  }
+
+  function renderTasks() {
+    var el = document.getElementById('task-list');
+    var story = getSelectedStory();
+    if (!story || !story.tasks || story.tasks.length === 0) {
+      el.innerHTML = '<span style="font-size:0.8rem;color:var(--text-muted);">No tasks</span>';
+      return;
+    }
+    var icons = { done: '\u2705', in_progress: '\uD83D\uDD04', pending: '\u2B1C' };
+    var html = '';
+    story.tasks.forEach(function(t) {
+      var icon = icons[t.status] || icons.pending;
+      html += '<span class="task-chip">' + icon + ' ' + esc(t.name || t.task_id) + '</span>';
+    });
+    el.innerHTML = html;
+  }
+
+  // ── Agent Messages ──
+  function renderMessages() {
+    var el = document.getElementById('agent-messages');
+    var story = getSelectedStory();
+    if (!story || !story.board || story.board.length === 0) {
+      el.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);padding:16px;text-align:center;">No messages</div>';
+      return;
+    }
+    var entries = story.board.slice().sort(function(a,b) {
+      return new Date(a.timestamp) - new Date(b.timestamp);
+    });
+    var html = '';
+    entries.forEach(function(e) {
+      var isHuman = e.from === 'human';
+      var isAlert = e.status === 'blocked' || e.status === 'rework';
+      html += '<div class="msg-row' + (isHuman ? ' human' : '') + '">';
+      html += '<div class="msg-bubble' + (isAlert ? ' alert' : '') + '">';
+      html += '<div class="msg-agent" style="color:' + agentColor(e.from) + ';">' + esc(e.from) + '</div>';
+      if (e.action) html += '<div class="msg-action">' + esc(e.action) + (e.to ? ' → ' + esc(e.to) : '') + '</div>';
+      if (e.note) html += '<div class="msg-note">' + esc(e.note) + '</div>';
+      html += '<div class="msg-time">' + formatTime(e.timestamp) + '</div>';
+      html += '</div></div>';
+    });
+    el.innerHTML = html;
+  }
+
+  // ── Auto Reload ──
+  var reloadTimer = setInterval(function(){ location.reload(); }, 5000);
+  document.getElementById('auto-reload').addEventListener('change', function() {
+    if (this.checked) {
+      reloadTimer = setInterval(function(){ location.reload(); }, 5000);
+    } else {
+      clearInterval(reloadTimer);
+    }
+  });
+
+  // ── Init ──
+  renderBacklog();
+  renderVelocity();
+  populateStorySelect();
+  renderStoryDetail();
+})();
+</script>
+</body>
+</html>
