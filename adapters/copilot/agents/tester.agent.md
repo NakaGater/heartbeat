@@ -1,4 +1,5 @@
 ---
+description: "Tester agent. Writes test code first (Red phase of TDD cycle)."
 tools:
   - shell(npm test:*)
   - shell(npx jest:*)

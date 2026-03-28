@@ -1,4 +1,5 @@
 ---
+description: "QA agent. Verifies story implementation via actual browser operation using Playwright."
 tools:
   - playwright(*)
   - read_file

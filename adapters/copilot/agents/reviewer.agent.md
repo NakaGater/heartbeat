@@ -1,4 +1,5 @@
 ---
+description: "Reviewer agent. Reviews code quality of completed story implementation."
 tools:
   - read_file
 ---
