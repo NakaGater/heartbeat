@@ -10,8 +10,10 @@ Deliver value in small increments. Stories should be the smallest splittable uni
 Quality and direction are the entire team's responsibility.
 
 ## Planning Game
-PdM decides story priority. Architect provides estimates.
-If estimates are too large, PdM splits the story.
+PdM decides story priority. Architect estimates complexity/uncertainty
+on a 3-level scale (1pt Clear, 2pt Challenging, 3pt Uncertain).
+A story estimated at 3pt ("too large") must not proceed to implementation;
+PdM splits, redefines, or commissions a spike to reduce uncertainty first.
 
 ## On-Site Customer
 PdM acts as the user's advocate, always present with the team.

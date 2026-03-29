@@ -15,6 +15,7 @@ User Request
   → [human approval]
   → designer → design.md
   → architect → tasks.md + tasks.jsonl
+    → [if 3pt] → pdm (split/redefine) → architect (re-estimate) → loop until 1-2pt
   → [human approval]
   → For each task (outer loop):
       tester → first test code (Red) → update tasks.jsonl to "in_progress"
@@ -49,7 +50,8 @@ User Request
 - If blocked: to="pdm", status="blocked", note="{unclear points}"
 
 ### Architect
-- After task decomposition: to="human", action="approve", output="tasks.md", status="waiting"
+- After task decomposition (1-2pt): to="human", action="approve", output="tasks.md", status="waiting"
+- If estimate is 3pt (gate rule): to="pdm", action="split_story", status="rework", note="3pt gate: {reason}"
 - If blocked: to="designer", status="blocked", note="{technical concerns}"
 
 ### Tester
