@@ -41,3 +41,57 @@ Describe 'No static timestamp placeholder in persona files'
     The status should be success
   End
 End
+
+check_board_protocol_auto_injection_docs() {
+  if ! grep -q 'auto-injected\|auto-injection\|board-stamp\.sh' "core/xp/board-protocol.md"; then
+    echo "FAIL: board-protocol.md missing documentation about auto-injection of timestamps" >&2
+    return 1
+  fi
+}
+
+check_no_static_timestamp_in_board_protocol() {
+  if grep -q '2026-01-01T00:00:00Z' "core/xp/board-protocol.md"; then
+    echo "FAIL: board-protocol.md contains static placeholder 2026-01-01T00:00:00Z" >&2
+    return 1
+  fi
+}
+
+check_no_static_timestamp_in_skills() {
+  for skill in adapters/*/skills/heartbeat/SKILL.md; do
+    if grep -q '2026-01-01T00:00:00Z' "$skill"; then
+      echo "FAIL: $skill contains static placeholder 2026-01-01T00:00:00Z" >&2
+      return 1
+    fi
+  done
+}
+
+check_skill_auto_injected_note() {
+  for skill in adapters/*/skills/heartbeat/SKILL.md; do
+    if ! grep -q 'auto-injected by.*hook\|auto-injected by PostToolUse hook' "$skill"; then
+      echo "FAIL: $skill missing auto-injected by hook note" >&2
+      return 1
+    fi
+  done
+}
+
+Describe 'Documentation and SKILL.md timestamp updates (Task 5)'
+  It 'board-protocol.md contains auto-injection documentation'
+    When call check_board_protocol_auto_injection_docs
+    The status should be success
+  End
+
+  It 'board-protocol.md does not contain static placeholder 2026-01-01T00:00:00Z'
+    When call check_no_static_timestamp_in_board_protocol
+    The status should be success
+  End
+
+  It 'no SKILL.md file contains 2026-01-01T00:00:00Z'
+    When call check_no_static_timestamp_in_skills
+    The status should be success
+  End
+
+  It 'all SKILL.md files contain auto-injected by hook note'
+    When call check_skill_auto_injected_note
+    The status should be success
+  End
+End
