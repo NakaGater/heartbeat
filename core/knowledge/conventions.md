@@ -50,6 +50,18 @@ Note: `subagentStop` is NOT a recognized event (was used in older convention but
 
 - Use `author` (not `publisher`) for the owner field in `.github/plugin/plugin.json`.
 
+## Story Point Estimation
+
+- Points measure **complexity and uncertainty**, not workload or effort.
+- Valid values: **1** (Clear), **2** (Challenging), **3** (Uncertain) only.
+- 3pt Gate Rule: A story estimated at 3pt must NOT proceed to implementation.
+  The architect returns it to PdM (action: `split_story`, status: `rework`)
+  for splitting, redefinition, or a research spike.
+- Escape hatch: If a story remains 3pt after one rework attempt, the human
+  can override and approve proceeding at 3pt.
+- Completed stories retain their historical point values (may include
+  pre-migration values like 5 or 13).
+
 ## Naming Rules
 
 - Agent files: `{role}.agent.md` under `adapters/copilot/agents/`
@@ -70,5 +82,5 @@ Note: `subagentStop` is NOT a recognized event (was used in older convention but
 - JSON: 2-space indentation
 - YAML front matter: block list format (`- item`)
 
-Last updated: 2026-03-29T18:00:00Z
-Source story: copilot-tools
+Last updated: 2026-03-29T04:00:00Z
+Source story: point-criteria
