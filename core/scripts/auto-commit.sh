@@ -345,26 +345,24 @@ main() {
   local project_dir="${CLAUDE_PROJECT_DIR:-.}"
   cd "$project_dir"
 
-  local input
-  input=$(cat)
+  # Consume stdin (hook may provide JSON, but we no longer use it)
+  cat > /dev/null
 
   # Exit silently if no changes (staged or unstaged)
   if ! git status --porcelain | grep -q .; then
     exit 0
   fi
 
-  local agent type scope desc msg
-  agent=$(get_agent_name "$input")
-  type=$(map_agent_to_type "$agent")
-  scope=$(get_story_scope)
-  desc=$(get_description "$input")
+  # Stage all changes first so diff --cached reflects everything
+  git add -A
 
-  # Fallback description if still empty
-  [ -z "$desc" ] && desc="update files"
+  local type scope desc msg
+  type=$(get_type_from_diff)
+  scope=$(get_scope_from_diff)
+  desc=$(get_description_from_diff)
 
   msg=$(format_commit_message "$type" "$scope" "$desc")
 
-  git add -A
   # --no-verify is intentional: this script runs as a SubagentStop hook,
   # so without it a pre-commit hook could re-trigger this script and
   # cause infinite recursion.

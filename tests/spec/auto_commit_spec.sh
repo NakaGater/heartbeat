@@ -885,11 +885,6 @@ Describe 'auto-commit.sh'
         -c user.name="test" -c user.email="test@test.com" \
         commit --allow-empty -m "initial" >/dev/null 2>&1
 
-      # Set up board.jsonl with story scope and note
-      mkdir -p "$TMPDIR_T5CC3/.heartbeat/stories/auto-commit-fix"
-      echo '{"from":"tester","note":"add login test"}' \
-        > "$TMPDIR_T5CC3/.heartbeat/stories/auto-commit-fix/board.jsonl"
-
       # Create an unstaged change so main() has something to commit
       echo "new content" > "$TMPDIR_T5CC3/feature.txt"
 
@@ -903,14 +898,14 @@ Describe 'auto-commit.sh'
     AfterEach 'cleanup'
 
     run_main_and_get_commit_message() {
-      echo '{"agent_type":"tester"}' \
+      echo '' \
         | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
       git -C "$TMPDIR_T5CC3" log -1 --format=%s
     }
 
-    It 'commits with Conventional Commits format using all helper functions'
+    It 'commits with Conventional Commits format derived from diff'
       When call run_main_and_get_commit_message
-      The output should equal "test(auto-commit-fix): add login test"
+      The output should equal "chore(feature): add feature.txt"
       The status should be success
     End
   End
@@ -926,13 +921,17 @@ Describe 'auto-commit.sh'
         git -C "$TMPDIR_T4W1" \
           -c user.name="test" -c user.email="test@test.com" \
           commit --allow-empty -m "initial" >/dev/null 2>&1
-        # Create a test file -- type should be "test" based on file path
-        mkdir -p "$TMPDIR_T4W1/tests/spec"
-        echo 'test content' > "$TMPDIR_T4W1/tests/spec/example_spec.sh"
-        # Set up board.jsonl with agent "implementer" to prove it's NOT used
+        # Pre-commit board.jsonl with agent "implementer" to prove it's NOT used
         mkdir -p "$TMPDIR_T4W1/.heartbeat/stories/some-story"
         echo '{"from":"implementer","note":"implement feature X"}' \
           > "$TMPDIR_T4W1/.heartbeat/stories/some-story/board.jsonl"
+        git -C "$TMPDIR_T4W1" add -A >/dev/null 2>&1
+        git -C "$TMPDIR_T4W1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "add board" --no-verify >/dev/null 2>&1
+        # Create a test file -- type should be "test" based on file path
+        mkdir -p "$TMPDIR_T4W1/tests/spec"
+        echo 'test content' > "$TMPDIR_T4W1/tests/spec/example_spec.sh"
         export CLAUDE_PROJECT_DIR="$TMPDIR_T4W1"
       }
       cleanup() {
@@ -963,13 +962,17 @@ Describe 'auto-commit.sh'
         git -C "$TMPDIR_T4W2" \
           -c user.name="test" -c user.email="test@test.com" \
           commit --allow-empty -m "initial" >/dev/null 2>&1
-        # Create a single file in core/scripts/ -- scope should be "auto-commit"
-        mkdir -p "$TMPDIR_T4W2/core/scripts"
-        echo '#!/bin/bash' > "$TMPDIR_T4W2/core/scripts/auto-commit.sh"
-        # Set up board.jsonl with a DIFFERENT story ID to prove it's NOT used
+        # Pre-commit board.jsonl with a DIFFERENT story ID to prove it's NOT used
         mkdir -p "$TMPDIR_T4W2/.heartbeat/stories/wrong-story"
         echo '{"from":"tester","note":"some note"}' \
           > "$TMPDIR_T4W2/.heartbeat/stories/wrong-story/board.jsonl"
+        git -C "$TMPDIR_T4W2" add -A >/dev/null 2>&1
+        git -C "$TMPDIR_T4W2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "add board" --no-verify >/dev/null 2>&1
+        # Create a single file in core/scripts/ -- scope should be "auto-commit"
+        mkdir -p "$TMPDIR_T4W2/core/scripts"
+        echo '#!/bin/bash' > "$TMPDIR_T4W2/core/scripts/auto-commit.sh"
         export CLAUDE_PROJECT_DIR="$TMPDIR_T4W2"
       }
       cleanup() {
@@ -1001,12 +1004,16 @@ Describe 'auto-commit.sh'
         git -C "$TMPDIR_T4W3" \
           -c user.name="test" -c user.email="test@test.com" \
           commit --allow-empty -m "initial" >/dev/null 2>&1
-        # Create a new file
-        echo 'new feature' > "$TMPDIR_T4W3/feature.txt"
-        # Set up board.jsonl with a note that should NOT appear in commit
+        # Pre-commit board.jsonl with a note that should NOT appear in commit
         mkdir -p "$TMPDIR_T4W3/.heartbeat/stories/my-story"
         echo '{"from":"tester","note":"completely different note from board"}' \
           > "$TMPDIR_T4W3/.heartbeat/stories/my-story/board.jsonl"
+        git -C "$TMPDIR_T4W3" add -A >/dev/null 2>&1
+        git -C "$TMPDIR_T4W3" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "add board" --no-verify >/dev/null 2>&1
+        # Create a new file
+        echo 'new feature' > "$TMPDIR_T4W3/feature.txt"
         export CLAUDE_PROJECT_DIR="$TMPDIR_T4W3"
       }
       cleanup() {
