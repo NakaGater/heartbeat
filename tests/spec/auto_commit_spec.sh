@@ -376,6 +376,162 @@ Describe 'auto-commit.sh'
         The status should be success
       End
     End
+
+    Describe 'CC2: core/scripts/auto-commit.sh only -> scope "auto-commit"'
+      setup() {
+        TMPDIR_SCOPE2=$(mktemp -d)
+        git init "$TMPDIR_SCOPE2" >/dev/null 2>&1
+        git -C "$TMPDIR_SCOPE2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_SCOPE2/core/scripts"
+        echo '#!/bin/bash' > "$TMPDIR_SCOPE2/core/scripts/auto-commit.sh"
+        git -C "$TMPDIR_SCOPE2" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SCOPE2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SCOPE2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "auto-commit" when only core/scripts/auto-commit.sh is staged'
+        When call get_scope_from_diff
+        The output should equal "auto-commit"
+        The status should be success
+      End
+    End
+
+    Describe 'CC3: .heartbeat/stories/my-story/ only -> scope "my-story"'
+      setup() {
+        TMPDIR_SCOPE3=$(mktemp -d)
+        git init "$TMPDIR_SCOPE3" >/dev/null 2>&1
+        git -C "$TMPDIR_SCOPE3" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_SCOPE3/.heartbeat/stories/my-story"
+        echo '{"from":"tester"}' > "$TMPDIR_SCOPE3/.heartbeat/stories/my-story/board.jsonl"
+        echo '# tasks' > "$TMPDIR_SCOPE3/.heartbeat/stories/my-story/tasks.md"
+        git -C "$TMPDIR_SCOPE3" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SCOPE3"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SCOPE3"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "my-story" when only .heartbeat/stories/my-story/ files are staged'
+        When call get_scope_from_diff
+        The output should equal "my-story"
+        The status should be success
+      End
+    End
+
+    Describe 'CC4: adapters/copilot/ only -> scope "copilot"'
+      setup() {
+        TMPDIR_SCOPE4=$(mktemp -d)
+        git init "$TMPDIR_SCOPE4" >/dev/null 2>&1
+        git -C "$TMPDIR_SCOPE4" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_SCOPE4/adapters/copilot"
+        echo '{}' > "$TMPDIR_SCOPE4/adapters/copilot/plugin.json"
+        echo '# copilot' > "$TMPDIR_SCOPE4/adapters/copilot/README.md"
+        git -C "$TMPDIR_SCOPE4" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SCOPE4"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SCOPE4"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "copilot" when only adapters/copilot/ files are staged'
+        When call get_scope_from_diff
+        The output should equal "copilot"
+        The status should be success
+      End
+    End
+
+    Describe 'CC5: multiple areas -> empty string'
+      setup() {
+        TMPDIR_SCOPE5=$(mktemp -d)
+        git init "$TMPDIR_SCOPE5" >/dev/null 2>&1
+        git -C "$TMPDIR_SCOPE5" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_SCOPE5/tests/spec"
+        mkdir -p "$TMPDIR_SCOPE5/core/scripts"
+        echo 'test1' > "$TMPDIR_SCOPE5/tests/spec/foo_spec.sh"
+        echo '#!/bin/bash' > "$TMPDIR_SCOPE5/core/scripts/auto-commit.sh"
+        git -C "$TMPDIR_SCOPE5" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SCOPE5"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SCOPE5"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns empty string when files span multiple areas'
+        When call get_scope_from_diff
+        The output should equal ""
+        The status should be success
+      End
+    End
+
+    Describe 'CC6: single file README.md only -> scope "README"'
+      setup() {
+        TMPDIR_SCOPE6=$(mktemp -d)
+        git init "$TMPDIR_SCOPE6" >/dev/null 2>&1
+        git -C "$TMPDIR_SCOPE6" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        echo '# readme' > "$TMPDIR_SCOPE6/README.md"
+        git -C "$TMPDIR_SCOPE6" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SCOPE6"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SCOPE6"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "README" when only README.md is staged'
+        When call get_scope_from_diff
+        The output should equal "README"
+        The status should be success
+      End
+    End
+
+    Describe 'CC7: no staged files -> empty string'
+      setup() {
+        TMPDIR_SCOPE7=$(mktemp -d)
+        git init "$TMPDIR_SCOPE7" >/dev/null 2>&1
+        git -C "$TMPDIR_SCOPE7" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SCOPE7"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SCOPE7"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns empty string when no files are staged'
+        When call get_scope_from_diff
+        The output should equal ""
+        The status should be success
+      End
+    End
   End
 
   # Task 5, CC3: main() が全関数を組み合わせて Conventional Commits 形式の git commit を実行する
