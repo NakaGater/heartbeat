@@ -2,9 +2,13 @@
 
 ARCHITECT="core/agent-personas/architect.md"
 
+# --- CC1: File contains a section defining three point levels ---
+
 check_point_estimation_scale_section() {
   grep -q "## Point Estimation Scale" "$ARCHITECT" || return 1
 }
+
+# --- CC1 (cont): Three levels with explicit criteria ---
 
 check_three_point_levels() {
   grep -q "1pt.*Clear" "$ARCHITECT" || return 1
@@ -12,10 +16,14 @@ check_three_point_levels() {
   grep -q "3pt.*Uncertain" "$ARCHITECT" || return 1
 }
 
+# --- CC3: Each level has both "Criteria" and "What it means" ---
+
 check_criteria_and_meaning() {
   grep -q "Criteria" "$ARCHITECT" || return 1
   grep -q "What it means" "$ARCHITECT" || return 1
 }
+
+# --- CC2: No workload-based estimation guidance exists ---
 
 check_no_workload_language() {
   # The file must NOT contain workload/effort-based estimation language
@@ -28,6 +36,8 @@ check_no_workload_language() {
   fi
   return 0
 }
+
+# --- CC1 (cont): Points measure complexity and uncertainty ---
 
 check_complexity_uncertainty_basis() {
   grep -q "complexity and uncertainty" "$ARCHITECT" || \
