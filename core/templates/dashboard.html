@@ -366,6 +366,9 @@ const AGENT_COLORS = {{AGENT_COLORS}};
       opt.textContent = s.story_id;
       sel.appendChild(opt);
     });
+    var backlog = BACKLOG_DATA || [];
+    var inProgress = backlog.filter(function(b) { return b.status === 'in_progress'; });
+    if (inProgress.length > 0) { sel.value = inProgress[0].story_id; }
   }
 
   function getSelectedStory() {
