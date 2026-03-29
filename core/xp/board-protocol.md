@@ -30,7 +30,7 @@ work completion. The orchestrator reads the last line to determine the next acti
 - `done`: Entire workflow complete
 
 ## Orchestrator Behavior
-1. Read the last line of board.jsonl
+1. Read the last line of .heartbeat/stories/{id}/board.jsonl
 2. If status is "done" → start the "to" agent
 3. If status is "waiting" → ask human for approval
 4. If status is "blocked" → report reason to human

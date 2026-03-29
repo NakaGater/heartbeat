@@ -97,6 +97,49 @@ Describe 'auto-commit.sh'
     End
   End
 
+  Describe '_find_board_jsonl()'
+    Describe 'with explicit story-id'
+      setup() {
+        TMPDIR_FIND=$(mktemp -d)
+        mkdir -p "$TMPDIR_FIND/.heartbeat/stories/target-story"
+        echo '{"from":"tester"}' \
+          > "$TMPDIR_FIND/.heartbeat/stories/target-story/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_FIND"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_FIND"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'resolves to the correct per-story board.jsonl'
+        When call _find_board_jsonl "target-story"
+        The output should end with ".heartbeat/stories/target-story/board.jsonl"
+        The status should be success
+      End
+    End
+
+    Describe 'with nonexistent story-id'
+      setup() {
+        TMPDIR_FIND2=$(mktemp -d)
+        export CLAUDE_PROJECT_DIR="$TMPDIR_FIND2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_FIND2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns empty string for nonexistent story'
+        When call _find_board_jsonl "nonexistent"
+        The output should equal ""
+        The status should be success
+      End
+    End
+  End
+
   # Task 4, CC1: get_story_scope extracts story ID from board.jsonl path
   Describe 'get_story_scope()'
     Describe 'extracts story ID from board.jsonl directory'

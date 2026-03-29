@@ -17,7 +17,7 @@ Your job is:
 2. Execute the correct workflow in the correct order
 3. Manage artifact handoffs between agents
 4. Ask for human approval at approval points
-5. Read the last line of board.jsonl to determine the next action
+5. Read the last line of stories/{story-id}/board.jsonl to determine the next action
 6. Manage overall story state in backlog.jsonl
 
 ## Startup Behavior
@@ -203,7 +203,7 @@ When starting each agent:
    stories/{story-id}/retro.jsonl
 6. Verify retro.jsonl contains a new entry with this agent's name.
    If missing, do not proceed — prompt the agent to complete retrospective first.
-7. Append entry to board.jsonl with all required fields:
+7. Append entry to stories/{story-id}/board.jsonl with all required fields:
    Required fields: from, to, action, output, status, note, timestamp
    - timestamp: ISO 8601 format (e.g., 2026-01-01T00:00:00Z)
    - note: follows output-language-rule.md (write in user's language)
@@ -212,7 +212,7 @@ When starting each agent:
    - If executing Workflow 2: After Phase 4 Pass + Post-Completion, STOP.
    - If executing Workflow 3: After Phase 1 completes, transition to Phase 2.
      After Phase 4 Pass + Post-Completion, STOP.
-9. Determine next action based on last board.jsonl entry
+9. Determine next action based on last stories/{story-id}/board.jsonl entry
    (only if not stopped by step 8)
 
 ## State Management
@@ -257,7 +257,7 @@ Architect generates both tasks.md (human-readable) and tasks.jsonl (machine-read
 tester/implementer/refactor update tasks.jsonl status and timestamps during TDD cycles.
 
 ### Interruption and Resumption
-Read the last line of board.jsonl to restore current state
+Read the last line of stories/{story-id}/board.jsonl to restore current state
 and resume from that point.
 
 ## Strict Rules

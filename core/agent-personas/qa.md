@@ -77,7 +77,7 @@ The note field follows ../xp/output-language-rule.md (write in user's language).
   note: "{issue summary and reason for rework target}"
 
 ### Write example
-Append one JSON line to board.jsonl:
+Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```json
 {"from": "qa", "to": "pdm", "action": "judge", "output": "qa-report.md", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
 ```

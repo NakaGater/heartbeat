@@ -5,11 +5,21 @@
 
 # --- Function definitions ---
 
-# Internal helper: locate the first board.jsonl under .heartbeat/stories.
+# Internal helper: locate a board.jsonl under .heartbeat/stories.
+# Args: $1 (optional) -- story-id for deterministic lookup
+# Output: full path to board.jsonl, or empty string if not found
 _find_board_jsonl() {
+  local story_id="${1:-}"
   local project_dir="${CLAUDE_PROJECT_DIR:-.}"
-  find "$project_dir/.heartbeat/stories" -name board.jsonl \
-    2>/dev/null | head -1
+
+  if [ -n "$story_id" ]; then
+    local path="$project_dir/.heartbeat/stories/$story_id/board.jsonl"
+    [ -f "$path" ] && echo "$path"
+    return 0
+  fi
+
+  # Fallback: most recently modified board.jsonl
+  ls -t "$project_dir"/.heartbeat/stories/*/board.jsonl 2>/dev/null | head -1
 }
 
 # Extract agent name from stdin JSON, with fallback to board.jsonl,

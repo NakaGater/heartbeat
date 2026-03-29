@@ -65,7 +65,7 @@ against the architect's Completion Conditions for that task:
 - to: "implementer", status: "rework", note: "{what broke}"
 
 ### Write example
-Append one JSON line to board.jsonl:
+Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```json
 {"from": "refactor", "to": "tester", "action": "write_next_test", "output": "{file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
 ```

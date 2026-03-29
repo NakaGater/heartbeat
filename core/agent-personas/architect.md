@@ -113,7 +113,7 @@ The note field follows ../xp/output-language-rule.md (write in user's language).
 - to: "designer", status: "blocked", note: "{technical concern details}"
 
 ### Write example
-Append one JSON line to board.jsonl:
+Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```json
 {"from": "architect", "to": "human", "action": "approve", "output": "tasks.md", "status": "waiting", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
 ```
