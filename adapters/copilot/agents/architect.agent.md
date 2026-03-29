@@ -1,7 +1,8 @@
 ---
 description: "Architect agent. Decomposes stories into implementable tasks with design decisions."
 tools:
-  - read_file
-  - create_file
+  - read
+  - edit
+  - search
 ---
 Read and follow the instructions in ../../core/agent-personas/architect.md
