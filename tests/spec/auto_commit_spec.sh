@@ -534,6 +534,163 @@ Describe 'auto-commit.sh'
     End
   End
 
+  # Story: commit-message-accuracy, Task 2: get_type_from_diff()
+  Describe 'get_type_from_diff()'
+    Describe 'CC1: tests/spec/foo_spec.sh only -> type "test"'
+      setup() {
+        TMPDIR_TYPE1=$(mktemp -d)
+        git init "$TMPDIR_TYPE1" >/dev/null 2>&1
+        git -C "$TMPDIR_TYPE1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_TYPE1/tests/spec"
+        echo 'test content' > "$TMPDIR_TYPE1/tests/spec/foo_spec.sh"
+        git -C "$TMPDIR_TYPE1" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_TYPE1"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_TYPE1"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "test" when only tests/ files are staged'
+        When call get_type_from_diff
+        The output should equal "test"
+        The status should be success
+      End
+    End
+
+    Describe 'CC2: core/scripts/auto-commit.sh only -> type "feat"'
+      setup() {
+        TMPDIR_TYPE2=$(mktemp -d)
+        git init "$TMPDIR_TYPE2" >/dev/null 2>&1
+        git -C "$TMPDIR_TYPE2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_TYPE2/core/scripts"
+        echo '#!/bin/bash' > "$TMPDIR_TYPE2/core/scripts/auto-commit.sh"
+        git -C "$TMPDIR_TYPE2" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_TYPE2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_TYPE2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "feat" when only core/scripts/ files are staged'
+        When call get_type_from_diff
+        The output should equal "feat"
+        The status should be success
+      End
+    End
+
+    Describe 'CC3: .heartbeat/stories/x/board.jsonl only -> type "chore"'
+      setup() {
+        TMPDIR_TYPE3=$(mktemp -d)
+        git init "$TMPDIR_TYPE3" >/dev/null 2>&1
+        git -C "$TMPDIR_TYPE3" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_TYPE3/.heartbeat/stories/x"
+        echo '{"from":"tester"}' > "$TMPDIR_TYPE3/.heartbeat/stories/x/board.jsonl"
+        git -C "$TMPDIR_TYPE3" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_TYPE3"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_TYPE3"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "chore" when only .heartbeat/ files are staged'
+        When call get_type_from_diff
+        The output should equal "chore"
+        The status should be success
+      End
+    End
+
+    Describe 'CC4: tests/ + core/scripts/ both -> type "feat"'
+      setup() {
+        TMPDIR_TYPE4=$(mktemp -d)
+        git init "$TMPDIR_TYPE4" >/dev/null 2>&1
+        git -C "$TMPDIR_TYPE4" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_TYPE4/tests/spec"
+        mkdir -p "$TMPDIR_TYPE4/core/scripts"
+        echo 'test content' > "$TMPDIR_TYPE4/tests/spec/foo_spec.sh"
+        echo '#!/bin/bash' > "$TMPDIR_TYPE4/core/scripts/auto-commit.sh"
+        git -C "$TMPDIR_TYPE4" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_TYPE4"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_TYPE4"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "feat" when tests/ and core/scripts/ files are both staged'
+        When call get_type_from_diff
+        The output should equal "feat"
+        The status should be success
+      End
+    End
+
+    Describe 'CC5: README.md only -> type "chore"'
+      setup() {
+        TMPDIR_TYPE5=$(mktemp -d)
+        git init "$TMPDIR_TYPE5" >/dev/null 2>&1
+        git -C "$TMPDIR_TYPE5" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        echo '# readme' > "$TMPDIR_TYPE5/README.md"
+        git -C "$TMPDIR_TYPE5" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_TYPE5"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_TYPE5"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "chore" when only README.md is staged'
+        When call get_type_from_diff
+        The output should equal "chore"
+        The status should be success
+      End
+    End
+
+    Describe 'CC6: no staged files -> type "chore"'
+      setup() {
+        TMPDIR_TYPE6=$(mktemp -d)
+        git init "$TMPDIR_TYPE6" >/dev/null 2>&1
+        git -C "$TMPDIR_TYPE6" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_TYPE6"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_TYPE6"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "chore" when no files are staged'
+        When call get_type_from_diff
+        The output should equal "chore"
+        The status should be success
+      End
+    End
+  End
+
   # Task 5, CC3: main() が全関数を組み合わせて Conventional Commits 形式の git commit を実行する
   Describe 'main() integration'
     setup() {
