@@ -5,3 +5,9 @@ cases:
     criteria:
       - "Only minimum code needed to pass tests is written"
       - "No features beyond what tests require are added"
+  - name: "Single test Green"
+    prompt: "Make the one new failing test pass while keeping all existing tests Green"
+    criteria:
+      - "Makes only the one new failing test pass"
+      - "All existing tests remain Green with no regression"
+      - "Does not implement beyond what the single new test requires"

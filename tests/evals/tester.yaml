@@ -10,3 +10,10 @@ cases:
     prompt: "Write tests for password reset"
     criteria:
       - "Does not write tests for features not yet requested"
+
+  - name: "Per-test TDD cycle"
+    prompt: "Write tests for a task with 3 completion conditions"
+    criteria:
+      - "Writes exactly one test per cycle, not all tests at once"
+      - "Picks the next untested completion condition in order"
+      - "Hands off to implementer after confirming the single test is Red"
