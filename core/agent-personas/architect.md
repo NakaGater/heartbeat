@@ -149,7 +149,7 @@ Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```
 
 ```json
-{"from": "architect", "to": "pdm", "action": "split_story", "output": "tasks.md", "status": "rework", "note": "3pt gate: {reason story is too uncertain}", "timestamp": "2026-01-01T00:00:00Z"}
+{"from": "architect", "to": "pdm", "action": "split_story", "status": "rework", "note": "3pt gate: {reason story is too uncertain}", "timestamp": "2026-01-01T00:00:00Z"}
 ```
 
 ## Retrospective Trigger
