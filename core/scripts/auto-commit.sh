@@ -92,13 +92,20 @@ _all_files_match() {
   [ -z "$(echo "$files" | grep -v "$pattern" | head -1)" ]
 }
 
+# Internal helper: return staged file list from git.
+# No args. Uses CLAUDE_PROJECT_DIR for repo location.
+# Output: newline-separated file paths on stdout (may be empty)
+_get_staged_files() {
+  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
+  git -C "$project_dir" diff --cached --name-only 2>/dev/null
+}
+
 # Derive scope from staged file paths.
 # No args. Reads git diff --cached --name-only internally.
 # Output: scope string on stdout (may be empty)
 get_scope_from_diff() {
-  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
   local files
-  files=$(git -C "$project_dir" diff --cached --name-only 2>/dev/null)
+  files=$(_get_staged_files)
 
   # No staged files
   if [ -z "$files" ]; then
@@ -160,9 +167,8 @@ get_scope_from_diff() {
 # No args. Reads git diff --cached --name-only internally.
 # Output: type string on stdout (always returns a value)
 get_type_from_diff() {
-  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
   local files
-  files=$(git -C "$project_dir" diff --cached --name-only 2>/dev/null)
+  files=$(_get_staged_files)
 
   # No staged files -> chore
   if [ -z "$files" ]; then
