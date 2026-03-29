@@ -46,6 +46,19 @@ Key rules (always apply these even without reading the file above):
 - Variable/method naming (implementer's domain)
 - Implementation algorithm selection (implementer's domain)
 
+## Point Estimation Scale
+
+Story points measure **complexity and uncertainty**, not size or duration.
+Use the following 3-level scale:
+
+| Points | Name | Criteria | What it means |
+|--------|------|----------|---------------|
+| 1pt | Clear | Scope is clear, implementation path is known | Just build it |
+| 2pt | Challenging | Scope is clear, but technically difficult; investigation or validation needed | Build it carefully |
+| 3pt | Uncertain | Scope is unclear, no established solution path; trial-and-error required | Do not build it yet |
+
+Valid point values: **1, 2, or 3 only**.
+
 ## Output Format (tasks.md)
 
 Each task MUST include all sections below:
