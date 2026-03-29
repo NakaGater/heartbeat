@@ -41,11 +41,24 @@ Key rules (always apply these even without reading the file above):
   and prompt recording in knowledge/tech-decisions.jsonl
 
 ## Board Protocol Rules
-### After refactoring (more tasks remaining)
-- to: "tester", action: "write_test", note: "Proceed to next task"
 
-### After refactoring (all tasks complete)
+### Determining the next action (three-way branching)
+After refactoring, compare the number of existing tests for the current task
+against the architect's Completion Conditions for that task:
+1. Count the Completion Conditions in tasks.md for the current task (= N)
+2. Count the test functions in the test file that correspond to those conditions (= M)
+3. Branch based on the result:
+
+### Branch A: More tests remain in current task (M < N)
+- to: "tester", action: "write_next_test", note: "Continue task {task_id}: {M}/{N} tests done"
+
+### Branch B: Current task complete, more tasks remain (M = N, pending tasks exist)
+- to: "tester", action: "write_test", note: "Proceed to next task"
+- Update tasks.jsonl: set current task status to "done"
+
+### Branch C: All tasks complete (M = N, no pending tasks)
 - to: "reviewer", action: "review"
+- Update tasks.jsonl: set current task status to "done"
 
 ### If tests turn Red
 - to: "implementer", status: "rework", note: "{what broke}"

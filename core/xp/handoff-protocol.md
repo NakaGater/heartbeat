@@ -16,10 +16,15 @@ User Request
   → designer → design.md
   → architect → tasks.md + tasks.jsonl
   → [human approval]
-  → For each task:
-      tester → test code (Red)
-      implementer → implementation (Green)
-      refactor → refactored code
+  → For each task (outer loop):
+      tester → first test code (Red) → update tasks.jsonl to "in_progress"
+      Per-test inner loop:
+        implementer → minimal implementation (Green)
+        refactor → refactored code
+        If more completion conditions remain in this task:
+          tester → next test code (Red)
+          Continue inner loop
+      → update tasks.jsonl to "done"
   → reviewer → review.md
   → qa → qa-report.md
   → pdm (acceptance judgment) → verdict.md
@@ -57,8 +62,9 @@ User Request
 - If test unclear: to="tester", status="blocked"
 
 ### Refactor
-- After refactoring (more tasks): to="tester", action="write_test", note="Proceed to next task"
-- After refactoring (all tasks done): to="reviewer", action="review"
+- After refactoring (more tests remain in current task): to="tester", action="write_next_test", note="Continue task {task_id}: next completion condition"
+- After refactoring (current task complete, more tasks remain): to="tester", action="write_test", note="Proceed to next task"
+- After refactoring (all tasks complete): to="reviewer", action="review"
 - If tests Red: to="implementer", status="rework", note="{what broke}"
 
 ### Reviewer
