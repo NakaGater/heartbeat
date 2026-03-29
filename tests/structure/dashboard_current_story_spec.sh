@@ -51,3 +51,47 @@ Describe 'dashboard.html populateStorySelect() in_progress auto-selection'
     The status should be success
   End
 End
+
+# Task 2: changeイベントハンドラの非退行検証
+
+# Task 2 completion condition 2:
+# story-select has onchange="renderStoryDetail()" attribute (unchanged)
+check_onchange_attribute() {
+  grep -q 'id="story-select".*onchange="renderStoryDetail()"' "$DASHBOARD" || return 1
+}
+
+# Task 2 completion condition 2:
+# renderStoryDetail() calls renderGantt, renderTasks, renderMessages (unchanged)
+check_render_story_detail_body() {
+  grep -A 5 "window.renderStoryDetail = function" "$DASHBOARD" \
+    | grep -q "renderGantt()" || return 1
+  grep -A 5 "window.renderStoryDetail = function" "$DASHBOARD" \
+    | grep -q "renderTasks()" || return 1
+  grep -A 5 "window.renderStoryDetail = function" "$DASHBOARD" \
+    | grep -q "renderMessages()" || return 1
+}
+
+# Task 2 completion condition 1:
+# getSelectedStory() exists and reads from story-select (supports manual selection)
+check_get_selected_story() {
+  grep -q "function getSelectedStory" "$DASHBOARD" || return 1
+  grep -A 3 "function getSelectedStory" "$DASHBOARD" \
+    | grep -q 'story-select' || return 1
+}
+
+Describe 'dashboard.html change event handler non-regression (Task 2)'
+  It 'has onchange="renderStoryDetail()" on story-select element'
+    When call check_onchange_attribute
+    The status should be success
+  End
+
+  It 'renderStoryDetail() calls renderGantt, renderTasks, renderMessages unchanged'
+    When call check_render_story_detail_body
+    The status should be success
+  End
+
+  It 'getSelectedStory() exists and reads from story-select dropdown'
+    When call check_get_selected_story
+    The status should be success
+  End
+End
