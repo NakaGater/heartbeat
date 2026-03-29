@@ -77,6 +77,89 @@ get_story_scope() {
   echo ""
 }
 
+# Derive scope from staged file paths.
+# No args. Reads git diff --cached --name-only internally.
+# Output: scope string on stdout (may be empty)
+get_scope_from_diff() {
+  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
+  local files
+  files=$(git -C "$project_dir" diff --cached --name-only 2>/dev/null)
+
+  # No staged files
+  if [ -z "$files" ]; then
+    echo ""
+    return 0
+  fi
+
+  local file_count
+  file_count=$(echo "$files" | wc -l | tr -d ' ')
+
+  # Single file: use filename without extension
+  if [ "$file_count" -eq 1 ]; then
+    local filename
+    filename=$(basename "$files")
+    echo "${filename%.*}"
+    return 0
+  fi
+
+  # Check if all files share a common top-level directory pattern
+  # .heartbeat/stories/{story-id}/ -> story-id
+  local story_ids
+  story_ids=$(echo "$files" | grep '^\.heartbeat/stories/' | sed 's|^\.heartbeat/stories/\([^/]*\)/.*|\1|' | sort -u)
+  local non_story_files
+  non_story_files=$(echo "$files" | grep -v '^\.heartbeat/stories/' | head -1)
+
+  if [ -n "$story_ids" ] && [ -z "$non_story_files" ]; then
+    local story_count
+    story_count=$(echo "$story_ids" | wc -l | tr -d ' ')
+    if [ "$story_count" -eq 1 ]; then
+      echo "$story_ids"
+      return 0
+    fi
+  fi
+
+  # tests/ only -> "tests"
+  local non_test_files
+  non_test_files=$(echo "$files" | grep -v '^tests/' | head -1)
+  if [ -z "$non_test_files" ]; then
+    echo "tests"
+    return 0
+  fi
+
+  # core/scripts/ only -> script name (without extension) if single script, else "scripts"
+  local non_scripts_files
+  non_scripts_files=$(echo "$files" | grep -v '^core/scripts/' | head -1)
+  if [ -z "$non_scripts_files" ]; then
+    local script_names
+    script_names=$(echo "$files" | sed 's|^core/scripts/||' | sed 's|\.[^.]*$||' | sort -u)
+    local script_count
+    script_count=$(echo "$script_names" | wc -l | tr -d ' ')
+    if [ "$script_count" -eq 1 ]; then
+      echo "$script_names"
+      return 0
+    fi
+    echo "scripts"
+    return 0
+  fi
+
+  # adapters/{platform}/ only -> platform name
+  local non_adapter_files
+  non_adapter_files=$(echo "$files" | grep -v '^adapters/' | head -1)
+  if [ -z "$non_adapter_files" ]; then
+    local platforms
+    platforms=$(echo "$files" | sed 's|^adapters/\([^/]*\)/.*|\1|' | sort -u)
+    local platform_count
+    platform_count=$(echo "$platforms" | wc -l | tr -d ' ')
+    if [ "$platform_count" -eq 1 ]; then
+      echo "$platforms"
+      return 0
+    fi
+  fi
+
+  # Multiple areas -> empty scope
+  echo ""
+}
+
 # Trim trailing period and truncate to 72 characters (69 + "...").
 # Args: $1 -- raw description string
 # Output: cleaned description on stdout
