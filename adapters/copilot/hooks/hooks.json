@@ -11,6 +11,12 @@
         "bash": "./core/scripts/generate-dashboard.sh",
         "comment": "Dashboard auto-update (async)"
       }
+    ],
+    "subagentStop": [
+      {
+        "type": "command",
+        "bash": "./core/scripts/auto-commit.sh"
+      }
     ]
   }
 }
