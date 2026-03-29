@@ -62,6 +62,18 @@ Note: `subagentStop` is NOT a recognized event (was used in older convention but
 - Completed stories retain their historical point values (may include
   pre-migration values like 5 or 13).
 
+## PostToolUse Hook Ordering
+
+Both platforms (Claude Code, Copilot) fire PostToolUse hooks on Write/Edit in this order:
+
+1. `board-stamp.sh` -- Overwrites `timestamp` on last line of board.jsonl with real UTC time
+2. `retrospective-record.sh` -- Records retrospective entries
+3. `generate-dashboard.sh` (async) -- Regenerates dashboard HTML
+
+**Rationale:** board-stamp.sh must run before generate-dashboard.sh so the dashboard reads corrected timestamps. New hooks that modify board.jsonl data should be inserted before generate-dashboard.sh.
+
+**Key pattern (hook-based auto-stamping):** When LLM agents cannot reliably produce accurate data (e.g., system time), use a PostToolUse hook to mechanically inject the correct value rather than relying on agent instructions alone.
+
 ## Naming Rules
 
 - Agent files: `{role}.agent.md` under `adapters/copilot/agents/`
@@ -82,5 +94,5 @@ Note: `subagentStop` is NOT a recognized event (was used in older convention but
 - JSON: 2-space indentation
 - YAML front matter: block list format (`- item`)
 
-Last updated: 2026-03-29T04:00:00Z
-Source story: point-criteria
+Last updated: 2026-03-29T17:00:00Z
+Source story: dashboard-timestamp
