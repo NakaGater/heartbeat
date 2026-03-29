@@ -13,8 +13,10 @@ Directly update backlog.jsonl.
 ## Supported Commands
 
 ### Change Points
-User: "Change login points to 5"
+User: "Change login points to 2"
 → Update points for the target story in backlog.jsonl
+→ Valid point values: **1** (Clear), **2** (Challenging), or **3** (Uncertain).
+  If the user specifies a value outside 1-3, warn them and ask for a valid value.
 
 ### Assign Iteration
 User: "Put reset in iteration 2"
@@ -37,19 +39,21 @@ User: "Create iteration 3 with reset and oauth"
 Group by iteration, show point totals:
 
 ```
-📋 Iteration 1 (Total 8pt / Done 3pt)
+📋 Iteration 1 (Total 5pt / Done 3pt)
   ✅ login: Login feature (3pt) Done
-  🔄 dnd: D&D reorder (5pt) In progress
+  🔄 dnd: D&D reorder (2pt) In progress
 
-📋 Iteration 2 (Total 8pt / Done 0pt)
+📋 Iteration 2 (Total 5pt / Done 0pt)
   ⬜ reset: Password reset (3pt) Not started
-  ⬜ oauth: Google login (5pt) Not started
+  ⬜ oauth: Google login (2pt) Not started
 
 📋 Unassigned
   📝 search: Search feature (points not set)
 ```
 
 ## Important Notes
+- Valid point values: 1 (Clear), 2 (Challenging), or 3 (Uncertain). Points
+  measure complexity/uncertainty, not workload.
 - Respect human judgment for points. Agents do not change points on their own.
 - Use "iteration" (XP term), not "sprint" (Scrum term).
 - Completed story points can be adjusted as actuals.
