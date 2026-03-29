@@ -1,0 +1,94 @@
+# Tests for backlog.jsonl migration (point-criteria story, Task 7)
+# CC1: All stories with status "ready" have point values of 1, 2, or 3
+# CC2: All stories with status "done" retain their original point values
+# CC3: parallel-stories (previously 13pt) has been re-estimated to a value in the 1-3 range
+
+BACKLOG=".heartbeat/backlog.jsonl"
+
+# --- CC1: All ready stories have points of 1, 2, or 3 ---
+
+check_ready_stories_have_valid_points() {
+  # Extract points for all stories with status "ready"
+  # Each must be 1, 2, or 3 (not null, not > 3, not 0 or negative)
+  ready_points=$(jq -r 'select(.status == "ready") | .points' "$BACKLOG" 2>/dev/null)
+  [ -n "$ready_points" ] || return 1
+  for pts in $ready_points; do
+    case "$pts" in
+      1|2|3) ;;
+      *) return 1 ;;
+    esac
+  done
+  return 0
+}
+
+check_no_ready_story_exceeds_3pt() {
+  # No ready story should have points > 3
+  over_3=$(jq -r 'select(.status == "ready" and .points != null and .points > 3) | .story_id' "$BACKLOG" 2>/dev/null)
+  [ -z "$over_3" ] || return 1
+}
+
+# --- CC2: All done stories retain their original point values ---
+
+# These are the known original values from before migration.
+# Done stories must NOT be changed from their historical values.
+check_done_stories_retain_original_points() {
+  # Expected: tdd-workflow=5, i18n-docs=3, auto-commit-fix=3,
+  #           dashboard-fix=5, workflow-fix=5, workflow-boundary=3,
+  #           copilot-hooks=1, board-cleanup=3, copilot-tools=2
+  check_done_story_points "tdd-workflow" 5 || return 1
+  check_done_story_points "i18n-docs" 3 || return 1
+  check_done_story_points "auto-commit-fix" 3 || return 1
+  check_done_story_points "dashboard-fix" 5 || return 1
+  check_done_story_points "workflow-fix" 5 || return 1
+  check_done_story_points "workflow-boundary" 3 || return 1
+  check_done_story_points "copilot-hooks" 1 || return 1
+  check_done_story_points "board-cleanup" 3 || return 1
+  check_done_story_points "copilot-tools" 2 || return 1
+}
+
+check_done_story_points() {
+  local story_id="$1"
+  local expected_points="$2"
+  actual=$(jq -r "select(.story_id == \"$story_id\" and .status == \"done\") | .points" "$BACKLOG" 2>/dev/null)
+  [ "$actual" = "$expected_points" ] || return 1
+}
+
+# --- CC3: parallel-stories re-estimated to 1-3 range ---
+
+check_parallel_stories_re_estimated() {
+  pts=$(jq -r 'select(.story_id == "parallel-stories") | .points' "$BACKLOG" 2>/dev/null)
+  case "$pts" in
+    1|2|3) return 0 ;;
+    *) return 1 ;;
+  esac
+}
+
+Describe 'Backlog migration to new point scale (Task 7)'
+
+  Describe 'All ready stories have valid points 1, 2, or 3 (CC1)'
+    It 'every ready story has points of 1, 2, or 3'
+      When call check_ready_stories_have_valid_points
+      The status should be success
+    End
+
+    It 'no ready story has points greater than 3'
+      When call check_no_ready_story_exceeds_3pt
+      The status should be success
+    End
+  End
+
+  Describe 'Done stories retain original point values (CC2)'
+    It 'all done stories keep their historical point values unchanged'
+      When call check_done_stories_retain_original_points
+      The status should be success
+    End
+  End
+
+  Describe 'parallel-stories re-estimated to 1-3 range (CC3)'
+    It 'parallel-stories has a point value in the 1-3 range'
+      When call check_parallel_stories_re_estimated
+      The status should be success
+    End
+  End
+
+End
