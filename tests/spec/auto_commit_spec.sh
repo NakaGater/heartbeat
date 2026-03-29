@@ -1,0 +1,348 @@
+Describe 'auto-commit.sh'
+  # Task 1, CC1: テストファイルが存在し ShellSpec で実行可能
+  # Task 1, CC2: source 時に副作用なし (main ガード必須)
+  # Task 1, CC3: Include で auto-commit.sh を読み込める
+
+  Include ./core/scripts/auto-commit.sh
+
+  Describe 'main guard (CC2)'
+    It 'produces no output when sourced'
+      When run source ./core/scripts/auto-commit.sh
+      The output should equal ""
+      The status should be success
+    End
+  End
+
+  Describe 'Include availability (CC3)'
+    It 'makes map_agent_to_type callable after Include'
+      When call map_agent_to_type "tester"
+      The output should equal "test"
+      The status should be success
+    End
+  End
+
+  Describe 'map_agent_to_type()'
+    It 'is defined and callable after source'
+      When call map_agent_to_type "tester"
+      The output should equal "test"
+    End
+
+    # Task 3, CC1: core 3 mappings (tester->test, implementer->feat, refactor->refactor)
+    Describe 'core agent type mappings'
+      It 'maps tester to test'
+        When call map_agent_to_type "tester"
+        The output should equal "test"
+      End
+
+      It 'maps implementer to feat'
+        When call map_agent_to_type "implementer"
+        The output should equal "feat"
+      End
+
+      It 'maps refactor to refactor'
+        When call map_agent_to_type "refactor"
+        The output should equal "refactor"
+      End
+    End
+
+    # Task 3, CC2: architect, pdm, designer, context-manager, reviewer, qa -> chore
+    Describe 'non-core agent mappings to chore'
+      It 'maps architect to chore'
+        When call map_agent_to_type "architect"
+        The output should equal "chore"
+      End
+
+      It 'maps pdm to chore'
+        When call map_agent_to_type "pdm"
+        The output should equal "chore"
+      End
+
+      It 'maps designer to chore'
+        When call map_agent_to_type "designer"
+        The output should equal "chore"
+      End
+
+      It 'maps context-manager to chore'
+        When call map_agent_to_type "context-manager"
+        The output should equal "chore"
+      End
+
+      It 'maps reviewer to chore'
+        When call map_agent_to_type "reviewer"
+        The output should equal "chore"
+      End
+
+      It 'maps qa to chore'
+        When call map_agent_to_type "qa"
+        The output should equal "chore"
+      End
+    End
+
+    # Task 3, CC3: unknown agent name -> chore fallback
+    Describe 'unknown agent fallback to chore'
+      It 'maps unknown to chore'
+        When call map_agent_to_type "unknown"
+        The output should equal "chore"
+      End
+
+      It 'maps empty string to chore'
+        When call map_agent_to_type ""
+        The output should equal "chore"
+      End
+
+      It 'maps arbitrary string to chore'
+        When call map_agent_to_type "nonexistent-agent"
+        The output should equal "chore"
+      End
+    End
+  End
+
+  # Task 4, CC1: get_story_scope extracts story ID from board.jsonl path
+  Describe 'get_story_scope()'
+    Describe 'extracts story ID from board.jsonl directory'
+      setup() {
+        TMPDIR_T4CC1=$(mktemp -d)
+        mkdir -p "$TMPDIR_T4CC1/.heartbeat/stories/my-story"
+        echo '{"from":"tester","message":"hello"}' \
+          > "$TMPDIR_T4CC1/.heartbeat/stories/my-story/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4CC1"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4CC1"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns the story ID from the board.jsonl parent directory name'
+        When call get_story_scope
+        The output should equal "my-story"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC2: board.jsonl 不在時、scope は空文字列を返す
+    Describe 'returns empty string when board.jsonl does not exist'
+      setup() {
+        TMPDIR_T4CC2=$(mktemp -d)
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4CC2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4CC2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns empty string when no board.jsonl exists'
+        When call get_story_scope
+        The output should equal ""
+        The status should be success
+      End
+    End
+  End
+
+  # Task 4, CC3: get_description extracts description from board.jsonl .note
+  Describe 'get_description()'
+    Describe 'returns note from board.jsonl'
+      setup() {
+        TMPDIR_T4CC3=$(mktemp -d)
+        mkdir -p "$TMPDIR_T4CC3/.heartbeat/stories/auto-commit-fix"
+        echo '{"from":"tester","note":"add login test"}' \
+          > "$TMPDIR_T4CC3/.heartbeat/stories/auto-commit-fix/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4CC3"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4CC3"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'extracts note field from board.jsonl as description'
+        When call get_description '{}'
+        The output should equal "add login test"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC4: .note 不在時、last_assistant_message の先頭行にフォールバック
+    Describe 'falls back to first line of last_assistant_message when note is absent'
+      setup() {
+        TMPDIR_T4CC4=$(mktemp -d)
+        mkdir -p "$TMPDIR_T4CC4/.heartbeat/stories/auto-commit-fix"
+        echo '{"from":"tester"}' \
+          > "$TMPDIR_T4CC4/.heartbeat/stories/auto-commit-fix/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4CC4"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4CC4"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns first line of last_assistant_message when note is missing'
+        When call get_description '{"last_assistant_message":"implement login feature\nwith validation"}'
+        The output should equal "implement login feature"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC5: すべて不在時、git diff --stat サマリーにフォールバック
+    Describe 'falls back to git diff --stat when note and last_assistant_message are both absent'
+      setup() {
+        TMPDIR_T4CC5=$(mktemp -d)
+        # No .heartbeat/stories -> no board.jsonl
+        # Initialize a git repo with a staged change for git diff --stat
+        git init "$TMPDIR_T4CC5" >/dev/null 2>&1
+        echo "initial" > "$TMPDIR_T4CC5/README.md"
+        git -C "$TMPDIR_T4CC5" add README.md >/dev/null 2>&1
+        git -C "$TMPDIR_T4CC5" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "initial" >/dev/null 2>&1
+        echo "changed" > "$TMPDIR_T4CC5/README.md"
+        git -C "$TMPDIR_T4CC5" add README.md >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4CC5"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4CC5"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns non-empty string from git diff --stat when both note and last_assistant_message are absent'
+        When call get_description '{}'
+        The output should not equal ""
+        The status should be success
+      End
+    End
+  End
+
+  # Task 2, CC1: get_agent_name extracts agent_type from stdin JSON
+  Describe 'get_agent_name()'
+    It 'extracts agent_type from JSON input'
+      When call get_agent_name '{"agent_type":"tester"}'
+      The output should equal "tester"
+      The status should be success
+    End
+
+    # Task 2, CC2: agent_type が空/不在の場合、board.jsonl の .from にフォールバック
+    # Task 2, CC3: board.jsonl も不在の場合、"unknown" にフォールバックする
+    Describe 'fallback to board.jsonl'
+      setup() {
+        TMPDIR_CC2=$(mktemp -d)
+        mkdir -p "$TMPDIR_CC2/.heartbeat/stories/test-story"
+        echo '{"from":"designer","message":"done"}' \
+          > "$TMPDIR_CC2/.heartbeat/stories/test-story/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_CC2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_CC2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'falls back to board.jsonl .from when agent_type is missing'
+        When call get_agent_name '{}'
+        The output should equal "designer"
+        The status should be success
+      End
+    End
+
+    # Task 2, CC3: board.jsonl も不在の場合、"unknown" にフォールバックする
+    Describe 'fallback to unknown when no board.jsonl'
+      setup() {
+        TMPDIR_CC3=$(mktemp -d)
+        export CLAUDE_PROJECT_DIR="$TMPDIR_CC3"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_CC3"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns unknown when agent_type is missing and no board.jsonl exists'
+        When call get_agent_name '{}'
+        The output should equal "unknown"
+        The status should be success
+      End
+    End
+  End
+
+  # Task 5, CC1: format_commit_message assembles "<type>(<scope>): <description>"
+  Describe 'format_commit_message()'
+    It 'assembles type, scope, and description into Conventional Commits format'
+      When call format_commit_message "test" "my-story" "add login test"
+      The output should equal "test(my-story): add login test"
+      The status should be success
+    End
+
+    # Task 5, CC2: scope が空の場合、括弧なしの "<type>: <description>" にフォールバック
+    It 'falls back to type-colon-description without parentheses when scope is empty'
+      When call format_commit_message "chore" "" "update config"
+      The output should equal "chore: update config"
+      The status should be success
+    End
+  End
+
+  # Reviewer feedback: _truncate_description() — truncation and trailing period removal
+  Describe '_truncate_description()'
+    It 'truncates a string longer than 72 chars to 69 chars plus ellipsis'
+      # 80-char input: "aaaaa..." (80 x 'a')
+      When call _truncate_description "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      The output should equal "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..."
+      The status should be success
+    End
+
+    It 'removes a trailing period from the description'
+      When call _truncate_description "add tests."
+      The output should equal "add tests"
+      The status should be success
+    End
+  End
+
+  # Task 5, CC3: main() が全関数を組み合わせて Conventional Commits 形式の git commit を実行する
+  Describe 'main() integration'
+    setup() {
+      TMPDIR_T5CC3=$(mktemp -d)
+
+      # Initialize a git repo with an initial commit
+      git init "$TMPDIR_T5CC3" >/dev/null 2>&1
+      git -C "$TMPDIR_T5CC3" \
+        -c user.name="test" -c user.email="test@test.com" \
+        commit --allow-empty -m "initial" >/dev/null 2>&1
+
+      # Set up board.jsonl with story scope and note
+      mkdir -p "$TMPDIR_T5CC3/.heartbeat/stories/auto-commit-fix"
+      echo '{"from":"tester","note":"add login test"}' \
+        > "$TMPDIR_T5CC3/.heartbeat/stories/auto-commit-fix/board.jsonl"
+
+      # Create an unstaged change so main() has something to commit
+      echo "new content" > "$TMPDIR_T5CC3/feature.txt"
+
+      export CLAUDE_PROJECT_DIR="$TMPDIR_T5CC3"
+    }
+    cleanup() {
+      rm -rf "$TMPDIR_T5CC3"
+      unset CLAUDE_PROJECT_DIR
+    }
+    BeforeEach 'setup'
+    AfterEach 'cleanup'
+
+    run_main_and_get_commit_message() {
+      echo '{"agent_type":"tester"}' \
+        | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+      git -C "$TMPDIR_T5CC3" log -1 --format=%s
+    }
+
+    It 'commits with Conventional Commits format using all helper functions'
+      When call run_main_and_get_commit_message
+      The output should equal "test(auto-commit-fix): add login test"
+      The status should be success
+    End
+  End
+End
