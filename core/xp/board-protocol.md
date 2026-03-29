@@ -15,9 +15,17 @@ work completion. The orchestrator reads the last line to determine the next acti
   "output": "file this agent created",
   "status": "done | waiting | blocked | rework",
   "note": "handoff notes (optional)",
-  "timestamp": "ISO 8601 datetime (required)"
+  "timestamp": "ISO 8601 datetime (auto-injected by hook)"
 }
 ```
+
+## Timestamp Auto-Injection
+
+The `timestamp` field is automatically injected (or overwritten) by the
+PostToolUse hook via `core/scripts/board-stamp.sh`. Agents may include the
+field in their board entries, but the value will always be replaced with the
+actual UTC system time at write-time. Agents should not attempt to fabricate
+a timestamp value.
 
 ## Status Definitions
 - `done`: Complete. Proceed to the next agent.

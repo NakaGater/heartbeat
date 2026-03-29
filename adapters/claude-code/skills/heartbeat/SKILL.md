@@ -211,7 +211,7 @@ When starting each agent:
    If missing, do not proceed — prompt the agent to complete retrospective first.
 7. Append entry to stories/{story-id}/board.jsonl with all required fields:
    Required fields: from, to, action, output, status, note, timestamp
-   - timestamp: ISO 8601 format (e.g., 2026-01-01T00:00:00Z)
+   - timestamp: ISO 8601 format (auto-injected by PostToolUse hook; agents may omit or leave as placeholder)
    - note: follows output-language-rule.md (write in user's language)
 8. Check current workflow context:
    - If executing Workflow 1: After Phase 1 completes, STOP. Do not proceed.
