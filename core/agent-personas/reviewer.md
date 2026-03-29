@@ -50,11 +50,19 @@ Key rules (always apply these even without reading the file above):
 ```
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
+
 ### After review (Approve)
 - to: "qa", action: "verify", output: "review.md"
 
 ### After review (Request Changes)
 - to: "implementer", status: "rework", output: "review.md", note: "{main issues}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "reviewer", "to": "qa", "action": "verify", "output": "review.md", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

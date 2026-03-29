@@ -224,9 +224,6 @@ header h1 { font-size: 1.25rem; font-weight: 700; }
   <header>
     <h1>Heartbeat Dashboard</h1>
     <div style="display:flex;align-items:center;gap:8px;">
-      <label style="font-size:0.75rem;color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer;">
-        <input type="checkbox" id="auto-reload" checked> Auto (5s)
-      </label>
       <button class="refresh-btn" onclick="location.reload()">&#x1f504;</button>
     </div>
   </header>
@@ -507,16 +504,6 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     });
     el.innerHTML = html;
   }
-
-  // ── Auto Reload ──
-  var reloadTimer = setInterval(function(){ location.reload(); }, 5000);
-  document.getElementById('auto-reload').addEventListener('change', function() {
-    if (this.checked) {
-      reloadTimer = setInterval(function(){ location.reload(); }, 5000);
-    } else {
-      clearInterval(reloadTimer);
-    }
-  });
 
   // ── Init ──
   renderBacklog();

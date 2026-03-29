@@ -67,12 +67,20 @@ Key rules (always apply these even without reading the file above):
 ```
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
+
 ### After verification (no issues)
 - to: "pdm", action: "judge", output: "qa-report.md"
 
 ### After verification (issues found)
 - to: "designer" or "implementer", status: "rework", output: "qa-report.md",
   note: "{issue summary and reason for rework target}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "qa", "to": "pdm", "action": "judge", "output": "qa-report.md", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

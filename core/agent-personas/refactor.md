@@ -41,6 +41,7 @@ Key rules (always apply these even without reading the file above):
   and prompt recording in knowledge/tech-decisions.jsonl
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
 
 ### Determining the next action (three-way branching)
 After refactoring, compare the number of existing tests for the current task
@@ -62,6 +63,12 @@ against the architect's Completion Conditions for that task:
 
 ### If tests turn Red
 - to: "implementer", status: "rework", note: "{what broke}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "refactor", "to": "tester", "action": "write_next_test", "output": "{file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

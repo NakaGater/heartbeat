@@ -68,6 +68,8 @@ Include the cycle position in the board protocol note field:
 - Test writing approach (assertions, mock usage, etc.) is your own judgment
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
+
 ### After writing one test (Red confirmed)
 - to: "implementer", action: "make_green", output: "{test file name}", note: "Test {M}/{N} for task {task_id}: {completion condition summary}"
 - On action "write_next_test": find the next untested condition before writing
@@ -77,6 +79,12 @@ Include the cycle position in the board protocol note field:
 
 ### If architect's design decision seems problematic
 - to: "architect", status: "blocked", note: "{specific concern}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "tester", "to": "implementer", "action": "make_green", "output": "{test file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

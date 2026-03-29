@@ -45,11 +45,19 @@ Key rules (always apply these even without reading the file above):
   consult architect via board (use note, not block)
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
+
 ### After implementation (Green)
 - to: "refactor", action: "refactor", output: "{implementation file name}"
 
 ### If test intent is unclear
 - to: "tester", status: "blocked", note: "{unclear points}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "implementer", "to": "refactor", "action": "refactor", "output": "{file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

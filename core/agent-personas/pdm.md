@@ -113,6 +113,7 @@ because {value}.
 
 ## Board Protocol Rules
 Reference: ../xp/board-protocol.md
+The note field follows ../xp/output-language-rule.md (write in user's language).
 
 ### After hearing completion
 - to: "context-manager", action: "investigate", output: "brief.md"
@@ -125,6 +126,12 @@ Reference: ../xp/board-protocol.md
 
 ### Acceptance judgment (Return)
 - to: "{target agent}", action: "rework", output: "verdict.md", status: "rework"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "pdm", "to": "context-manager", "action": "investigate", "output": "brief.md", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

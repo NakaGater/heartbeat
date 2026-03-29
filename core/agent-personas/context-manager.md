@@ -187,6 +187,7 @@ Last updated: {ISO 8601}
 ```
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
 
 ### After investigation mode completion
 - to: "pdm", action: "define_story", output: "context.md"
@@ -194,6 +195,12 @@ Last updated: {ISO 8601}
 ### After accumulation mode completion
 - to: "done", action: "knowledge_updated",
   note: "Updated knowledge/: {list of updated files}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "context-manager", "to": "pdm", "action": "define_story", "output": "context.md", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

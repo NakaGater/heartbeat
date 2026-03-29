@@ -82,11 +82,19 @@ Key rules (always apply these even without reading the file above):
 ```
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
+
 ### After design completion
 - to: "architect", action: "decompose", output: "design.md"
 
 ### If spec is too ambiguous to design
 - to: "pdm", status: "blocked", note: "{specific unclear points}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "designer", "to": "architect", "action": "decompose", "output": "design.md", "status": "ok", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

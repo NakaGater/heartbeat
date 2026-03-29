@@ -104,11 +104,19 @@ Generate alongside tasks.md as machine-readable task tracking:
 ```
 
 ## Board Protocol Rules
+The note field follows ../xp/output-language-rule.md (write in user's language).
+
 ### After task decomposition
 - to: "human", action: "approve", output: "tasks.md", status: "waiting"
 
 ### If designer's spec has technical concerns
 - to: "designer", status: "blocked", note: "{technical concern details}"
+
+### Write example
+Append one JSON line to board.jsonl:
+```json
+{"from": "architect", "to": "human", "action": "approve", "output": "tasks.md", "status": "waiting", "note": "{summary in user's language}", "timestamp": "2026-01-01T00:00:00Z"}
+```
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

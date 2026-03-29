@@ -191,7 +191,10 @@ When starting each agent:
    stories/{story-id}/retro.jsonl
 6. Verify retro.jsonl contains a new entry with this agent's name.
    If missing, do not proceed — prompt the agent to complete retrospective first.
-7. Append entry to board.jsonl
+7. Append entry to board.jsonl with all required fields:
+   Required fields: from, to, action, output, status, note, timestamp
+   - timestamp: ISO 8601 format (e.g., 2026-01-01T00:00:00Z)
+   - note: follows output-language-rule.md (write in user's language)
 8. Determine next action based on last board.jsonl entry
 
 ## State Management
