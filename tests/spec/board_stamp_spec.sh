@@ -23,9 +23,9 @@ Describe 'board-stamp.sh'
     local now_epoch
     local diff
 
-    # macOS date conversion
-    if date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
-      injected_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s")
+    # macOS date conversion (TZ=UTC0 so the trailing Z is honoured)
+    if TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
+      injected_epoch=$(TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s")
     else
       # Linux date conversion
       injected_epoch=$(date -d "$ts" "+%s")
