@@ -24,6 +24,20 @@ Your job is:
 
 When user enters /heartbeat:
 
+0. Initialize if needed:
+   - If .heartbeat/ does not exist:
+     a. Create .heartbeat/ directory structure (knowledge/, retrospectives/, stories/)
+     b. Create empty backlog.jsonl
+     c. Start context-manager in initialization mode
+        → Scan full repository and build initial knowledge base
+        → Generate 6 files in knowledge/ (architecture.md, tech-decisions.jsonl,
+          directory-map.md, conventions.md, dependencies.md, changelog.jsonl)
+     d. After initialization, continue to step 1
+   - Else if .heartbeat/knowledge/ does not exist or is empty:
+     a. Create missing directories (knowledge/, retrospectives/)
+     b. Start context-manager in initialization mode
+        → Build initial knowledge base as above
+   - Otherwise: skip initialization (knowledge/ already populated)
 1. Check backlog.jsonl and present current status grouped by iteration
 2. Present the following choices:
 
@@ -97,23 +111,57 @@ Phase 2 - Design:
     output: tasks.md + tasks.jsonl (only if not yet created)
     Approval: Ask user to confirm task decomposition
 
-Phase 3 - Implementation (TDD cycle per task):
-  For each task in tasks.jsonl:
-    tester → test code (Red) → update tasks.jsonl to "in_progress"
-    implementer → minimal implementation (Green)
-    refactor → refactored code → update tasks.jsonl to "done"
-  Repeat until all tasks complete
+Phase 3 - Implementation (per-test TDD cycle within per-task loop):
+  For each task in tasks.jsonl (outer loop):
+    tester → ONE test (Red) → update tasks.jsonl to "in_progress"
+    Per-test inner loop:
+      implementer → minimal implementation to make ONE new test Green
+      refactor → refactored code → evaluate next action:
+        If more completion conditions remain in this task:
+          tester → next ONE test (Red) [action: write_next_test]
+          Continue inner loop
+        If current task complete (all conditions tested):
+          Update tasks.jsonl to "done"
+          Break inner loop → next task [action: write_test]
+  After all tasks complete:
+    → Phase 4
 
 Phase 4 - Verification:
   reviewer → review.md
   qa → qa-report.md (browser verification via Playwright MCP)
   pdm → verdict.md
   Approval: Report final result to user
-    Pass → conduct retrospective
-         → context-manager (accumulation mode) → update knowledge/
-         → update backlog.jsonl to "done"
+    Pass → execute Post-Completion Flow (see below)
     Return → return to appropriate Phase based on feedback
 ```
+
+## Post-Completion Flow
+
+Executed after Phase 4 verdict is "Pass". This flow MUST be executed
+in full — do not skip any step.
+
+### Step 1: Transfer retrospectives to global log
+
+For each entry in stories/{story-id}/retro.jsonl:
+  Pipe to core/scripts/retrospective-record.sh
+  → appends to .heartbeat/retrospectives/log.jsonl
+
+Then run core/scripts/insights-aggregate.sh
+  → regenerates .heartbeat/retrospectives/insights.md from log.jsonl
+
+### Step 2: Update knowledge base
+
+Start context-manager in accumulation mode.
+context-manager will:
+  - Read git commits since last knowledge update
+  - Update only changed files in .heartbeat/knowledge/
+  - Do NOT rescan the entire repository (diff-only)
+
+### Step 3: Finalize story
+
+Update backlog.jsonl:
+  - status → "done"
+  - completed → current ISO 8601 timestamp
 
 ## Workflow 3: Create and Implement a Story
 
@@ -139,9 +187,12 @@ When starting each agent:
    the agent: "Write all output documents and JSONL natural-language
    fields in {detected language}. Translate template headings too."
 4. Save artifacts to .heartbeat/stories/{story-id}/
-5. Conduct retrospective per core/xp/retrospective-template.md and append to retro.jsonl
-6. Append entry to board.jsonl
-7. Determine next action based on last board.jsonl entry
+5. Conduct retrospective per core/xp/retrospective-template.md and append to
+   stories/{story-id}/retro.jsonl
+6. Verify retro.jsonl contains a new entry with this agent's name.
+   If missing, do not proceed — prompt the agent to complete retrospective first.
+7. Append entry to board.jsonl
+8. Determine next action based on last board.jsonl entry
 
 ## State Management
 
