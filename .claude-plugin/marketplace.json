@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "heartbeat-marketplace",
+  "description": "XP-driven AI agent team plugin for TDD-based development",
+  "owner": {
+    "name": "NakaG"
+  },
+  "plugins": [
+    {
+      "name": "heartbeat",
+      "description": "9 specialized AI agents collaborating via file-based bulletin board for TDD-based development, grounded in XP values",
+      "category": "development",
+      "source": {
+        "source": "github",
+        "repo": "nakagater/heartbeat"
+      },
+      "homepage": "https://github.com/nakagater/heartbeat",
+      "license": "MIT"
+    }
+  ]
+}
