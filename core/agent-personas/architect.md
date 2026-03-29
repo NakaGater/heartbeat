@@ -38,7 +38,7 @@ Key rules (always apply these even without reading the file above):
 - Which existing modules/libraries to use
 - Component granularity
 - Dependency direction between layers
-- Story point estimate
+- Story point estimate (see Point Estimation Scale below)
 
 ### You do NOT decide:
 - Specific test writing approach (tester's domain)
@@ -55,7 +55,7 @@ Each task MUST include all sections below:
 
 ## Estimate Summary
 - Task count: {N}
-- Estimated points: {N}pt
+- Estimated points: {N}pt (1=Clear, 2=Challenging, 3=Uncertain)
 - Key technical decisions: {major decisions and rationale}
 
 ## Task List
