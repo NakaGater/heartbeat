@@ -156,6 +156,58 @@ get_scope_from_diff() {
   echo ""
 }
 
+# Derive Conventional Commits type from staged file paths.
+# No args. Reads git diff --cached --name-only internally.
+# Output: type string on stdout (always returns a value)
+get_type_from_diff() {
+  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
+  local files
+  files=$(git -C "$project_dir" diff --cached --name-only 2>/dev/null)
+
+  # No staged files -> chore
+  if [ -z "$files" ]; then
+    echo "chore"
+    return 0
+  fi
+
+  local has_test_files=false
+  local has_impl_files=false
+  local has_heartbeat_files=false
+  local has_other_files=false
+
+  while IFS= read -r f; do
+    case "$f" in
+      tests/*)           has_test_files=true ;;
+      core/scripts/*)    has_impl_files=true ;;
+      core/*)            has_impl_files=true ;;
+      adapters/*)        has_impl_files=true ;;
+      .heartbeat/*)      has_heartbeat_files=true ;;
+      *)                 has_other_files=true ;;
+    esac
+  done <<< "$files"
+
+  # tests/ + implementation files mixed -> feat (implementation is primary)
+  if [ "$has_impl_files" = true ]; then
+    echo "feat"
+    return 0
+  fi
+
+  # tests/ only -> test
+  if [ "$has_test_files" = true ] && [ "$has_heartbeat_files" = false ] && [ "$has_other_files" = false ]; then
+    echo "test"
+    return 0
+  fi
+
+  # .heartbeat/ only -> chore
+  if [ "$has_heartbeat_files" = true ] && [ "$has_test_files" = false ] && [ "$has_other_files" = false ]; then
+    echo "chore"
+    return 0
+  fi
+
+  # Default
+  echo "chore"
+}
+
 # Trim trailing period and truncate to 72 characters (69 + "...").
 # Args: $1 -- raw description string
 # Output: cleaned description on stdout
