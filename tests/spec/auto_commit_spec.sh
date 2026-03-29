@@ -691,6 +691,189 @@ Describe 'auto-commit.sh'
     End
   End
 
+  # Story: commit-message-accuracy, Task 3: get_description_from_diff()
+  Describe 'get_description_from_diff()'
+    Describe 'CC1: single file README.md modified -> "update README.md"'
+      setup() {
+        TMPDIR_DESC1=$(mktemp -d)
+        git init "$TMPDIR_DESC1" >/dev/null 2>&1
+        git -C "$TMPDIR_DESC1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        echo '# readme' > "$TMPDIR_DESC1/README.md"
+        git -C "$TMPDIR_DESC1" add -A >/dev/null 2>&1
+        git -C "$TMPDIR_DESC1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "add readme" >/dev/null 2>&1
+        echo '# updated readme' > "$TMPDIR_DESC1/README.md"
+        git -C "$TMPDIR_DESC1" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_DESC1"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_DESC1"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "update README.md" for a single modified file'
+        When call get_description_from_diff
+        The output should equal "update README.md"
+        The status should be success
+      End
+    End
+
+    Describe 'CC2: 3 files in core/scripts/ -> "update 3 files in core/scripts"'
+      setup() {
+        TMPDIR_DESC2=$(mktemp -d)
+        git init "$TMPDIR_DESC2" >/dev/null 2>&1
+        git -C "$TMPDIR_DESC2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_DESC2/core/scripts"
+        echo 'v1' > "$TMPDIR_DESC2/core/scripts/a.sh"
+        echo 'v1' > "$TMPDIR_DESC2/core/scripts/b.sh"
+        echo 'v1' > "$TMPDIR_DESC2/core/scripts/c.sh"
+        git -C "$TMPDIR_DESC2" add -A >/dev/null 2>&1
+        git -C "$TMPDIR_DESC2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "add scripts" >/dev/null 2>&1
+        echo 'v2' > "$TMPDIR_DESC2/core/scripts/a.sh"
+        echo 'v2' > "$TMPDIR_DESC2/core/scripts/b.sh"
+        echo 'v2' > "$TMPDIR_DESC2/core/scripts/c.sh"
+        git -C "$TMPDIR_DESC2" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_DESC2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_DESC2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "update 3 files in core/scripts" for multiple files in same directory'
+        When call get_description_from_diff
+        The output should equal "update 3 files in core/scripts"
+        The status should be success
+      End
+    End
+
+    Describe 'CC3: files across different directories -> "update N files across M directories"'
+      setup() {
+        TMPDIR_DESC3=$(mktemp -d)
+        git init "$TMPDIR_DESC3" >/dev/null 2>&1
+        git -C "$TMPDIR_DESC3" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_DESC3/core/scripts"
+        mkdir -p "$TMPDIR_DESC3/tests/spec"
+        echo 'v1' > "$TMPDIR_DESC3/core/scripts/a.sh"
+        echo 'v1' > "$TMPDIR_DESC3/tests/spec/a_spec.sh"
+        git -C "$TMPDIR_DESC3" add -A >/dev/null 2>&1
+        git -C "$TMPDIR_DESC3" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "add files" >/dev/null 2>&1
+        echo 'v2' > "$TMPDIR_DESC3/core/scripts/a.sh"
+        echo 'v2' > "$TMPDIR_DESC3/tests/spec/a_spec.sh"
+        git -C "$TMPDIR_DESC3" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_DESC3"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_DESC3"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "update 2 files across 2 directories" for files in different directories'
+        When call get_description_from_diff
+        The output should equal "update 2 files across 2 directories"
+        The status should be success
+      End
+    End
+
+    Describe 'CC4: new files only (git add) -> starts with "add"'
+      setup() {
+        TMPDIR_DESC4=$(mktemp -d)
+        git init "$TMPDIR_DESC4" >/dev/null 2>&1
+        git -C "$TMPDIR_DESC4" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        echo 'new file' > "$TMPDIR_DESC4/newfile.txt"
+        git -C "$TMPDIR_DESC4" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_DESC4"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_DESC4"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns description starting with "add" for a newly added file'
+        When call get_description_from_diff
+        The output should equal "add newfile.txt"
+        The status should be success
+      End
+    End
+
+    Describe 'CC5: long description (72+ chars) -> truncated by _truncate_description()'
+      setup() {
+        TMPDIR_DESC5=$(mktemp -d)
+        git init "$TMPDIR_DESC5" >/dev/null 2>&1
+        git -C "$TMPDIR_DESC5" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # Create a file with a very long name to force truncation
+        # "update " = 7 chars, filename needs 66+ chars to exceed 72 total
+        echo 'content' > "$TMPDIR_DESC5/this-is-a-very-long-filename-that-will-cause-the-description-to-exceed-seventy-two-characters.txt"
+        git -C "$TMPDIR_DESC5" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_DESC5"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_DESC5"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      truncated_within_limit() {
+        local output="$1"
+        local len=${#output}
+        [ "$len" -le 72 ]
+      }
+
+      It 'returns a description of 72 chars or less when input would exceed limit'
+        When call get_description_from_diff
+        The output should satisfy truncated_within_limit
+        The status should be success
+      End
+    End
+
+    Describe 'CC6: no staged files -> "update files"'
+      setup() {
+        TMPDIR_DESC6=$(mktemp -d)
+        git init "$TMPDIR_DESC6" >/dev/null 2>&1
+        git -C "$TMPDIR_DESC6" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_DESC6"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_DESC6"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "update files" when no files are staged'
+        When call get_description_from_diff
+        The output should equal "update files"
+        The status should be success
+      End
+    End
+  End
+
   # Task 5, CC3: main() が全関数を組み合わせて Conventional Commits 形式の git commit を実行する
   Describe 'main() integration'
     setup() {
