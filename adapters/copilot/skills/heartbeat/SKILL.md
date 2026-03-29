@@ -89,10 +89,15 @@ Phase 1 - Planning:
 Result:
   Register in backlog.jsonl with status: "ready", points: {estimate}
 
+>>> STOP: Workflow 1 complete. Return control to user.
+    Do NOT proceed to Workflow 2 or any other workflow. <<<
+
 Message to user:
   "Story created (estimate: {N}pt).
    To change points, use /heartbeat-backlog.
    To implement, select 'Implement a story' from /heartbeat."
+
+END OF WORKFLOW 1 -- Do not execute any further agents.
 ```
 
 ## Workflow 2: Implement a Story
@@ -132,6 +137,8 @@ Phase 4 - Verification:
   pdm → verdict.md
   Approval: Report final result to user
     Pass → execute Post-Completion Flow (see below)
+           >>> STOP: Workflow 2 complete. Return control to user.
+               Do NOT start another workflow. <<<
     Return → return to appropriate Phase based on feedback
 ```
 
@@ -171,8 +178,13 @@ User question:
 
 Flow:
   Execute Workflow 1 (story creation)
+    NOTE: When executing as part of Workflow 3, IGNORE the
+    "STOP/END OF WORKFLOW 1" directive. Instead:
     → After story approval, automatically transition to Workflow 2 (implementation)
     → Execute all phases to completion
+
+  After Workflow 2 completes:
+    >>> STOP: Workflow 3 complete. Return control to user. <<<
 
   Note: Point estimates from architect can be adjusted as actuals
   by human via /heartbeat-backlog after implementation.
@@ -195,7 +207,13 @@ When starting each agent:
    Required fields: from, to, action, output, status, note, timestamp
    - timestamp: ISO 8601 format (e.g., 2026-01-01T00:00:00Z)
    - note: follows output-language-rule.md (write in user's language)
-8. Determine next action based on last board.jsonl entry
+8. Check current workflow context:
+   - If executing Workflow 1: After Phase 1 completes, STOP. Do not proceed.
+   - If executing Workflow 2: After Phase 4 Pass + Post-Completion, STOP.
+   - If executing Workflow 3: After Phase 1 completes, transition to Phase 2.
+     After Phase 4 Pass + Post-Completion, STOP.
+9. Determine next action based on last board.jsonl entry
+   (only if not stopped by step 8)
 
 ## State Management
 
