@@ -13,7 +13,7 @@ check_subagent_stop_absent() {
 }
 
 check_post_tool_use_unchanged() {
-  jq -e '.hooks.postToolUse | length == 2' "$HOOKS_JSON" >/dev/null 2>&1
+  jq -e '.hooks.postToolUse | length == 3' "$HOOKS_JSON" >/dev/null 2>&1
 }
 
 Describe 'Copilot hooks.json sessionEnd'
@@ -32,7 +32,7 @@ Describe 'Copilot hooks.json sessionEnd'
     The status should be success
   End
 
-  It 'postToolUse hooks are unchanged (2 entries)'
+  It 'postToolUse hooks have 3 entries (board-stamp + retrospective + dashboard)'
     When call check_post_tool_use_unchanged
     The status should be success
   End

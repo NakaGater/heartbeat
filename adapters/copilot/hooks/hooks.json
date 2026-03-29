@@ -4,6 +4,10 @@
     "postToolUse": [
       {
         "type": "command",
+        "bash": "./core/scripts/board-stamp.sh"
+      },
+      {
+        "type": "command",
         "bash": "./core/scripts/retrospective-record.sh"
       },
       {
