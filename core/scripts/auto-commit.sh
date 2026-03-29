@@ -1,26 +1,173 @@
 #!/bin/bash
-# Auto-commit when a subagent finishes
-# Reads SubagentStop hook stdin JSON to extract agent info
+# Auto-commit when a subagent finishes.
+# Reads SubagentStop hook stdin JSON to extract agent info.
+# Dependency: jq
 
-set -euo pipefail
-cd "${CLAUDE_PROJECT_DIR:-.}"
+# --- Function definitions ---
 
-# Read hook stdin JSON
-INPUT=$(cat)
-AGENT=$(echo "$INPUT" | jq -r '.agent_name // .subagent_type // "unknown"')
+# Internal helper: locate the first board.jsonl under .heartbeat/stories.
+_find_board_jsonl() {
+  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
+  find "$project_dir/.heartbeat/stories" -name board.jsonl \
+    2>/dev/null | head -1
+}
 
-# Exit silently if no changes
-if ! git status --porcelain | grep -q .; then
-  exit 0
+# Extract agent name from stdin JSON, with fallback to board.jsonl,
+# then to "unknown".
+# Args: $1 -- stdin JSON string
+# Output: agent name on stdout (always returns a value)
+get_agent_name() {
+  local input="$1"
+  local agent
+
+  # 1. stdin JSON の .agent_type
+  agent=$(echo "$input" | jq -r '.agent_type // empty' 2>/dev/null)
+  if [ -n "$agent" ]; then
+    echo "$agent"
+    return 0
+  fi
+
+  # 2. board.jsonl 最新エントリの .from
+  local board
+  board=$(_find_board_jsonl)
+  if [ -n "$board" ]; then
+    agent=$(tail -1 "$board" | jq -r '.from // empty' 2>/dev/null)
+    if [ -n "$agent" ]; then
+      echo "$agent"
+      return 0
+    fi
+  fi
+
+  # 3. フォールバック
+  echo "unknown"
+}
+
+# Map Heartbeat agent name to Conventional Commits type.
+# Args: $1 -- agent name
+# Output: type string on stdout (always returns a value)
+map_agent_to_type() {
+  local agent="$1"
+  case "$agent" in
+    tester)           echo "test" ;;
+    implementer)      echo "feat" ;;
+    refactor)         echo "refactor" ;;
+    *)                echo "chore" ;;
+  esac
+}
+
+# Extract the active story ID from the board.jsonl directory path.
+# Output: story ID on stdout, or empty string if not found
+get_story_scope() {
+  local board
+  board=$(_find_board_jsonl)
+  if [ -n "$board" ]; then
+    basename "$(dirname "$board")"
+    return 0
+  fi
+  echo ""
+}
+
+# Trim trailing period and truncate to 72 characters (69 + "...").
+# Args: $1 -- raw description string
+# Output: cleaned description on stdout
+_truncate_description() {
+  local desc="$1"
+  # Remove trailing period (Conventional Commits convention)
+  desc="${desc%.}"
+  # Truncate to 69 chars + "..." if over 72 characters
+  if [ "${#desc}" -gt 72 ]; then
+    desc="${desc:0:69}..."
+  fi
+  echo "$desc"
+}
+
+# Generate the commit description from multiple sources.
+# Fallback chain: board.jsonl .note -> last_assistant_message -> git diff --stat
+# Args: $1 -- stdin JSON string
+# Output: description on stdout (may be empty; caller handles final fallback)
+get_description() {
+  local input="$1"
+  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
+  local desc
+
+  # 1. board.jsonl 最新エントリの .note
+  local board
+  board=$(_find_board_jsonl)
+  if [ -n "$board" ]; then
+    desc=$(tail -1 "$board" | jq -r '.note // empty' 2>/dev/null)
+    if [ -n "$desc" ]; then
+      _truncate_description "$desc"
+      return 0
+    fi
+  fi
+
+  # 2. input JSON の .last_assistant_message 先頭行
+  desc=$(printf '%s' "$input" | jq -r '.last_assistant_message // empty' 2>/dev/null | head -1)
+  if [ -n "$desc" ]; then
+    _truncate_description "$desc"
+    return 0
+  fi
+
+  # 3. git diff --cached --stat サマリーにフォールバック
+  desc=$(git -C "$project_dir" diff --cached --stat 2>/dev/null | tail -1 | sed 's/^ *//')
+  if [ -n "$desc" ]; then
+    _truncate_description "$desc"
+    return 0
+  fi
+
+  echo ""
+}
+
+# Assemble a Conventional Commits message: "<type>(<scope>): <desc>"
+# or "<type>: <desc>" when scope is empty.
+# Args: $1 -- type, $2 -- scope, $3 -- description
+format_commit_message() {
+  local type="$1"
+  local scope="$2"
+  local description="$3"
+  if [ -n "$scope" ]; then
+    echo "${type}(${scope}): ${description}"
+  else
+    echo "${type}: ${description}"
+  fi
+}
+
+# Orchestrate agent detection, type mapping, scope/description extraction,
+# and git commit.
+main() {
+  set -euo pipefail
+  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
+  cd "$project_dir"
+
+  local input
+  input=$(cat)
+
+  # Exit silently if no changes (staged or unstaged)
+  if ! git status --porcelain | grep -q .; then
+    exit 0
+  fi
+
+  local agent type scope desc msg
+  agent=$(get_agent_name "$input")
+  type=$(map_agent_to_type "$agent")
+  scope=$(get_story_scope)
+  desc=$(get_description "$input")
+
+  # Fallback description if still empty
+  [ -z "$desc" ] && desc="update files"
+
+  msg=$(format_commit_message "$type" "$scope" "$desc")
+
+  git add -A
+  # --no-verify is intentional: this script runs as a SubagentStop hook,
+  # so without it a pre-commit hook could re-trigger this script and
+  # cause infinite recursion.
+  git commit -m "$msg" --no-verify
+}
+
+# --- Main guard ---
+# When sourced, only function definitions are loaded.
+# When executed directly, main runs.
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  main "$@"
 fi
-
-# Build change summary from git diff
-CHANGED_FILES=$(git diff --name-only HEAD 2>/dev/null || git diff --name-only --cached)
-SUMMARY=$(echo "$CHANGED_FILES" | head -5 | tr '\n' ', ' | sed 's/,$//')
-FILE_COUNT=$(echo "$CHANGED_FILES" | wc -l | tr -d ' ')
-if [ "$FILE_COUNT" -gt 5 ]; then
-  SUMMARY="${SUMMARY} (+$((FILE_COUNT - 5)) more)"
-fi
-
-git add -A
-git commit -m "[$AGENT] $SUMMARY"
