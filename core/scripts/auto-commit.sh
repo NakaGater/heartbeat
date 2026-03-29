@@ -77,6 +77,21 @@ get_story_scope() {
   echo ""
 }
 
+# Internal helper: count lines in a string.
+# Args: $1 -- string to count lines in
+# Output: line count on stdout (trimmed)
+_count_lines() {
+  echo "$1" | wc -l | tr -d ' '
+}
+
+# Internal helper: check whether all files reside under a given prefix.
+# Args: $1 -- file list, $2 -- grep pattern (e.g. '^tests/')
+# Returns: 0 if all files match the pattern, 1 otherwise
+_all_files_match() {
+  local files="$1" pattern="$2"
+  [ -z "$(echo "$files" | grep -v "$pattern" | head -1)" ]
+}
+
 # Derive scope from staged file paths.
 # No args. Reads git diff --cached --name-only internally.
 # Output: scope string on stdout (may be empty)
@@ -91,50 +106,35 @@ get_scope_from_diff() {
     return 0
   fi
 
-  local file_count
-  file_count=$(echo "$files" | wc -l | tr -d ' ')
-
   # Single file: use filename without extension
-  if [ "$file_count" -eq 1 ]; then
+  if [ "$(_count_lines "$files")" -eq 1 ]; then
     local filename
     filename=$(basename "$files")
     echo "${filename%.*}"
     return 0
   fi
 
-  # Check if all files share a common top-level directory pattern
-  # .heartbeat/stories/{story-id}/ -> story-id
-  local story_ids
-  story_ids=$(echo "$files" | grep '^\.heartbeat/stories/' | sed 's|^\.heartbeat/stories/\([^/]*\)/.*|\1|' | sort -u)
-  local non_story_files
-  non_story_files=$(echo "$files" | grep -v '^\.heartbeat/stories/' | head -1)
-
-  if [ -n "$story_ids" ] && [ -z "$non_story_files" ]; then
-    local story_count
-    story_count=$(echo "$story_ids" | wc -l | tr -d ' ')
-    if [ "$story_count" -eq 1 ]; then
+  # .heartbeat/stories/{story-id}/ -> story-id (if single story)
+  if _all_files_match "$files" '^\.heartbeat/stories/'; then
+    local story_ids
+    story_ids=$(echo "$files" | sed 's|^\.heartbeat/stories/\([^/]*\)/.*|\1|' | sort -u)
+    if [ "$(_count_lines "$story_ids")" -eq 1 ]; then
       echo "$story_ids"
       return 0
     fi
   fi
 
   # tests/ only -> "tests"
-  local non_test_files
-  non_test_files=$(echo "$files" | grep -v '^tests/' | head -1)
-  if [ -z "$non_test_files" ]; then
+  if _all_files_match "$files" '^tests/'; then
     echo "tests"
     return 0
   fi
 
-  # core/scripts/ only -> script name (without extension) if single script, else "scripts"
-  local non_scripts_files
-  non_scripts_files=$(echo "$files" | grep -v '^core/scripts/' | head -1)
-  if [ -z "$non_scripts_files" ]; then
+  # core/scripts/ only -> script name (without extension) if single, else "scripts"
+  if _all_files_match "$files" '^core/scripts/'; then
     local script_names
     script_names=$(echo "$files" | sed 's|^core/scripts/||' | sed 's|\.[^.]*$||' | sort -u)
-    local script_count
-    script_count=$(echo "$script_names" | wc -l | tr -d ' ')
-    if [ "$script_count" -eq 1 ]; then
+    if [ "$(_count_lines "$script_names")" -eq 1 ]; then
       echo "$script_names"
       return 0
     fi
@@ -142,15 +142,11 @@ get_scope_from_diff() {
     return 0
   fi
 
-  # adapters/{platform}/ only -> platform name
-  local non_adapter_files
-  non_adapter_files=$(echo "$files" | grep -v '^adapters/' | head -1)
-  if [ -z "$non_adapter_files" ]; then
+  # adapters/{platform}/ only -> platform name (if single platform)
+  if _all_files_match "$files" '^adapters/'; then
     local platforms
     platforms=$(echo "$files" | sed 's|^adapters/\([^/]*\)/.*|\1|' | sort -u)
-    local platform_count
-    platform_count=$(echo "$platforms" | wc -l | tr -d ' ')
-    if [ "$platform_count" -eq 1 ]; then
+    if [ "$(_count_lines "$platforms")" -eq 1 ]; then
       echo "$platforms"
       return 0
     fi
