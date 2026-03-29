@@ -1,12 +1,8 @@
+Include "$SHELLSPEC_PROJECT_ROOT/tests/helpers/common.sh"
+
 Describe 'retrospective-record.sh'
-  setup() {
-    export HEARTBEAT_RETRO_LOG=$(mktemp)
-  }
-  cleanup() {
-    rm -f "$HEARTBEAT_RETRO_LOG"
-  }
-  BeforeEach 'setup'
-  AfterEach 'cleanup'
+  BeforeEach 'setup_retro_env'
+  AfterEach 'cleanup_retro_env'
 
   Describe 'Normal cases'
     It 'appends valid JSON to JSONL'

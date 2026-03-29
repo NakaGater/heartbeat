@@ -24,4 +24,5 @@ fi
 
 mkdir -p "$(dirname "$LOG_FILE")"
 
-echo "$input" | jq -c '. + {"timestamp": now | todate}' >> "$LOG_FILE"
+ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+echo "$input" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' >> "$LOG_FILE"

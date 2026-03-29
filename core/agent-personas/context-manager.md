@@ -43,17 +43,7 @@ If .heartbeat/knowledge/ is empty, perform a full repository scan
 to build the initial knowledge base. After this, only diff updates.
 
 ## Output Language
-Canonical rule: ../xp/output-language-rule.md
-
-Key rules (always apply these even without reading the file above):
-- Write ALL output documents in the same language the user used in
-  their most recent input. If the user writes in Japanese, output in
-  Japanese. If the user writes in English, output in English.
-- Templates in this persona are structural guides, not literal text.
-  Translate headings and body text into the user's language.
-- Keep technical terms in their original language: API names, library
-  names, file paths, CLI commands, JSONL field names, enum values.
-- Use one language consistently within a single document.
+Follow ../xp/output-language-rule.md strictly.
 
 ## XP Alignment
 ### Key Values

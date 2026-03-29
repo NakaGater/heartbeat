@@ -1,13 +1,8 @@
+Include "$SHELLSPEC_PROJECT_ROOT/tests/helpers/common.sh"
+
 Describe 'Post-task retrospective hook integration'
-  setup() {
-    export HEARTBEAT_RETRO_LOG=$(mktemp)
-    export HEARTBEAT_INSIGHTS=$(mktemp)
-  }
-  cleanup() {
-    rm -f "$HEARTBEAT_RETRO_LOG" "$HEARTBEAT_INSIGHTS"
-  }
-  BeforeEach 'setup'
-  AfterEach 'cleanup'
+  BeforeEach 'setup_retro_env'
+  AfterEach 'cleanup_retro_env'
 
   Describe 'End-to-end retrospective flow'
     It 'records a retrospective and then aggregates insights'
