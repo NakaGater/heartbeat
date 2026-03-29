@@ -348,6 +348,36 @@ Describe 'auto-commit.sh'
     End
   End
 
+  # Story: commit-message-accuracy, Task 1: get_scope_from_diff()
+  Describe 'get_scope_from_diff()'
+    Describe 'CC1: tests/ only -> scope "tests"'
+      setup() {
+        TMPDIR_SCOPE1=$(mktemp -d)
+        git init "$TMPDIR_SCOPE1" >/dev/null 2>&1
+        git -C "$TMPDIR_SCOPE1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        mkdir -p "$TMPDIR_SCOPE1/tests/spec"
+        echo 'test1' > "$TMPDIR_SCOPE1/tests/spec/foo_spec.sh"
+        echo 'test2' > "$TMPDIR_SCOPE1/tests/spec/bar_spec.sh"
+        git -C "$TMPDIR_SCOPE1" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SCOPE1"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SCOPE1"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      It 'returns "tests" when only tests/ files are staged'
+        When call get_scope_from_diff
+        The output should equal "tests"
+        The status should be success
+      End
+    End
+  End
+
   # Task 5, CC3: main() が全関数を組み合わせて Conventional Commits 形式の git commit を実行する
   Describe 'main() integration'
     setup() {
