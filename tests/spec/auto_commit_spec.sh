@@ -914,4 +914,249 @@ Describe 'auto-commit.sh'
       The status should be success
     End
   End
+
+  # Story: commit-message-accuracy, Task 4: main() rewiring to new functions
+  Describe 'main() rewiring (Task 4)'
+
+    # Task 4, CC1: main() type is based on file paths (not agent name)
+    Describe 'CC1: type is derived from file paths, not agent name'
+      setup() {
+        TMPDIR_T4W1=$(mktemp -d)
+        git init "$TMPDIR_T4W1" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # Create a test file -- type should be "test" based on file path
+        mkdir -p "$TMPDIR_T4W1/tests/spec"
+        echo 'test content' > "$TMPDIR_T4W1/tests/spec/example_spec.sh"
+        # Set up board.jsonl with agent "implementer" to prove it's NOT used
+        mkdir -p "$TMPDIR_T4W1/.heartbeat/stories/some-story"
+        echo '{"from":"implementer","note":"implement feature X"}' \
+          > "$TMPDIR_T4W1/.heartbeat/stories/some-story/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4W1"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4W1"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_type_test() {
+        echo '{"agent_type":"implementer"}' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W1" log -1 --format=%s | sed 's/(.*//'
+      }
+
+      It 'uses type "test" for tests/ files even when agent is "implementer"'
+        When call run_main_type_test
+        The output should equal "test"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC2: main() scope is based on file paths (not story ID from board.jsonl)
+    Describe 'CC2: scope is derived from file paths, not board.jsonl story ID'
+      setup() {
+        TMPDIR_T4W2=$(mktemp -d)
+        git init "$TMPDIR_T4W2" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # Create a single file in core/scripts/ -- scope should be "auto-commit"
+        mkdir -p "$TMPDIR_T4W2/core/scripts"
+        echo '#!/bin/bash' > "$TMPDIR_T4W2/core/scripts/auto-commit.sh"
+        # Set up board.jsonl with a DIFFERENT story ID to prove it's NOT used
+        mkdir -p "$TMPDIR_T4W2/.heartbeat/stories/wrong-story"
+        echo '{"from":"tester","note":"some note"}' \
+          > "$TMPDIR_T4W2/.heartbeat/stories/wrong-story/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4W2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4W2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_scope_test() {
+        echo '{"agent_type":"tester"}' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        # Extract scope from commit message: type(SCOPE): desc
+        git -C "$TMPDIR_T4W2" log -1 --format=%s | sed 's/^[^(]*(\([^)]*\)).*/\1/'
+      }
+
+      It 'uses scope "auto-commit" from file path, not "wrong-story" from board.jsonl'
+        When call run_main_scope_test
+        The output should equal "auto-commit"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC3: main() description is based on file content (not board.jsonl .note)
+    Describe 'CC3: description is derived from file changes, not board.jsonl .note'
+      setup() {
+        TMPDIR_T4W3=$(mktemp -d)
+        git init "$TMPDIR_T4W3" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W3" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # Create a new file
+        echo 'new feature' > "$TMPDIR_T4W3/feature.txt"
+        # Set up board.jsonl with a note that should NOT appear in commit
+        mkdir -p "$TMPDIR_T4W3/.heartbeat/stories/my-story"
+        echo '{"from":"tester","note":"completely different note from board"}' \
+          > "$TMPDIR_T4W3/.heartbeat/stories/my-story/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4W3"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4W3"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_desc_test() {
+        echo '{"agent_type":"tester"}' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        # Extract description from commit message: type(scope): DESCRIPTION
+        git -C "$TMPDIR_T4W3" log -1 --format=%s | sed 's/^[^:]*: //'
+      }
+
+      It 'uses "add feature.txt" from diff, not the board.jsonl note'
+        When call run_main_desc_test
+        The output should equal "add feature.txt"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC4: board.jsonl .note is NOT used in commit message
+    Describe 'CC4: board.jsonl .note does not appear in commit message'
+      setup() {
+        TMPDIR_T4W4=$(mktemp -d)
+        git init "$TMPDIR_T4W4" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W4" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        echo 'content' > "$TMPDIR_T4W4/app.js"
+        # board.jsonl with a distinctive note that must NOT appear in commit
+        mkdir -p "$TMPDIR_T4W4/.heartbeat/stories/x-story"
+        echo '{"from":"tester","note":"UNIQUE_BOARD_NOTE_MARKER"}' \
+          > "$TMPDIR_T4W4/.heartbeat/stories/x-story/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4W4"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4W4"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_no_board_note() {
+        echo '{}' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W4" log -1 --format=%s
+      }
+
+      It 'produces a commit message that does not contain the board.jsonl note'
+        When call run_main_no_board_note
+        The output should not include "UNIQUE_BOARD_NOTE_MARKER"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC5: Conventional Commits format type(scope): description is maintained
+    Describe 'CC5: Conventional Commits format is maintained'
+      setup() {
+        TMPDIR_T4W5=$(mktemp -d)
+        git init "$TMPDIR_T4W5" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W5" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        echo 'new content' > "$TMPDIR_T4W5/feature.txt"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_T4W5"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_T4W5"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_format_test() {
+        echo '' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        git -C "$TMPDIR_T4W5" log -1 --format=%s
+      }
+
+      It 'produces "chore(feature): add feature.txt" in Conventional Commits format'
+        When call run_main_format_test
+        The output should equal "chore(feature): add feature.txt"
+        The status should be success
+      End
+    End
+
+    # Task 4, CC6: Works on both platforms (with and without stdin JSON)
+    Describe 'CC6: works with and without stdin JSON'
+      Describe 'with stdin JSON'
+        setup() {
+          TMPDIR_T4W6A=$(mktemp -d)
+          git init "$TMPDIR_T4W6A" >/dev/null 2>&1
+          git -C "$TMPDIR_T4W6A" \
+            -c user.name="test" -c user.email="test@test.com" \
+            commit --allow-empty -m "initial" >/dev/null 2>&1
+          echo 'content' > "$TMPDIR_T4W6A/feature.txt"
+          export CLAUDE_PROJECT_DIR="$TMPDIR_T4W6A"
+        }
+        cleanup() {
+          rm -rf "$TMPDIR_T4W6A"
+          unset CLAUDE_PROJECT_DIR
+        }
+        BeforeEach 'setup'
+        AfterEach 'cleanup'
+
+        run_main_with_json() {
+          echo '{"agent_type":"tester","last_assistant_message":"ignore this"}' \
+            | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+          git -C "$TMPDIR_T4W6A" log -1 --format=%s
+        }
+
+        It 'produces diff-based commit message even when stdin provides JSON'
+          When call run_main_with_json
+          The output should equal "chore(feature): add feature.txt"
+          The status should be success
+        End
+      End
+
+      Describe 'with empty stdin'
+        setup() {
+          TMPDIR_T4W6B=$(mktemp -d)
+          git init "$TMPDIR_T4W6B" >/dev/null 2>&1
+          git -C "$TMPDIR_T4W6B" \
+            -c user.name="test" -c user.email="test@test.com" \
+            commit --allow-empty -m "initial" >/dev/null 2>&1
+          echo 'content' > "$TMPDIR_T4W6B/feature.txt"
+          export CLAUDE_PROJECT_DIR="$TMPDIR_T4W6B"
+        }
+        cleanup() {
+          rm -rf "$TMPDIR_T4W6B"
+          unset CLAUDE_PROJECT_DIR
+        }
+        BeforeEach 'setup'
+        AfterEach 'cleanup'
+
+        run_main_with_empty() {
+          echo '' \
+            | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+          git -C "$TMPDIR_T4W6B" log -1 --format=%s
+        }
+
+        It 'produces diff-based commit message with empty stdin'
+          When call run_main_with_empty
+          The output should equal "chore(feature): add feature.txt"
+          The status should be success
+        End
+      End
+    End
+  End
 End
