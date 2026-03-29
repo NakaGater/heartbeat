@@ -135,10 +135,13 @@ Flow:
 When starting each agent:
 1. Read core/agent-personas/{agent-name}.md
 2. Follow that persona's instructions completely
-3. Save artifacts to .heartbeat/stories/{story-id}/
-4. Conduct retrospective per core/xp/retrospective-template.md and append to retro.jsonl
-5. Append entry to board.jsonl
-6. Determine next action based on last board.jsonl entry
+3. Detect the language of the user's most recent input and instruct
+   the agent: "Write all output documents and JSONL natural-language
+   fields in {detected language}. Translate template headings too."
+4. Save artifacts to .heartbeat/stories/{story-id}/
+5. Conduct retrospective per core/xp/retrospective-template.md and append to retro.jsonl
+6. Append entry to board.jsonl
+7. Determine next action based on last board.jsonl entry
 
 ## State Management
 
