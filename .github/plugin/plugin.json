@@ -2,7 +2,7 @@
   "name": "heartbeat",
   "description": "XP-driven AI agent team for TDD-based development",
   "version": "2.0.0",
-  "publisher": {
+  "author": {
     "name": "NakaG"
   },
   "agents": [
