@@ -12,7 +12,7 @@
         "comment": "Dashboard auto-update (async)"
       }
     ],
-    "subagentStop": [
+    "sessionEnd": [
       {
         "type": "command",
         "bash": "./core/scripts/auto-commit.sh"
