@@ -228,6 +228,65 @@ _truncate_description() {
   echo "$desc"
 }
 
+# Generate commit description from staged file metadata.
+# No args. Reads git diff --cached internally.
+# Output: description string on stdout (never empty)
+get_description_from_diff() {
+  local files
+  files=$(_get_staged_files)
+
+  # No staged files
+  if [ -z "$files" ]; then
+    echo "update files"
+    return 0
+  fi
+
+  local file_count
+  file_count=$(_count_lines "$files")
+
+  # Determine verb: check if all files are new (added) or all deleted
+  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
+  local added_files
+  added_files=$(git -C "$project_dir" diff --cached --name-only --diff-filter=A 2>/dev/null)
+  local deleted_files
+  deleted_files=$(git -C "$project_dir" diff --cached --name-only --diff-filter=D 2>/dev/null)
+
+  local verb="update"
+  if [ -n "$added_files" ] && [ -z "$deleted_files" ]; then
+    local added_count
+    added_count=$(_count_lines "$added_files")
+    if [ "$added_count" -eq "$file_count" ]; then
+      verb="add"
+    fi
+  elif [ -n "$deleted_files" ] && [ -z "$added_files" ]; then
+    local deleted_count
+    deleted_count=$(_count_lines "$deleted_files")
+    if [ "$deleted_count" -eq "$file_count" ]; then
+      verb="remove"
+    fi
+  fi
+
+  # Single file
+  if [ "$file_count" -eq 1 ]; then
+    local filename
+    filename=$(basename "$files")
+    _truncate_description "$verb $filename"
+    return 0
+  fi
+
+  # Multiple files: check if all in same directory
+  local dirs
+  dirs=$(echo "$files" | xargs -I{} dirname {} | sort -u)
+  local dir_count
+  dir_count=$(_count_lines "$dirs")
+
+  if [ "$dir_count" -eq 1 ]; then
+    _truncate_description "$verb $file_count files in $dirs"
+  else
+    _truncate_description "$verb $file_count files across $dir_count directories"
+  fi
+}
+
 # Generate the commit description from multiple sources.
 # Fallback chain: board.jsonl .note -> last_assistant_message -> git diff --stat
 # Args: $1 -- stdin JSON string
