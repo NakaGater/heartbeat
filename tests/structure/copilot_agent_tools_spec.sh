@@ -34,33 +34,14 @@ check_no_old_style_names() {
   return 0
 }
 
-# --- Condition 3: architect has exactly read, edit, search ---
-check_architect_tools() {
-  tools=$(extract_tools "$AGENTS_DIR/architect.agent.md")
-  expected="edit
-read
-search"
-  actual=$(echo "$tools" | sort)
-  [ "$actual" = "$expected" ]
-}
-
-# --- Condition 4: qa has read, execute, search, playwright/* ---
-check_qa_tools() {
-  tools=$(extract_tools "$AGENTS_DIR/qa.agent.md")
-  expected="execute
-playwright/*
-read
-search"
-  actual=$(echo "$tools" | sort)
-  [ "$actual" = "$expected" ]
-}
-
-# --- Condition 5: reviewer has exactly read, search ---
-check_reviewer_tools() {
-  tools=$(extract_tools "$AGENTS_DIR/reviewer.agent.md")
-  expected="read
-search"
-  actual=$(echo "$tools" | sort)
+# --- Shared helper: verify an agent has exactly the expected tools ---
+# Usage: check_agent_has_tools <agent-basename> <space-separated-expected-tools>
+# Expected tools are passed space-separated; both sides are sorted for comparison.
+check_agent_has_tools() {
+  local agent="$1"; shift
+  local expected actual
+  expected=$(printf '%s\n' "$@" | sort)
+  actual=$(extract_tools "$AGENTS_DIR/${agent}.agent.md" | sort)
   [ "$actual" = "$expected" ]
 }
 
@@ -76,17 +57,17 @@ Describe 'Copilot agent tools: front matter'
   End
 
   It 'architect agent has exactly read, edit, search'
-    When call check_architect_tools
+    When call check_agent_has_tools architect read edit search
     The status should be success
   End
 
   It 'qa agent has read, execute, search, playwright/*'
-    When call check_qa_tools
+    When call check_agent_has_tools qa read execute search "playwright/*"
     The status should be success
   End
 
   It 'reviewer agent has exactly read, search'
-    When call check_reviewer_tools
+    When call check_agent_has_tools reviewer read search
     The status should be success
   End
 End
