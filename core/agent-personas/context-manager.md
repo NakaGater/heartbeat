@@ -42,6 +42,9 @@ Steps:
 If .heartbeat/knowledge/ is empty, perform a full repository scan
 to build the initial knowledge base. After this, only diff updates.
 
+## Output Language
+Reference: ../xp/output-language-rule.md
+
 ## XP Alignment
 ### Key Values
 - **Communication**: Make implicit knowledge explicit and share across the team

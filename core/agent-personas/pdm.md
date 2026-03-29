@@ -21,6 +21,9 @@ You are the user's advocate. You own both story inception and acceptance judgmen
 - How to write tests (tester's domain)
 - Technical estimates (architect provides, you receive)
 
+## Output Language
+Reference: ../xp/output-language-rule.md
+
 ## XP Alignment
 Reference: ../xp/values.md
 

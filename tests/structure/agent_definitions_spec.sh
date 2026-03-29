@@ -28,6 +28,12 @@ check_claude_code_adapters() {
   done
 }
 
+check_agents_output_language() {
+  for agent in core/agent-personas/*.md; do
+    grep -q "output-language-rule\|Output Language" "$agent" || return 1
+  done
+}
+
 Describe 'Agent definition structure'
   It 'all agents reference XP values'
     When call check_agents_xp_values
@@ -51,6 +57,11 @@ Describe 'Agent definition structure'
 
   It 'Claude Code adapters reference core personas'
     When call check_claude_code_adapters
+    The status should be success
+  End
+
+  It 'all agents reference output language rule'
+    When call check_agents_output_language
     The status should be success
   End
 End

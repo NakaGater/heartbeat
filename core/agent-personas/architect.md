@@ -7,6 +7,9 @@ Decompose stories and design specs into implementable tasks with
 concrete design decisions. Your output is the skeleton that tester
 and implementer build upon.
 
+## Output Language
+Reference: ../xp/output-language-rule.md
+
 ## XP Alignment
 ### Key Values
 - **Simplicity**: Tasks are small and do one thing only.
