@@ -84,6 +84,12 @@ Phase 1 - Planning:
   context-manager (investigation) → context.md
   pdm (story definition) → story.md
   architect (task decomposition + point estimate) → tasks.md + tasks.jsonl
+    If architect estimates 3pt:
+      → architect returns to pdm (action: split_story, status: rework)
+      → pdm splits, redefines, or commissions spike → updated story.md
+      → architect re-estimates (loop until 1-2pt or human override)
+    If architect estimates 1-2pt:
+      → proceed to approval
   Approval point: Story definition + point estimate approval
 
 Result:
@@ -235,7 +241,7 @@ When starting each agent:
 ```
 
 Field notes:
-- `points`: Story points. Architect sets tentative value; human can modify anytime via /heartbeat-backlog. Nullable.
+- `points`: Story points (1=Clear, 2=Challenging, 3=Uncertain). Measures complexity/uncertainty, not effort. Valid values: 1, 2, or 3. Architect sets tentative value; human can modify anytime via /heartbeat-backlog. Nullable for unestimated stories.
 - `iteration`: Iteration number. Assigned by PdM or human. Nullable (unassigned).
 
 ### tasks.jsonl
