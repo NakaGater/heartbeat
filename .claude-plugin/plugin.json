@@ -4,14 +4,5 @@
   "version": "2.0.0",
   "author": {
     "name": "NakaG"
-  },
-  "agents": "adapters/claude-code/agents/",
-  "skills": "adapters/claude-code/skills/",
-  "hooks": "adapters/claude-code/hooks/settings.json",
-  "mcpServers": {
-    "playwright": {
-      "command": "npx",
-      "args": ["@playwright/mcp@latest"]
-    }
   }
 }
