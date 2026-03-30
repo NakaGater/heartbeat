@@ -121,6 +121,18 @@ header h1 { font-size: 1.25rem; font-weight: 700; }
   font-size: 0.7rem;
   color: var(--text-muted);
 }
+.done-toggle-btn {
+  background: none;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+.done-toggle-btn:hover { background: var(--bg-card); }
 
 /* Velocity Chart */
 .chart-container { width: 100%; overflow-x: auto; }
@@ -283,6 +295,17 @@ const AGENT_COLORS = {{AGENT_COLORS}};
   }
 
   // ── Backlog Board ──
+  window.toggleDoneCards = function(btn, hiddenCount) {
+    var col = btn.parentElement;
+    var cards = col.querySelectorAll('.done-hidden');
+    var expanded = btn.getAttribute('aria-expanded') === 'true';
+    for (var i = 0; i < cards.length; i++) {
+      cards[i].style.display = expanded ? 'none' : 'block';
+    }
+    btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+    btn.textContent = expanded ? '他 ' + hiddenCount + ' 件を表示' : '折りたたむ';
+  };
+
   function renderBacklog() {
     var el = document.getElementById('backlog-board');
     var cols = { draft: [], ready: [], in_progress: [], done: [] };
@@ -292,12 +315,26 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     });
     var labels = { draft: 'Draft', ready: 'Ready', in_progress: 'In Progress', done: 'Done' };
     var html = '';
+    var DONE_VISIBLE = 3;
     ['draft','ready','in_progress','done'].forEach(function(key) {
       html += '<div class="kanban-col"><div class="kanban-col-header">' + labels[key] + '</div>';
-      cols[key].forEach(function(item) {
-        html += '<div class="kanban-card"><div class="card-title">' + esc(item.title || item.story_id) + '</div>';
-        html += '<div class="card-points">' + (item.points != null ? item.points + ' pts' : '—') + '</div></div>';
-      });
+      var items = cols[key];
+      if (key === 'done' && items.length > DONE_VISIBLE) {
+        // Show latest N items (end of array = newest)
+        var visibleStart = items.length - DONE_VISIBLE;
+        items.forEach(function(item, idx) {
+          var hidden = idx < visibleStart ? ' done-hidden' : '';
+          html += '<div class="kanban-card' + hidden + '"' + (hidden ? ' style="display:none"' : '') + '><div class="card-title">' + esc(item.title || item.story_id) + '</div>';
+          html += '<div class="card-points">' + (item.points != null ? item.points + ' pts' : '—') + '</div></div>';
+        });
+        var hiddenCount = items.length - DONE_VISIBLE;
+        html += '<button class="done-toggle-btn" aria-expanded="false" onclick="toggleDoneCards(this, ' + hiddenCount + ')">他 ' + hiddenCount + ' 件を表示</button>';
+      } else {
+        items.forEach(function(item) {
+          html += '<div class="kanban-card"><div class="card-title">' + esc(item.title || item.story_id) + '</div>';
+          html += '<div class="card-points">' + (item.points != null ? item.points + ' pts' : '—') + '</div></div>';
+        });
+      }
       if (cols[key].length === 0) html += '<div style="font-size:0.7rem;color:var(--text-muted);text-align:center;padding:8px;">—</div>';
       html += '</div>';
     });
