@@ -6,7 +6,7 @@ check_claude_code_skill_has_language_detection_step() {
   grep -q "Language directive" "$skill_file" || return 1
 }
 
-check_claude_code_skill_steps_are_sequential_1_to_9() {
+check_claude_code_skill_steps_are_sequential_1_to_7() {
   skill_file="adapters/claude-code/skills/heartbeat/SKILL.md"
   [ -f "$skill_file" ] || return 1
 
@@ -46,8 +46,8 @@ Describe 'SKILL.md language detection step'
     The status should be success
   End
 
-  It 'when checking step numbers in claude-code SKILL.md Agent Startup Method, should be sequential 1 through 9'
-    When call check_claude_code_skill_steps_are_sequential_1_to_9
+  It 'when checking step numbers in claude-code SKILL.md Agent Startup Method, should be sequential 1 through 7'
+    When call check_claude_code_skill_steps_are_sequential_1_to_7
     The status should be success
   End
 End
