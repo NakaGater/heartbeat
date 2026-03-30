@@ -284,9 +284,9 @@ const AGENT_COLORS = {{AGENT_COLORS}};
   }
 
   function formatTime(ts) {
-    if (!ts) return '';
+    if (!ts) return 'N/A';
     var d = new Date(ts);
-    if (isNaN(d)) return String(ts);
+    if (isNaN(d.getTime())) return 'N/A';
     return d.toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
   }
 
@@ -432,13 +432,15 @@ const AGENT_COLORS = {{AGENT_COLORS}};
       return;
     }
 
-    // Backfill missing timestamps from surrounding entries
-    var withTs = entries.filter(function(e){ return e.timestamp; });
+    // Backfill missing or invalid timestamps from surrounding entries
+    var withTs = entries.filter(function(e){
+      return e.timestamp && !isNaN(new Date(e.timestamp).getTime());
+    });
     withTs.sort(function(a,b){ return new Date(a.timestamp) - new Date(b.timestamp); });
     if (withTs.length > 0) {
       var lastKnown = withTs[withTs.length - 1].timestamp;
       entries.forEach(function(e) {
-        if (!e.timestamp) e.timestamp = lastKnown;
+        if (!e.timestamp || isNaN(new Date(e.timestamp).getTime())) e.timestamp = lastKnown;
       });
     }
     entries.sort(function(a,b){ return new Date(a.timestamp) - new Date(b.timestamp); });

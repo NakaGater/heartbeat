@@ -171,7 +171,7 @@ Then run core/scripts/insights-aggregate.sh
 
 **Checkpoint**: Append to stories/{story-id}/board.jsonl:
 ```json
-{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "retro-transfer", "status": "done", "note": "Post-Completion Step 1 complete", "timestamp": "(auto-injected)"}
+{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "retro-transfer", "status": "done", "note": "Post-Completion Step 1 complete", "timestamp": ""}
 ```
 
 ### Step 2: Update knowledge base
@@ -184,7 +184,7 @@ context-manager will:
 
 **Checkpoint**: Append to stories/{story-id}/board.jsonl:
 ```json
-{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "knowledge-update", "status": "done", "note": "Post-Completion Step 2 complete", "timestamp": "(auto-injected)"}
+{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "knowledge-update", "status": "done", "note": "Post-Completion Step 2 complete", "timestamp": ""}
 ```
 
 ### Step 3: Finalize story
@@ -254,7 +254,7 @@ Each subagent is responsible for:
    stories/{story-id}/retro.jsonl
 4. Appending entry to stories/{story-id}/board.jsonl with all required fields:
    Required fields: from, to, action, output, status, note, timestamp
-   - timestamp: ISO 8601 UTC format — agent MUST write the current time (e.g. "2026-03-30T12:00:00Z"). Hook may overwrite if it fires, but agent must not leave empty or use a placeholder.
+   - timestamp: Write an empty string `""`. The SubagentStart/SubagentStop hooks automatically inject accurate UTC timestamps via `board-stamp.sh` (auto-injected by hook). Do not fabricate a time value.
    - note: follows output-language-rule.md (write in user's language)
 
 ### Orchestrator responsibilities (after subagent returns)

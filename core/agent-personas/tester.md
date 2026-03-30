@@ -73,8 +73,9 @@ The note field follows ../xp/output-language-rule.md (write in user's language).
 ### Write example
 Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```json
-{"from": "tester", "to": "implementer", "action": "make_green", "output": "{test file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "(ISO 8601 UTC — agent writes current time)"}
+{"from": "tester", "to": "implementer", "action": "make_green", "output": "{test file}", "status": "ok", "note": "{summary in user's language}", "timestamp": ""}
 ```
+Note: The `timestamp` field is automatically overwritten with an accurate UTC value by SubagentStart/SubagentStop hooks (auto-injected by hook). Agents should write an empty string.
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md

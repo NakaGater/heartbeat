@@ -15,17 +15,20 @@ work completion. The orchestrator reads the last line to determine the next acti
   "output": "file this agent created",
   "status": "done | waiting | blocked | rework",
   "note": "handoff notes (optional)",
-  "timestamp": "ISO 8601 UTC datetime (agent writes current time; hook may overwrite)"
+  "timestamp": ""
 }
 ```
 
-## Timestamp Hybrid Injection
+## Timestamp Auto-Injection (SubagentStart/SubagentStop)
 
-Agents MUST write the current UTC time in ISO 8601 format when appending to
-board.jsonl (e.g. "2026-03-30T12:00:00Z"). Do not leave empty or use a
-placeholder. The PostToolUse hook (`core/scripts/board-stamp.sh`) may overwrite
-the timestamp with the system time if it fires, but agents must not rely on
-the hook — it does not fire for all write methods (e.g. shell echo).
+Agents should write an empty string `""` for the `timestamp` field.
+The `board-stamp.sh` hook is auto-injected by SubagentStart and SubagentStop
+lifecycle events, automatically overwriting the timestamp with an accurate
+`date -u` derived ISO 8601 UTC value. This ensures timestamps are always
+accurate regardless of the write method (Write, Edit, or Bash).
+
+Additionally, the PostToolUse hook (Write/Edit matcher) continues to invoke
+`board-stamp.sh` as a supplementary safety net for finer-grained timestamps.
 
 ## Status Definitions
 - `done`: Complete. Proceed to the next agent.
