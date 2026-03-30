@@ -86,4 +86,154 @@ Describe 'board-stamp.sh'
       The status should be success
     End
   End
+
+  Describe 'SubagentStop hook context (no file_path in stdin)'
+    # SubagentStop の stdin には file_path が含まれない。
+    # board-stamp.sh は .heartbeat/stories/*/board.jsonl を走査し、
+    # 最も最近変更されたファイルの最終行 timestamp を上書きすべき。
+
+    setup_subagent_stop() {
+      # テスト用のストーリーディレクトリ構造を作成
+      STORIES_DIR=$(mktemp -d)
+      mkdir -p "${STORIES_DIR}/.heartbeat/stories/story-alpha"
+      mkdir -p "${STORIES_DIR}/.heartbeat/stories/story-beta"
+
+      # story-alpha の board.jsonl（古い）
+      echo '{"from":"tester","to":"impl","action":"test","status":"ok","note":"alpha","timestamp":"2026-01-01T00:00:00Z"}' \
+        > "${STORIES_DIR}/.heartbeat/stories/story-alpha/board.jsonl"
+
+      # 少し待って story-beta を作成（こちらが最新）
+      sleep 1
+      echo '{"from":"architect","to":"impl","action":"design","status":"ok","note":"beta","timestamp":"2026-02-01T00:00:00Z"}' \
+        > "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
+
+      export HEARTBEAT_ROOT="${STORIES_DIR}"
+    }
+
+    cleanup_subagent_stop() {
+      rm -rf "$STORIES_DIR"
+    }
+
+    BeforeEach 'setup_subagent_stop'
+    AfterEach 'cleanup_subagent_stop'
+
+    # SubagentStop の stdin は file_path を含まない JSON
+    # （例: {"event":"SubagentStop","subagent_id":"..."}）
+
+    It 'overwrites timestamp of most recently modified board.jsonl last line'
+      When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
+      The status should be success
+      # story-beta が最新のため、そのタイムスタンプが上書きされるべき
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should not include '2026-02-01T00:00:00Z'
+    End
+
+    It 'injects accurate ISO 8601 UTC timestamp within 5 seconds of system time'
+      # timestamp_is_recent_for を使って story-beta の最終行を検証
+      timestamp_is_recent_for() {
+        local target_file="${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
+        local ts
+        ts=$(tail -1 "$target_file" | jq -r '.timestamp')
+        local injected_epoch now_epoch diff
+        if TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
+          injected_epoch=$(TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s")
+        else
+          injected_epoch=$(date -d "$ts" "+%s")
+        fi
+        now_epoch=$(date -u "+%s")
+        diff=$(( now_epoch - injected_epoch ))
+        if [ "$diff" -lt 0 ]; then diff=$(( -diff )); fi
+        [ "$diff" -le 5 ]
+      }
+      When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
+      The status should be success
+      Assert timestamp_is_recent_for
+    End
+
+    It 'does not modify older board.jsonl files'
+      When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
+      The status should be success
+      # story-alpha は古いので変更されないべき
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/story-alpha/board.jsonl" should include '2026-01-01T00:00:00Z'
+    End
+  End
+
+  Describe 'No board.jsonl exists (SubagentStop context)'
+    # board.jsonl が1つも存在しない場合、exit 0 で正常終了すべき
+
+    setup_no_board() {
+      STORIES_DIR=$(mktemp -d)
+      mkdir -p "${STORIES_DIR}/.heartbeat/stories/empty-story"
+      export HEARTBEAT_ROOT="${STORIES_DIR}"
+    }
+
+    cleanup_no_board() {
+      rm -rf "$STORIES_DIR"
+    }
+
+    BeforeEach 'setup_no_board'
+    AfterEach 'cleanup_no_board'
+
+    It 'exits 0 gracefully when no board.jsonl exists'
+      When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-456"}'
+      The status should be success
+    End
+  End
+
+  Describe 'SubagentStart hook context'
+    # SubagentStart でも board-stamp.sh が呼び出され、
+    # 最新の board.jsonl の最終行 timestamp を上書きすべき。
+
+    setup_subagent_start() {
+      STORIES_DIR=$(mktemp -d)
+      mkdir -p "${STORIES_DIR}/.heartbeat/stories/active-story"
+      echo '{"from":"pdm","to":"architect","action":"start","status":"ok","note":"kick off","timestamp":"2026-03-01T00:00:00Z"}' \
+        > "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl"
+      export HEARTBEAT_ROOT="${STORIES_DIR}"
+    }
+
+    cleanup_subagent_start() {
+      rm -rf "$STORIES_DIR"
+    }
+
+    BeforeEach 'setup_subagent_start'
+    AfterEach 'cleanup_subagent_start'
+
+    It 'overwrites timestamp when called from SubagentStart context'
+      When call run_board_stamp '{"event":"SubagentStart","subagent_id":"sub-789"}'
+      The status should be success
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should not include '2026-03-01T00:00:00Z'
+    End
+
+    It 'injects accurate timestamp in SubagentStart context'
+      timestamp_is_recent_start() {
+        local target_file="${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl"
+        local ts
+        ts=$(tail -1 "$target_file" | jq -r '.timestamp')
+        local injected_epoch now_epoch diff
+        if TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
+          injected_epoch=$(TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s")
+        else
+          injected_epoch=$(date -d "$ts" "+%s")
+        fi
+        now_epoch=$(date -u "+%s")
+        diff=$(( now_epoch - injected_epoch ))
+        if [ "$diff" -lt 0 ]; then diff=$(( -diff )); fi
+        [ "$diff" -le 5 ]
+      }
+      When call run_board_stamp '{"event":"SubagentStart","subagent_id":"sub-789"}'
+      The status should be success
+      Assert timestamp_is_recent_start
+    End
+  End
+
+  Describe 'PostToolUse backward compatibility'
+    # 既存の PostToolUse パス（file_path あり）が引き続き正常動作することを確認
+
+    It 'still overwrites timestamp via file_path path'
+      When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
+      The status should be success
+      The contents of file "$TEST_BOARD_FILE" should not include '2026-01-01T00:00:00Z'
+      Assert timestamp_is_recent
+    End
+  End
 End
