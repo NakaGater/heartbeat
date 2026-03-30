@@ -27,6 +27,21 @@ check_skill_accumulation_mode_ref() {
   grep -q "accumulation mode" adapters/claude-code/skills/heartbeat/SKILL.md
 }
 
+check_skill_retro_checkpoint() {
+  grep -q "checkpoint" adapters/claude-code/skills/heartbeat/SKILL.md &&
+  grep -q "retro-transfer" adapters/claude-code/skills/heartbeat/SKILL.md
+}
+
+check_skill_knowledge_checkpoint() {
+  grep -q "checkpoint" adapters/claude-code/skills/heartbeat/SKILL.md &&
+  grep -q "knowledge-update" adapters/claude-code/skills/heartbeat/SKILL.md
+}
+
+check_skill_verification_gate() {
+  grep -q "Verification gate" adapters/claude-code/skills/heartbeat/SKILL.md &&
+  grep -q "do not proceed" adapters/claude-code/skills/heartbeat/SKILL.md
+}
+
 Describe 'SKILL.md workflow completeness'
   It 'claude-code and copilot SKILL.md are identical'
     When call check_skill_platform_sync
@@ -60,6 +75,21 @@ Describe 'SKILL.md workflow completeness'
 
   It 'SKILL.md references accumulation mode'
     When call check_skill_accumulation_mode_ref
+    The status should be success
+  End
+
+  It 'SKILL.md contains retro-transfer checkpoint'
+    When call check_skill_retro_checkpoint
+    The status should be success
+  End
+
+  It 'SKILL.md contains knowledge-update checkpoint'
+    When call check_skill_knowledge_checkpoint
+    The status should be success
+  End
+
+  It 'SKILL.md contains verification gate for finalize step'
+    When call check_skill_verification_gate
     The status should be success
   End
 End

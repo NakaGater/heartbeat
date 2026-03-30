@@ -153,6 +153,10 @@ Phase 4 - Verification:
 Executed after Phase 4 verdict is "Pass". This flow MUST be executed
 in full — do not skip any step.
 
+IMPORTANT: Step 3 (Finalize story) MUST NOT be executed until Step 1
+and Step 2 are both complete and their checkpoints recorded.
+Do not update backlog.jsonl to "done" before completing all prior steps.
+
 ### Step 1: Transfer retrospectives to global log
 
 For each entry in stories/{story-id}/retro.jsonl:
@@ -162,6 +166,11 @@ For each entry in stories/{story-id}/retro.jsonl:
 Then run core/scripts/insights-aggregate.sh
   → regenerates .heartbeat/retrospectives/insights.md from log.jsonl
 
+**Checkpoint**: Append to stories/{story-id}/board.jsonl:
+```json
+{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "retro-transfer", "status": "done", "note": "Post-Completion Step 1 complete", "timestamp": "(auto-injected)"}
+```
+
 ### Step 2: Update knowledge base
 
 Start context-manager in accumulation mode.
@@ -170,7 +179,19 @@ context-manager will:
   - Update only changed files in .heartbeat/knowledge/
   - Do NOT rescan the entire repository (diff-only)
 
+**Checkpoint**: Append to stories/{story-id}/board.jsonl:
+```json
+{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "knowledge-update", "status": "done", "note": "Post-Completion Step 2 complete", "timestamp": "(auto-injected)"}
+```
+
 ### Step 3: Finalize story
+
+**Verification gate**: Before executing this step, read stories/{story-id}/board.jsonl
+and verify that BOTH checkpoint entries exist:
+  - One entry with `"action": "checkpoint"` and `"output": "retro-transfer"`
+  - One entry with `"action": "checkpoint"` and `"output": "knowledge-update"`
+If either checkpoint is missing, do not proceed — go back and execute
+the missing step first.
 
 Update backlog.jsonl:
   - status → "done"
