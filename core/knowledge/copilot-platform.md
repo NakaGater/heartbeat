@@ -25,17 +25,66 @@ Unrecognized names are **silently ignored** -- the agent receives zero tool acce
 
 ### Per-Agent Tool Assignments
 
-| Agent           | read | edit | execute | search | playwright/* |
-|-----------------|------|------|---------|--------|--------------|
-| architect       | Y    | Y    |         | Y      |              |
-| context-manager | Y    | Y    | Y       | Y      |              |
-| designer        | Y    | Y    |         | Y      |              |
-| implementer     | Y    | Y    | Y       | Y      |              |
-| pdm             | Y    | Y    | Y       | Y      |              |
-| qa              | Y    |      | Y       | Y      | Y            |
-| refactor        | Y    | Y    | Y       | Y      |              |
-| reviewer        | Y    |      |         | Y      |              |
-| tester          | Y    | Y    | Y       | Y      |              |
+| Agent           | read | edit | execute | search | agent | playwright/* |
+|-----------------|------|------|---------|--------|-------|--------------|
+| heartbeat       | Y    | Y    | Y       | Y      | Y     |              |
+| architect       | Y    | Y    |         | Y      |       |              |
+| context-manager | Y    | Y    | Y       | Y      |       |              |
+| designer        | Y    | Y    |         | Y      |       |              |
+| implementer     | Y    | Y    | Y       | Y      |       |              |
+| pdm             | Y    | Y    | Y       | Y      |       |              |
+| qa              | Y    |      | Y       | Y      |       | Y            |
+| refactor        | Y    | Y    | Y       | Y      |       |              |
+| reviewer        | Y    |      |         | Y      |       |              |
+| tester          | Y    | Y    | Y       | Y      |       |              |
+
+## Subagent Dispatch (agent tool)
+
+The `agent` tool enables an orchestrator agent to invoke other custom agents as subagents.
+
+### Prerequisites
+
+1. The orchestrator's frontmatter must include `agent` in `tools`
+2. The orchestrator's frontmatter must list allowed subagents in `agents`
+3. Each subagent must have a `.agent.md` file in `.github/agents/`
+
+### Invocation
+
+The orchestrator instructs the LLM with natural language:
+"Use the {name} agent as a subagent to {task description}."
+
+VS Code automatically calls `runSubagent` to start the named agent in an isolated context.
+
+### Behavior
+
+- Each subagent runs with its own context window (no shared conversation history)
+- Subagents have only the tools listed in their own frontmatter
+- Subagent results are returned to the orchestrator as text
+- By default, subagents cannot invoke further subagents (no nesting)
+  - Enable via `chat.subagents.allowInvocationsFromSubagents` setting (max depth 5)
+
+### Relevant frontmatter properties
+
+| Property | Values | Description |
+|----------|--------|-------------|
+| `agents` | list of names / `*` / `[]` | Which subagents this agent may invoke |
+| `user-invocable` | `true` (default) / `false` | If `false`, agent only appears as subagent, not in dropdown |
+| `disable-model-invocation` | `true` / `false` | If `true`, cannot be invoked as subagent |
+
+### Heartbeat agent mapping
+
+| Role | .github/agents/ file | Invoked by |
+|------|---------------------|------------|
+| Orchestrator | heartbeat.agent.md | User (via dropdown) |
+| PDM | pdm.agent.md | heartbeat |
+| Context Manager | context-manager.agent.md | heartbeat |
+| Designer | designer.agent.md | heartbeat |
+| Architect | architect.agent.md | heartbeat |
+| Tester | tester.agent.md | heartbeat |
+| Implementer | implementer.agent.md | heartbeat |
+| Refactor | refactor.agent.md | heartbeat |
+| Reviewer | reviewer.agent.md | heartbeat |
+| QA | qa.agent.md | heartbeat |
 
 ## Hooks Event Names
 

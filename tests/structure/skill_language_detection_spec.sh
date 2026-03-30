@@ -27,16 +27,12 @@ check_claude_code_skill_steps_are_sequential_1_to_9() {
   [ "$step_numbers" = "$expected" ] || return 1
 }
 
-check_copilot_skill_language_detection_matches_claude_code() {
-  claude_code_file="adapters/claude-code/skills/heartbeat/SKILL.md"
+check_copilot_skill_has_subagent_dispatch() {
   copilot_file="adapters/copilot/skills/heartbeat/SKILL.md"
-  [ -f "$claude_code_file" ] || return 1
   [ -f "$copilot_file" ] || return 1
-
-  claude_code_section=$(sed -n '/^## Agent Startup Method$/,/^## /{ /^## Agent Startup Method$/d; /^## /d; p; }' "$claude_code_file")
-  copilot_section=$(sed -n '/^## Agent Startup Method$/,/^## /{ /^## Agent Startup Method$/d; /^## /d; p; }' "$copilot_file")
-
-  [ "$claude_code_section" = "$copilot_section" ] || return 1
+  grep -q "Use the .* agent as a subagent" "$copilot_file" || return 1
+  grep -q "Subagent responsibilities" "$copilot_file" || return 1
+  grep -q "Orchestrator responsibilities" "$copilot_file" || return 1
 }
 
 Describe 'SKILL.md language detection step'
@@ -45,8 +41,8 @@ Describe 'SKILL.md language detection step'
     The status should be success
   End
 
-  It 'copilot SKILL.md Agent Startup Method is identical to claude-code version'
-    When call check_copilot_skill_language_detection_matches_claude_code
+  It 'copilot SKILL.md Agent Startup Method uses subagent dispatch pattern'
+    When call check_copilot_skill_has_subagent_dispatch
     The status should be success
   End
 
