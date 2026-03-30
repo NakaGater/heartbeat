@@ -7,6 +7,8 @@
 ![Platform: Copilot CLI / Claude Code](https://img.shields.io/badge/Platform-Copilot%20CLI%20%7C%20Claude%20Code-purple.svg)
 ![Stories: 17 self-built](https://img.shields.io/badge/Stories-17%20self--built-orange.svg)
 
+*Heartbeat* — the pulse of a team. Nine agents work in rhythm: Red, Green, Refactor. Like a heartbeat, the cycle never stops and never skips a beat. Each iteration pumps knowledge through the system, making the next one stronger.
+
 AI coding tools promise quality but skip the tests. Heartbeat is an XP-driven agent team for Claude Code and GitHub Copilot CLI that enforces Red-Green-Refactor on every story — no exceptions.
 
 ## Quick Start
@@ -84,6 +86,41 @@ User Request
 | **Process** | One agent does everything | 9 specialists hand off like a real team |
 | **Quality** | Hope it works | Red-Green-Refactor with code review and browser QA |
 | **State** | Lost between sessions | Git-tracked JSONL/Markdown — resume anytime |
+
+## A Team That Learns
+
+Every story makes the next one better. Heartbeat implements three XP feedback loops that compound over time:
+
+**Retrospective (Whole Team)** — After each story, every agent answers five XP-aligned questions: *Was this the simplest approach? Did I ignore any problems? Did I respect previous decisions?* Answers are scored and stored in `log.jsonl`.
+
+**Insight Aggregation (Feedback)** — Patterns are extracted automatically. Repeated yellow/red flags surface as actionable recommendations — "add boundary tests before implementation," "extract shared validation logic." These accumulate in `insights.md`.
+
+**Knowledge Reuse (Communication)** — When a new story starts, the Context Manager pulls relevant insights and technical decisions from past work into `context.md`. Every downstream agent receives this context. Lessons from story #3 inform the design of story #17.
+
+```
+Story Complete
+    │
+    ▼
+┌──────────────┐   ┌───────────────┐   ┌─────────────────┐
+│ Retrospective│──▶│   Aggregate   │──▶│  Knowledge Base  │
+│  per agent   │   │   insights    │   │   updated        │
+└──────────────┘   └───────────────┘   └────────┬────────┘
+                                                │
+                   Next Story Starts ◀──────────┘
+                        │
+                        ▼
+                ┌───────────────┐
+                │Context Manager│
+                │reads insights │
+                │+ past decisions│
+                └───────┬───────┘
+                        │
+                        ▼
+                  All agents get
+                  enriched context
+```
+
+The result: agents don't repeat mistakes. Design decisions, coding conventions, and failure patterns are preserved in Git-tracked files — not lost between sessions, not locked in a black box.
 
 ## Built With Itself
 
