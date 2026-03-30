@@ -2,8 +2,10 @@
 
 ## Naming Rules
 
-- Agent files: `{role}.agent.md` under `adapters/copilot/agents/`
+- Agent files: `{role}.agent.md` under `adapters/copilot/agents/` (including orchestrator `heartbeat.agent.md`)
+- Agent files: `{role}.md` under `adapters/claude-code/agents/`
 - Core personas: `{role}.md` under `core/agent-personas/`
+- Plugin manifests: `.github/plugin/plugin.json` (Copilot), `.claude-plugin/plugin.json` (Claude Code)
 - Test files: `{descriptive_name}_spec.sh` under `tests/`
 - Stories: kebab-case directory names under `.heartbeat/stories/`
 
@@ -41,4 +43,10 @@ Both platforms (Claude Code, Copilot) fire PostToolUse hooks on Write/Edit in th
 - Defensive data access: `BACKLOG_DATA || []`, `STORIES_DATA || []`
 - `sel.value = id` for programmatic dropdown selection (browser ignores invalid values)
 
-Last updated: 2026-03-30
+## Directory Ownership
+
+- `.github/` contains only `plugin/` (Copilot manifest) and `workflows/` (CI). No agent files or hooks.
+- `adapters/` contains all platform-specific files (agents, hooks, skills).
+- `core/` contains platform-independent definitions (personas, XP practices, scripts, knowledge).
+
+Last updated: 2026-03-30 (story: plugin-config-cleanup)

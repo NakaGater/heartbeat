@@ -46,7 +46,7 @@ The `agent` tool enables an orchestrator agent to invoke other custom agents as 
 
 1. The orchestrator's frontmatter must include `agent` in `tools`
 2. The orchestrator's frontmatter must list allowed subagents in `agents`
-3. Each subagent must have a `.agent.md` file in `.github/agents/`
+3. Each subagent must have a `.agent.md` file in `adapters/copilot/agents/`
 
 ### Invocation
 
@@ -73,8 +73,8 @@ VS Code automatically calls `runSubagent` to start the named agent in an isolate
 
 ### Heartbeat agent mapping
 
-| Role | .github/agents/ file | Invoked by |
-|------|---------------------|------------|
+| Role | adapters/copilot/agents/ file | Invoked by |
+|------|-------------------------------|------------|
 | Orchestrator | heartbeat.agent.md | User (via dropdown) |
 | PDM | pdm.agent.md | heartbeat |
 | Context Manager | context-manager.agent.md | heartbeat |
