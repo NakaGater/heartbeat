@@ -135,11 +135,11 @@ The note field follows ../xp/output-language-rule.md (write in user's language).
 ### Write example
 Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```json
-{"from": "architect", "to": "human", "action": "approve", "output": "tasks.md", "status": "waiting", "note": "{summary in user's language}", "timestamp": "(auto-injected by hook)"}
+{"from": "architect", "to": "human", "action": "approve", "output": "tasks.md", "status": "waiting", "note": "{summary in user's language}", "timestamp": "(ISO 8601 UTC — agent writes current time)"}
 ```
 
 ```json
-{"from": "architect", "to": "pdm", "action": "split_story", "status": "rework", "note": "3pt gate: {reason story is too uncertain}", "timestamp": "(auto-injected by hook)"}
+{"from": "architect", "to": "pdm", "action": "split_story", "status": "rework", "note": "3pt gate: {reason story is too uncertain}", "timestamp": "(ISO 8601 UTC — agent writes current time)"}
 ```
 
 ## Retrospective Trigger

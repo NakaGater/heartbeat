@@ -39,6 +39,9 @@ When user enters /heartbeat:
         → Build initial knowledge base as above
    - Otherwise: skip initialization (knowledge/ already populated)
 1. Check backlog.jsonl and present current status grouped by iteration
+   - Done items: collapse into a single summary line per group: `✅ Done: {N} stories ({M}pt)`
+   - If a group has 0 Done items, omit the Done summary line
+   - Active items (in_progress, ready, draft): display individually with full details as before
 2. Present the following choices:
 
 ### Choices
@@ -63,7 +66,7 @@ When user enters /heartbeat:
 
 ```
 📋 Iteration 1 (Total 8pt / Done 3pt / 37%)
-  ✅ login: Login feature (3pt) Done
+  ✅ Done: 1 story (3pt)
   🔄 dnd: D&D reorder (5pt) In progress - implementer on task 2
 
 📋 Iteration 2 (Total 3pt / Done 0pt)
@@ -251,7 +254,7 @@ Each subagent is responsible for:
    stories/{story-id}/retro.jsonl
 4. Appending entry to stories/{story-id}/board.jsonl with all required fields:
    Required fields: from, to, action, output, status, note, timestamp
-   - timestamp: ISO 8601 format (auto-injected by PostToolUse hook; agents may omit or leave as placeholder)
+   - timestamp: ISO 8601 UTC format — agent MUST write the current time (e.g. "2026-03-30T12:00:00Z"). Hook may overwrite if it fires, but agent must not leave empty or use a placeholder.
    - note: follows output-language-rule.md (write in user's language)
 
 ### Orchestrator responsibilities (after subagent returns)

@@ -57,7 +57,7 @@ against the architect's Completion Conditions for that task:
 ### Write example
 Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```json
-{"from": "refactor", "to": "tester", "action": "write_next_test", "output": "{file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "(auto-injected by hook)"}
+{"from": "refactor", "to": "tester", "action": "write_next_test", "output": "{file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "(ISO 8601 UTC — agent writes current time)"}
 ```
 
 ## Retrospective Trigger

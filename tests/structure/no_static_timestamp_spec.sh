@@ -16,10 +16,10 @@ check_persona_timestamp_field_reference() {
   done
 }
 
-check_persona_auto_injected_note() {
+check_persona_timestamp_instruction() {
   for agent in core/agent-personas/*.md; do
-    if ! grep -q 'auto-injected by hook' "$agent"; then
-      echo "FAIL: $agent missing auto-injected by hook note" >&2
+    if ! grep -q 'agent writes current time\|auto-injected by hook' "$agent"; then
+      echo "FAIL: $agent missing timestamp instruction" >&2
       return 1
     fi
   done
@@ -36,8 +36,8 @@ Describe 'No static timestamp placeholder in persona files'
     The status should be success
   End
 
-  It 'all persona files contain auto-injected by hook note'
-    When call check_persona_auto_injected_note
+  It 'all persona files contain timestamp instruction'
+    When call check_persona_timestamp_instruction
     The status should be success
   End
 End
@@ -65,10 +65,10 @@ check_no_static_timestamp_in_skills() {
   done
 }
 
-check_skill_auto_injected_note() {
+check_skill_timestamp_instruction() {
   for skill in adapters/*/skills/heartbeat/SKILL.md; do
-    if ! grep -q 'auto-injected by.*hook\|auto-injected by PostToolUse hook' "$skill"; then
-      echo "FAIL: $skill missing auto-injected by hook note" >&2
+    if ! grep -q 'agent MUST write\|auto-injected by.*hook' "$skill"; then
+      echo "FAIL: $skill missing timestamp instruction" >&2
       return 1
     fi
   done
@@ -90,8 +90,8 @@ Describe 'Documentation and SKILL.md timestamp updates (Task 5)'
     The status should be success
   End
 
-  It 'all SKILL.md files contain auto-injected by hook note'
-    When call check_skill_auto_injected_note
+  It 'all SKILL.md files contain timestamp instruction'
+    When call check_skill_timestamp_instruction
     The status should be success
   End
 End

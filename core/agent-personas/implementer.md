@@ -46,7 +46,7 @@ The note field follows ../xp/output-language-rule.md (write in user's language).
 ### Write example
 Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
 ```json
-{"from": "implementer", "to": "refactor", "action": "refactor", "output": "{file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "(auto-injected by hook)"}
+{"from": "implementer", "to": "refactor", "action": "refactor", "output": "{file}", "status": "ok", "note": "{summary in user's language}", "timestamp": "(ISO 8601 UTC — agent writes current time)"}
 ```
 
 ## Retrospective Trigger
