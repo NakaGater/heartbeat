@@ -16,7 +16,7 @@ check_only_recognized_aliases() {
     tools=$(extract_tools "$agent")
     while IFS= read -r tool; do
       case "$tool" in
-        read|edit|execute|search|playwright/*) ;;
+        agent|read|edit|execute|search|playwright/*) ;;
         *) return 1 ;;
       esac
     done <<EOF
@@ -46,7 +46,7 @@ check_agent_has_tools() {
 }
 
 Describe 'Copilot agent tools: front matter'
-  It 'all 9 agents contain only recognized Copilot tool aliases'
+  It 'all 10 agents contain only recognized Copilot tool aliases'
     When call check_only_recognized_aliases
     The status should be success
   End
