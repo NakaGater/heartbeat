@@ -325,7 +325,7 @@ and resume from that point.
 Copilot ではAIの各応答がプレミアムリクエストを消費するため、
 以下のルールでリクエスト消費を最小化する。
 
-### Rule 1: vscode_askQuestions による Approval
+### Rule 1: vscode/askQuestions による Approval
 AP1（ストーリー承認）と AP3（最終結果報告）では `vscode_askQuestions`
 ツールを使用してユーザー入力を取得せよ。通常の応答生成で
 承認を求めてはならない。
