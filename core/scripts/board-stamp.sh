@@ -11,7 +11,15 @@ input=$(cat)
 
 # Extract file_path from hook JSON (Claude Code snake_case, VS Code camelCase, or flat)
 file_path=$(echo "$input" | jq -r '.tool_input.file_path // .tool_input.filePath // .file_path // .filePath // empty' 2>/dev/null)
-[ -z "$file_path" ] && exit 0
+
+# No file_path → SubagentStart/SubagentStop context
+# Find the most recently modified board.jsonl under .heartbeat/stories/
+if [ -z "$file_path" ]; then
+  search_root="${HEARTBEAT_ROOT:-.}"
+  target=$(ls -t "$search_root"/.heartbeat/stories/*/board.jsonl 2>/dev/null | head -1)
+  [ -z "$target" ] && exit 0
+  file_path="$target"
+fi
 
 # Only act on board.jsonl files
 case "$file_path" in
