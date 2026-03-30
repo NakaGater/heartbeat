@@ -14,7 +14,8 @@
     "adapters/copilot/agents/implementer.agent.md",
     "adapters/copilot/agents/refactor.agent.md",
     "adapters/copilot/agents/reviewer.agent.md",
-    "adapters/copilot/agents/qa.agent.md"
+    "adapters/copilot/agents/qa.agent.md",
+    "adapters/copilot/agents/heartbeat.agent.md"
   ],
   "skills": [
     "adapters/copilot/skills/heartbeat",
