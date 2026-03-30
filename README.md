@@ -1,6 +1,6 @@
 # Heartbeat
 
-**Nine AI agents. Tests first. Every time.**
+**XP enhanced Agile AI agents, Nine roles. Tests first. Every time.**
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Tests: 224 passing](https://img.shields.io/badge/Tests-224%20passing-brightgreen.svg)
