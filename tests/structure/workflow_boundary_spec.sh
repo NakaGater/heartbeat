@@ -26,7 +26,7 @@ check_agent_startup_workflow_branch() {
 }
 
 check_platform_sync() {
-  diff "$SKILL_MD" "$SKILL_MD_COPILOT" >/dev/null 2>&1
+  grep -q "Copilot-Specific" "$SKILL_MD_COPILOT"
 }
 
 Describe 'Workflow boundary enforcement in SKILL.md'
@@ -60,7 +60,7 @@ Describe 'Workflow boundary enforcement in SKILL.md'
     The status should be success
   End
 
-  It 'both SKILL.md files are identical'
+  It 'copilot SKILL.md has Copilot-Specific section'
     When call check_platform_sync
     The status should be success
   End

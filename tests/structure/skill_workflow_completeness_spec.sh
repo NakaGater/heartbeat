@@ -1,6 +1,5 @@
 check_skill_platform_sync() {
-  diff adapters/claude-code/skills/heartbeat/SKILL.md \
-       adapters/copilot/skills/heartbeat/SKILL.md >/dev/null 2>&1
+  grep -q "Copilot-Specific" adapters/copilot/skills/heartbeat/SKILL.md
 }
 
 check_skill_initialization_flow() {
@@ -42,8 +41,23 @@ check_skill_verification_gate() {
   grep -q "do not proceed" adapters/claude-code/skills/heartbeat/SKILL.md
 }
 
+check_copilot_ask_questions() {
+  grep -q "vscode_askQuestions" adapters/copilot/skills/heartbeat/SKILL.md
+}
+
+check_copilot_auto_approve_task_decomposition() {
+  grep -q "AP2" adapters/copilot/skills/heartbeat/SKILL.md &&
+  grep -q "Phase 3" adapters/copilot/skills/heartbeat/SKILL.md &&
+  grep -q "自動" adapters/copilot/skills/heartbeat/SKILL.md
+}
+
+check_copilot_workflow3_input_merge() {
+  grep -q "Workflow 3" adapters/copilot/skills/heartbeat/SKILL.md &&
+  grep -q "入力統合\|入力で受け取" adapters/copilot/skills/heartbeat/SKILL.md
+}
+
 Describe 'SKILL.md workflow completeness'
-  It 'claude-code and copilot SKILL.md are identical'
+  It 'copilot SKILL.md has Copilot-Specific section'
     When call check_skill_platform_sync
     The status should be success
   End
@@ -90,6 +104,21 @@ Describe 'SKILL.md workflow completeness'
 
   It 'SKILL.md contains verification gate for finalize step'
     When call check_skill_verification_gate
+    The status should be success
+  End
+
+  It 'copilot SKILL.md references vscode_askQuestions for approval'
+    When call check_copilot_ask_questions
+    The status should be success
+  End
+
+  It 'copilot SKILL.md auto-approves task decomposition'
+    When call check_copilot_auto_approve_task_decomposition
+    The status should be success
+  End
+
+  It 'copilot SKILL.md merges workflow 3 input points'
+    When call check_copilot_workflow3_input_merge
     The status should be success
   End
 End
