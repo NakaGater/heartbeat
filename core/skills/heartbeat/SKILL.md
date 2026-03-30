@@ -222,28 +222,53 @@ Flow:
 
 ## Agent Startup Method
 
-When starting each agent:
-1. Read core/agent-personas/{agent-name}.md
-2. Follow that persona's instructions completely
-3. Detect the language of the user's most recent input and instruct
-   the agent: "Write all output documents and JSONL natural-language
-   fields in {detected language}. Translate template headings too."
-4. Save artifacts to .heartbeat/stories/{story-id}/
-5. Conduct retrospective per core/xp/retrospective-template.md and append to
+When starting each agent, use the Agent tool to invoke them as subagents.
+Each subagent runs in its own context with its own tool permissions.
+
+### Invocation pattern
+
+Use the Agent tool with `subagent_type: "heartbeat:{name}.agent"` to dispatch
+each agent as a subagent.
+
+Pass the following context to the subagent in the prompt:
+- story-id: {story-id}
+- Language directive: "Write all output documents and JSONL natural-language
+  fields in {detected language}. Translate template headings too."
+- Input artifacts: list the files the subagent should read from
+  .heartbeat/stories/{story-id}/
+
+### Examples
+
+- Invoke Agent tool with subagent_type: "heartbeat:pdm.agent" to hear the user's problem and produce brief.md.
+- Invoke Agent tool with subagent_type: "heartbeat:context-manager.agent" to investigate the codebase and produce context.md.
+- Invoke Agent tool with subagent_type: "heartbeat:tester.agent" to write the next failing test for task {task_id}.
+- Invoke Agent tool with subagent_type: "heartbeat:implementer.agent" to make the failing test pass.
+- Invoke Agent tool with subagent_type: "heartbeat:refactor.agent" to improve code quality while keeping tests green.
+- Invoke Agent tool with subagent_type: "heartbeat:reviewer.agent" to review the implementation and produce review.md.
+
+### Subagent responsibilities
+
+Each subagent is responsible for:
+1. Following its persona instructions (defined in its .agent.md body)
+2. Saving artifacts to .heartbeat/stories/{story-id}/
+3. Conducting retrospective per core/xp/retrospective-template.md and appending to
    stories/{story-id}/retro.jsonl
-6. Verify retro.jsonl contains a new entry with this agent's name.
-   If missing, do not proceed — prompt the agent to complete retrospective first.
-7. Append entry to stories/{story-id}/board.jsonl with all required fields:
+4. Appending entry to stories/{story-id}/board.jsonl with all required fields:
    Required fields: from, to, action, output, status, note, timestamp
    - timestamp: ISO 8601 UTC format — agent MUST write the current time (e.g. "2026-03-30T12:00:00Z"). Hook may overwrite if it fires, but agent must not leave empty or use a placeholder.
    - note: follows output-language-rule.md (write in user's language)
-8. Check current workflow context:
+
+### Orchestrator responsibilities (after subagent returns)
+
+5. Verify retro.jsonl contains a new entry with the subagent's name.
+   If missing, re-invoke the subagent to complete retrospective.
+6. Check current workflow context:
    - If executing Workflow 1: After Phase 1 completes, STOP. Do not proceed.
    - If executing Workflow 2: After Phase 4 Pass + Post-Completion, STOP.
    - If executing Workflow 3: After Phase 1 completes, transition to Phase 2.
      After Phase 4 Pass + Post-Completion, STOP.
-9. Determine next action based on last stories/{story-id}/board.jsonl entry
-   (only if not stopped by step 8)
+7. Determine next action based on last stories/{story-id}/board.jsonl entry
+   (only if not stopped by step 6)
 
 ## State Management
 
