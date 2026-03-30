@@ -1,0 +1,73 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git:*)",
+      "Bash(curl:*)",
+      "Bash(shellspec:*)",
+      "Bash(make test-unit:*)",
+      "Bash(make test-structure:*)",
+      "Bash(make test:*)",
+      "Bash(make test-all:*)",
+      "Bash(make dashboard:*)",
+      "Bash(chmod +x:*)",
+      "Bash(command:*)",
+      "Bash(/opt/homebrew/bin/jq:*)",
+      "Bash(grep:*)",
+      "Bash(md5)",
+      "Bash(python3:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(cat:*)",
+      "Bash(wc:*)",
+      "Bash(diff:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(echo:*)",
+      "Bash(sed:*)",
+      "Bash(date:*)",
+      "Bash(sort:*)",
+      "Bash(find:*)",
+      "Bash(gh:*)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "WebFetch(domain:docs.github.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.makeareadme.com)",
+      "WebSearch",
+      "Bash(/Users/nakajimakazunori/Documents/Repositories/nakagater/heartbeat/.heartbeat/stories/claude-subagent-dispatch/retro.jsonl:*)",
+      "Bash(/Users/nakajimakazunori/Documents/Repositories/nakagater/heartbeat/.heartbeat/stories/claude-subagent-dispatch/board.jsonl:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "playwright"
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./core/scripts/retrospective-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "./core/scripts/generate-dashboard.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./core/scripts/auto-commit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
