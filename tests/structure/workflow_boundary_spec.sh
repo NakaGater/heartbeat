@@ -22,7 +22,7 @@ check_workflow3_own_stop() {
 }
 
 check_agent_startup_workflow_branch() {
-  grep -A 20 "## Agent Startup Method" "$SKILL_MD" | grep -q "Check current workflow context"
+  grep -A 50 "## Agent Startup Method" "$SKILL_MD" | grep -q "Check current workflow context"
 }
 
 check_platform_sync() {

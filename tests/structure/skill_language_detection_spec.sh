@@ -1,17 +1,19 @@
 check_claude_code_skill_has_language_detection_step() {
   skill_file="adapters/claude-code/skills/heartbeat/SKILL.md"
   [ -f "$skill_file" ] || return 1
-  grep -q "Detect the language" "$skill_file" || return 1
+  # After subagent dispatch rewrite, language detection is expressed as
+  # a Language directive passed to the subagent in the invocation pattern.
+  grep -q "Language directive" "$skill_file" || return 1
 }
 
 check_claude_code_skill_steps_are_sequential_1_to_9() {
   skill_file="adapters/claude-code/skills/heartbeat/SKILL.md"
   [ -f "$skill_file" ] || return 1
 
-  # Extract the Agent Startup Method section (between ## Agent Startup Method and next ## heading)
+  # After subagent dispatch rewrite, responsibilities are split:
+  # Subagent (1-4) and Orchestrator (5-7) = 7 sequential steps.
   section=$(sed -n '/^## Agent Startup Method$/,/^## /{ /^## /d; p; }' "$skill_file")
 
-  # Extract step numbers (lines starting with a digit followed by a dot)
   step_numbers=$(echo "$section" | grep -E '^[0-9]+\.' | sed 's/^\([0-9]*\)\..*/\1/')
 
   expected="1
@@ -20,9 +22,7 @@ check_claude_code_skill_steps_are_sequential_1_to_9() {
 4
 5
 6
-7
-8
-9"
+7"
 
   [ "$step_numbers" = "$expected" ] || return 1
 }
