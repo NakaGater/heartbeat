@@ -1,7 +1,10 @@
 #!/bin/bash
 # Inject accurate UTC timestamp into last line of board.jsonl
-# Called by PostToolUse hook; must exit 0 on all paths.
-# Dependency: jq
+# Called by PostToolUse, SubagentStart, and SubagentStop hooks.
+# - PostToolUse: uses tool_input.file_path from stdin to locate the file.
+# - SubagentStart/SubagentStop: no file_path; finds the most recently
+#   modified .heartbeat/stories/*/board.jsonl via ls -t.
+# Must exit 0 on all paths.  Dependency: jq
 set +e
 
 input=$(cat)

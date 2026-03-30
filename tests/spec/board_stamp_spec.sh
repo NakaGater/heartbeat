@@ -15,13 +15,13 @@ Describe 'board-stamp.sh'
     echo "$1" | ./core/scripts/board-stamp.sh
   }
 
-  # Helper: check that a timestamp string is within 5 seconds of now
-  timestamp_is_recent() {
+  # Helper: check that the timestamp in the last line of a given file
+  # is within 5 seconds of now.  Defaults to $TEST_BOARD_FILE.
+  assert_timestamp_recent() {
+    local target_file="${1:-$TEST_BOARD_FILE}"
     local ts
-    ts=$(tail -1 "$TEST_BOARD_FILE" | jq -r '.timestamp')
-    local injected_epoch
-    local now_epoch
-    local diff
+    ts=$(tail -1 "$target_file" | jq -r '.timestamp')
+    local injected_epoch now_epoch diff
 
     # macOS date conversion (TZ=UTC0 so the trailing Z is honoured)
     if TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
@@ -32,11 +32,12 @@ Describe 'board-stamp.sh'
     fi
     now_epoch=$(date -u "+%s")
     diff=$(( now_epoch - injected_epoch ))
-    if [ "$diff" -lt 0 ]; then
-      diff=$(( -diff ))
-    fi
+    if [ "$diff" -lt 0 ]; then diff=$(( -diff )); fi
     [ "$diff" -le 5 ]
   }
+
+  # Backward-compatible alias used by existing Assert calls
+  timestamp_is_recent() { assert_timestamp_recent "$TEST_BOARD_FILE"; }
 
   Describe 'Normal cases'
     It 'overwrites placeholder timestamp with current system time'
@@ -128,21 +129,8 @@ Describe 'board-stamp.sh'
     End
 
     It 'injects accurate ISO 8601 UTC timestamp within 5 seconds of system time'
-      # timestamp_is_recent_for を使って story-beta の最終行を検証
       timestamp_is_recent_for() {
-        local target_file="${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
-        local ts
-        ts=$(tail -1 "$target_file" | jq -r '.timestamp')
-        local injected_epoch now_epoch diff
-        if TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
-          injected_epoch=$(TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s")
-        else
-          injected_epoch=$(date -d "$ts" "+%s")
-        fi
-        now_epoch=$(date -u "+%s")
-        diff=$(( now_epoch - injected_epoch ))
-        if [ "$diff" -lt 0 ]; then diff=$(( -diff )); fi
-        [ "$diff" -le 5 ]
+        assert_timestamp_recent "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
       }
       When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
       The status should be success
@@ -206,19 +194,7 @@ Describe 'board-stamp.sh'
 
     It 'injects accurate timestamp in SubagentStart context'
       timestamp_is_recent_start() {
-        local target_file="${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl"
-        local ts
-        ts=$(tail -1 "$target_file" | jq -r '.timestamp')
-        local injected_epoch now_epoch diff
-        if TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
-          injected_epoch=$(TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s")
-        else
-          injected_epoch=$(date -d "$ts" "+%s")
-        fi
-        now_epoch=$(date -u "+%s")
-        diff=$(( now_epoch - injected_epoch ))
-        if [ "$diff" -lt 0 ]; then diff=$(( -diff )); fi
-        [ "$diff" -le 5 ]
+        assert_timestamp_recent "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl"
       }
       When call run_board_stamp '{"event":"SubagentStart","subagent_id":"sub-789"}'
       The status should be success
