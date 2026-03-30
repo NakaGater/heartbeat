@@ -9,8 +9,8 @@ input=$(cat)
 # Empty stdin — nothing to do
 [ -z "$input" ] && exit 0
 
-# Extract file_path from hook JSON (Claude Code or Copilot format)
-file_path=$(echo "$input" | jq -r '.tool_input.file_path // .file_path // empty' 2>/dev/null)
+# Extract file_path from hook JSON (Claude Code snake_case, VS Code camelCase, or flat)
+file_path=$(echo "$input" | jq -r '.tool_input.file_path // .tool_input.filePath // .file_path // .filePath // empty' 2>/dev/null)
 [ -z "$file_path" ] && exit 0
 
 # Only act on board.jsonl files

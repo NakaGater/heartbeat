@@ -1,0 +1,24 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "command": "./core/scripts/board-stamp.sh"
+      },
+      {
+        "type": "command",
+        "command": "./core/scripts/retrospective-record.sh"
+      },
+      {
+        "type": "command",
+        "command": "./core/scripts/generate-dashboard.sh"
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "./core/scripts/auto-commit.sh"
+      }
+    ]
+  }
+}
