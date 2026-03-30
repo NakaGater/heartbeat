@@ -4,5 +4,30 @@
   "version": "2.0.0",
   "author": {
     "name": "NakaG"
+  },
+  "agents": [
+    "adapters/claude-code/agents/pdm.agent.md",
+    "adapters/claude-code/agents/context-manager.agent.md",
+    "adapters/claude-code/agents/designer.agent.md",
+    "adapters/claude-code/agents/architect.agent.md",
+    "adapters/claude-code/agents/tester.agent.md",
+    "adapters/claude-code/agents/implementer.agent.md",
+    "adapters/claude-code/agents/refactor.agent.md",
+    "adapters/claude-code/agents/reviewer.agent.md",
+    "adapters/claude-code/agents/qa.agent.md"
+  ],
+  "skills": [
+    "adapters/claude-code/skills/heartbeat",
+    "adapters/claude-code/skills/heartbeat-backlog",
+    "adapters/claude-code/skills/xp-values",
+    "adapters/claude-code/skills/xp-retro",
+    "adapters/claude-code/skills/browser-testing"
+  ],
+  "hooks": "adapters/claude-code/hooks/settings.json",
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
   }
 }
