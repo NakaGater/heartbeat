@@ -1166,4 +1166,160 @@ Describe 'auto-commit.sh'
       End
     End
   End
+
+  # Story: commit-message-accuracy, Task 6: Edge case tests
+  Describe 'Edge cases (Task 6)'
+
+    # Task 6, CC1: No staged files -> main() exits with code 0 early (no commit created)
+    Describe 'CC1: main() exits early with code 0 when no staged files exist'
+      setup() {
+        TMPDIR_EDGE1=$(mktemp -d)
+        git init "$TMPDIR_EDGE1" >/dev/null 2>&1
+        git -C "$TMPDIR_EDGE1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # No changes at all -- working tree is clean
+        export CLAUDE_PROJECT_DIR="$TMPDIR_EDGE1"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_EDGE1"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_no_changes() {
+        echo '' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" 2>/dev/null
+        echo $?
+      }
+
+      count_commits_after_main() {
+        echo '' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" 2>/dev/null
+        # Count commits -- should still be just the initial one
+        git -C "$TMPDIR_EDGE1" rev-list --count HEAD
+      }
+
+      It 'exits with code 0 when there are no changes'
+        When call run_main_no_changes
+        The output should equal "0"
+        The status should be success
+      End
+
+      It 'does not create a new commit when there are no changes'
+        When call count_commits_after_main
+        The output should equal "1"
+        The status should be success
+      End
+    End
+
+    # Task 6, CC2: Many files changed -> description is 72 characters or less
+    Describe 'CC2: description stays within 72 chars for many files'
+      setup() {
+        TMPDIR_EDGE2=$(mktemp -d)
+        git init "$TMPDIR_EDGE2" >/dev/null 2>&1
+        git -C "$TMPDIR_EDGE2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # Create 100 files spread across many directories to force a long description
+        local i=0
+        while [ "$i" -lt 100 ]; do
+          local dir_name="dir-with-a-long-name-for-testing-purposes-$(printf '%02d' $i)"
+          mkdir -p "$TMPDIR_EDGE2/$dir_name"
+          echo "content $i" > "$TMPDIR_EDGE2/$dir_name/file-$i.txt"
+          i=$((i + 1))
+        done
+        git -C "$TMPDIR_EDGE2" add -A >/dev/null 2>&1
+        export CLAUDE_PROJECT_DIR="$TMPDIR_EDGE2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_EDGE2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      desc_within_72_chars() {
+        local output="$1"
+        local len=${#output}
+        [ "$len" -le 72 ]
+      }
+
+      It 'produces a description of 72 chars or less even with 100 files across many directories'
+        When call get_description_from_diff
+        The output should satisfy desc_within_72_chars
+        The status should be success
+      End
+    End
+
+    # Task 6, CC3: .heartbeat/ only changes -> type is "chore"
+    Describe 'CC3: .heartbeat/ only changes produce type "chore" in full main() flow'
+      setup() {
+        TMPDIR_EDGE3=$(mktemp -d)
+        git init "$TMPDIR_EDGE3" >/dev/null 2>&1
+        git -C "$TMPDIR_EDGE3" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # Create multiple .heartbeat/ files across different story dirs
+        mkdir -p "$TMPDIR_EDGE3/.heartbeat/stories/story-a"
+        mkdir -p "$TMPDIR_EDGE3/.heartbeat/stories/story-b"
+        echo '{"from":"tester"}' > "$TMPDIR_EDGE3/.heartbeat/stories/story-a/board.jsonl"
+        echo '# tasks' > "$TMPDIR_EDGE3/.heartbeat/stories/story-a/tasks.md"
+        echo '{"from":"designer"}' > "$TMPDIR_EDGE3/.heartbeat/stories/story-b/board.jsonl"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_EDGE3"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_EDGE3"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_heartbeat_only() {
+        echo '' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        # Extract type from commit message (everything before the first parenthesis or colon)
+        git -C "$TMPDIR_EDGE3" log -1 --format=%s | sed 's/[(:].*//'
+      }
+
+      It 'uses type "chore" when only .heartbeat/ files are changed'
+        When call run_main_heartbeat_only
+        The output should equal "chore"
+        The status should be success
+      End
+    End
+
+    # Task 6, CC4: New functions do not depend on jq (bash + git only)
+    Describe 'CC4: new functions do not depend on jq'
+      # Verify by source code inspection: grep for jq usage in the new functions
+      # The new functions are: get_scope_from_diff, get_type_from_diff,
+      # get_description_from_diff, _get_staged_files, _count_lines, _all_files_match
+
+      new_functions_free_of_jq() {
+        local script="$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh"
+        # Extract function bodies of the new functions and check for jq
+        # We check that jq does NOT appear between function def and closing brace
+        # for each new function
+        local funcs="get_scope_from_diff get_type_from_diff get_description_from_diff _get_staged_files _count_lines _all_files_match"
+        for func_name in $funcs; do
+          # Extract function body using sed: from "func_name()" to next "^}"
+          local body
+          body=$(sed -n "/^${func_name}()/,/^}/p" "$script")
+          if echo "$body" | grep -q 'jq '; then
+            echo "FAIL: $func_name uses jq"
+            return 1
+          fi
+        done
+        echo "PASS"
+        return 0
+      }
+
+      It 'confirms none of the new functions call jq'
+        When call new_functions_free_of_jq
+        The output should equal "PASS"
+        The status should be success
+      End
+    End
+  End
 End
