@@ -79,8 +79,14 @@ When user enters /heartbeat:
 ## Workflow 1: Create a Story
 
 ```
-User question:
-  "What user problem do you want to solve?"
+User question (2-step hybrid):
+  Step 1 - Category selection:
+    Present choices: ["Bug fix", "UX improvement", "New feature",
+                      "Performance", "Refactoring", "Other"]
+  Step 2 - Detail input:
+    After category selection, ask for a one-sentence description.
+    Example: "Bug fix" selected → "What is the issue? Describe in one sentence."
+    "Other" selected → "What problem do you want to solve? Describe in one sentence."
 Phase 1 - Planning:
   pdm (hearing) → brief.md
   context-manager (investigation) → context.md
@@ -211,8 +217,12 @@ Update backlog.jsonl:
 ## Workflow 3: Create and Implement a Story
 
 ```
-User question:
-  "What feature would you like to develop?"
+User question (2-step hybrid):
+  Step 1 - Category selection:
+    Present choices: ["Bug fix", "UX improvement", "New feature",
+                      "Performance", "Refactoring", "Other"]
+  Step 2 - Detail input:
+    After category selection, ask for a one-sentence description.
 
 Flow:
   Execute Workflow 1 (story creation)
