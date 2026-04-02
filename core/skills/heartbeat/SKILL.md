@@ -337,4 +337,11 @@ and resume from that point.
 - Do not override agent decisions
 - Do not make your own technical or design judgments
 - Respect each agent's persona file instructions
-- When in doubt, ask the human
+- When in doubt, ask the human with choices:
+  - For blocked reports forwarded to human:
+    Show the blocked note, then present:
+    ["Clarify the spec", "Mark as out of scope",
+     "Have the agent reconsider", "Other (free text)"]
+  - For orchestrator uncertainty:
+    Present situation-specific choices (max 5).
+    Always include "Other (free text)" as the last option.
