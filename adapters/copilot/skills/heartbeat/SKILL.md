@@ -42,7 +42,7 @@ When user enters /heartbeat:
    - Done items: collapse into a single summary line per group: `✅ Done: {N} stories ({M}pt)`
    - If a group has 0 Done items, omit the Done summary line
    - Active items (in_progress, ready, draft): display individually with full details as before
-2. Present the following choices:
+2. Present the following choices (Use vscode_askQuestions):
 
 ### Choices
 
@@ -82,9 +82,10 @@ When user enters /heartbeat:
 User question (2-step hybrid):
   Step 1 - Category selection:
     Present choices: ["Bug fix", "UX improvement", "New feature",
-                      "Performance", "Refactoring", "Other"]
+                      "Performance", "Refactoring", "Other"] (Use vscode_askQuestions)
   Step 2 - Detail input:
     After category selection, ask for a one-sentence description.
+    (Use vscode_askQuestions without choices parameter)
     Example: "Bug fix" selected → "What is the issue? Describe in one sentence."
     "Other" selected → "What problem do you want to solve? Describe in one sentence."
 Phase 1 - Planning:
@@ -97,14 +98,20 @@ Phase 1 - Planning:
       → pdm splits, redefines, or commissions spike → updated story.md
       → architect re-estimates (loop until 1-2pt or human override)
       Human override: Present choices: ["Continue with 3pt", "Split the story"]
+      (Use vscode_askQuestions)
     If architect estimates 1-2pt:
       → proceed to approval
   Approval point: Story definition + point estimate approval
-    Present choices: ["Approve", "Send back"]
-    If "Send back" → Present reason choices: ["Scope too broad", "Acceptance criteria unclear", "Want to change priority", "Other (free text)"]
+    Present choices: ["Approve", "Send back"] (Use vscode_askQuestions)
+    If "Send back" → Present reason choices: ["Scope too broad", "Acceptance criteria unclear", "Want to change priority", "Other (free text)"] (Use vscode_askQuestions)
 
 Result:
   Register in backlog.jsonl with status: "ready", points: {estimate}
+
+  Continuation prompt (Use vscode_askQuestions):
+    Present choices: ["Implement this story", "Create another story", "Exit"]
+    If "Exit" → proceed to STOP below
+    Otherwise → transition to corresponding workflow
 
 >>> STOP: Workflow 1 complete. Return control to user.
     Do NOT proceed to Workflow 2 or any other workflow. <<<
@@ -120,7 +127,7 @@ END OF WORKFLOW 1 -- Do not execute any further agents.
 
 ```
 Show backlog.jsonl stories with status: "ready"
-User selects a story
+User selects a story (Use vscode_askQuestions)
 
 Phase 2 - Design:
   designer
@@ -156,11 +163,15 @@ Phase 4 - Verification:
   qa → qa-report.md (browser verification via Playwright MCP)
   pdm → verdict.md
   Approval: Report final result to user
-    Present choices: ["Pass", "Send back"]
+    Present choices: ["Pass", "Send back"] (Use vscode_askQuestions)
     If "Send back":
       Present phase choices: ["From design phase", "From implementation phase",
-                              "From verification phase"]
+                              "From verification phase"] (Use vscode_askQuestions)
     Pass → execute Post-Completion Flow (see below)
+    Continuation prompt (Use vscode_askQuestions):
+      Present choices: ["Implement another story", "Create a new story", "Exit"]
+      If "Exit" → proceed to STOP below
+      Otherwise → transition to corresponding workflow
            >>> STOP: Workflow 2 complete. Return control to user.
                Do NOT start another workflow. <<<
     Return → return to appropriate Phase based on feedback
@@ -233,6 +244,10 @@ Flow:
     → Execute all phases to completion
 
   After Workflow 2 completes:
+    Continuation prompt (Use vscode_askQuestions):
+      Present choices: ["Create a story", "Implement a story", "Exit"]
+      If "Exit" → proceed to STOP below
+      Otherwise → transition to corresponding workflow
     >>> STOP: Workflow 3 complete. Return control to user. <<<
 
   Note: Point estimates from architect can be adjusted as actuals
@@ -350,11 +365,11 @@ and resume from that point.
 - Respect each agent's persona file instructions
 - When in doubt, ask the human with choices:
   - For blocked reports forwarded to human:
-    Show the blocked note, then present:
+    Show the blocked note, then present (Use vscode_askQuestions):
     ["Clarify the spec", "Mark as out of scope",
      "Have the agent reconsider", "Other (free text)"]
   - For orchestrator uncertainty:
-    Present situation-specific choices (max 5).
+    Present situation-specific choices (max 5). (Use vscode_askQuestions)
     Always include "Other (free text)" as the last option.
 
 ## Copilot-Specific: Request Optimization
