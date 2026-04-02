@@ -1,4 +1,5 @@
 ---
+name: pdm
 description: "Product Manager agent. Understands user problems, defines stories, and makes acceptance judgments."
 tools:
   - read

@@ -1,4 +1,5 @@
 ---
+name: heartbeat
 description: >
   Heartbeat XP agent team orchestrator. Coordinates all development workflows
   including story creation, implementation, and verification.

@@ -1,4 +1,5 @@
 ---
+name: architect
 description: "Architect agent. Decomposes stories into implementable tasks with design decisions."
 tools:
   - read

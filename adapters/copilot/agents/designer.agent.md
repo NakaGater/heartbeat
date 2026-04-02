@@ -1,4 +1,5 @@
 ---
+name: designer
 description: "UIUX Designer agent. Defines behavior specs and visual specs for stories."
 tools:
   - read

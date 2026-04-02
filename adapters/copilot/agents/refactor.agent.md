@@ -1,4 +1,5 @@
 ---
+name: refactor
 description: "Refactor agent. Improves code quality while keeping tests green."
 tools:
   - execute

@@ -1,4 +1,5 @@
 ---
+name: qa
 description: "QA agent. Verifies story implementation via actual browser operation using Playwright."
 tools:
   - read

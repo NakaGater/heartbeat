@@ -1,4 +1,5 @@
 ---
+name: context-manager
 description: "Context Manager agent. Maintains project knowledge base and provides context for story development."
 tools:
   - read
