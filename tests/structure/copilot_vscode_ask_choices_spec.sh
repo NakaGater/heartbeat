@@ -30,6 +30,52 @@ check_rule3_fallback_ask() {
   grep -A 20 'Rule 3' "$COPILOT_SKILL" | grep -q 'vscode_askQuestions.*カテゴリ'
 }
 
+# --- Task 1: 8箇所の vscode_askQuestions 義務化 ---
+# Rule 1 セクションのみを抽出するヘルパー関数
+rule1_section() {
+  sed -n '/### Rule 1/,/### Rule 2/p' "$COPILOT_SKILL"
+}
+
+# Rule 1: ワークフロー選択で vscode_askQuestions を使用する指示がある
+check_rule1_workflow_selection() {
+  rule1_section | grep -q 'ワークフロー選択'
+}
+
+# Rule 1: WF1 カテゴリ選択で vscode_askQuestions を使用する指示がある
+check_rule1_wf1_category() {
+  rule1_section | grep -q 'カテゴリ選択'
+}
+
+# Rule 1: WF1 詳細入力（自由記述）で vscode_askQuestions を使用する指示がある
+check_rule1_wf1_detail_input() {
+  rule1_section | grep -q '詳細入力'
+}
+
+# Rule 1: 3pt エスケープハッチで vscode_askQuestions を使用する指示がある
+check_rule1_3pt_escape_hatch() {
+  rule1_section | grep -q 'エスケープハッチ'
+}
+
+# Rule 1: WF2 ストーリー選択で vscode_askQuestions を使用する指示がある
+check_rule1_wf2_story_selection() {
+  rule1_section | grep -q 'ストーリー選択'
+}
+
+# Rule 1: AP3 差し戻し先フェーズ選択で vscode_askQuestions を使用する指示がある
+check_rule1_ap3_phase_selection() {
+  rule1_section | grep -q '差し戻し先フェーズ'
+}
+
+# Rule 1: ブロック報告時で vscode_askQuestions を使用する指示がある
+check_rule1_blocked_report() {
+  rule1_section | grep -q 'ブロック報告'
+}
+
+# Rule 1: オーケストレーター不確実時で vscode_askQuestions を使用する指示がある
+check_rule1_orchestrator_uncertainty() {
+  rule1_section | grep -q 'オーケストレーター不確実'
+}
+
 Describe 'Copilot SKILL.md vscode_askQuestions choice parameter guidance'
   It 'Rule 1 specifies AP1 choices for vscode_askQuestions'
     When call check_rule1_ap1_choices
@@ -53,6 +99,48 @@ Describe 'Copilot SKILL.md vscode_askQuestions choice parameter guidance'
 
   It 'Rule 3 describes vscode_askQuestions fallback for category selection'
     When call check_rule3_fallback_ask
+    The status should be success
+  End
+End
+
+Describe 'Copilot SKILL.md Rule 1: 全ユーザー対話での vscode_askQuestions 義務化'
+  It 'Rule 1 specifies vscode_askQuestions for workflow selection'
+    When call check_rule1_workflow_selection
+    The status should be success
+  End
+
+  It 'Rule 1 specifies vscode_askQuestions for WF1 category selection'
+    When call check_rule1_wf1_category
+    The status should be success
+  End
+
+  It 'Rule 1 specifies vscode_askQuestions for WF1 detail input (free text)'
+    When call check_rule1_wf1_detail_input
+    The status should be success
+  End
+
+  It 'Rule 1 specifies vscode_askQuestions for 3pt escape hatch'
+    When call check_rule1_3pt_escape_hatch
+    The status should be success
+  End
+
+  It 'Rule 1 specifies vscode_askQuestions for WF2 story selection'
+    When call check_rule1_wf2_story_selection
+    The status should be success
+  End
+
+  It 'Rule 1 specifies vscode_askQuestions for AP3 phase selection after sendback'
+    When call check_rule1_ap3_phase_selection
+    The status should be success
+  End
+
+  It 'Rule 1 specifies vscode_askQuestions for blocked report'
+    When call check_rule1_blocked_report
+    The status should be success
+  End
+
+  It 'Rule 1 specifies vscode_askQuestions for orchestrator uncertainty'
+    When call check_rule1_orchestrator_uncertainty
     The status should be success
   End
 End
