@@ -6,7 +6,7 @@ check_workflow1_stop() {
 }
 
 check_workflow1_end() {
-  grep -A 40 "## Workflow 1" "$SKILL_MD" | grep -q "END OF WORKFLOW 1"
+  grep -A 30 "## Workflow 1" "$SKILL_MD" | grep -q "END OF WORKFLOW 1"
 }
 
 check_workflow2_stop() {

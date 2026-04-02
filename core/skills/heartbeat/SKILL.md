@@ -79,14 +79,9 @@ When user enters /heartbeat:
 ## Workflow 1: Create a Story
 
 ```
-User question (2-step hybrid):
-  Step 1 - Category selection:
-    Present choices: ["Bug fix", "UX improvement", "New feature",
-                      "Performance", "Refactoring", "Other"]
-  Step 2 - Detail input:
-    After category selection, ask for a one-sentence description.
-    Example: "Bug fix" selected → "What is the issue? Describe in one sentence."
-    "Other" selected → "What problem do you want to solve? Describe in one sentence."
+User question:
+  "What user problem do you want to solve?"
+
 Phase 1 - Planning:
   pdm (hearing) → brief.md
   context-manager (investigation) → context.md
@@ -96,12 +91,10 @@ Phase 1 - Planning:
       → architect returns to pdm (action: split_story, status: rework)
       → pdm splits, redefines, or commissions spike → updated story.md
       → architect re-estimates (loop until 1-2pt or human override)
-      Human override: Present choices: ["Continue with 3pt", "Split the story"]
     If architect estimates 1-2pt:
       → proceed to approval
   Approval point: Story definition + point estimate approval
-    Present choices: ["Approve", "Send back"]
-    If "Send back" → Present reason choices: ["Scope too broad", "Acceptance criteria unclear", "Want to change priority", "Other (free text)"]
+
 Result:
   Register in backlog.jsonl with status: "ready", points: {estimate}
 
@@ -112,6 +105,7 @@ Message to user:
   "Story created (estimate: {N}pt).
    To change points, use /heartbeat-backlog.
    To implement, select 'Implement a story' from /heartbeat."
+
 END OF WORKFLOW 1 -- Do not execute any further agents.
 ```
 
@@ -130,10 +124,6 @@ Phase 2 - Design:
     input: story.md + design.md
     output: tasks.md + tasks.jsonl (only if not yet created)
     Approval: Ask user to confirm task decomposition
-      Present choices: ["Approve", "Request changes"]
-      If "Request changes":
-        Present reason choices: ["Task granularity too large", "Tasks missing",
-                                 "Want to change order", "Other (free text)"]
 
 Phase 3 - Implementation (per-test TDD cycle within per-task loop):
   For each task in tasks.jsonl (outer loop):
@@ -155,10 +145,6 @@ Phase 4 - Verification:
   qa → qa-report.md (browser verification via Playwright MCP)
   pdm → verdict.md
   Approval: Report final result to user
-    Present choices: ["Pass", "Send back"]
-    If "Send back":
-      Present phase choices: ["From design phase", "From implementation phase",
-                              "From verification phase"]
     Pass → execute Post-Completion Flow (see below)
            >>> STOP: Workflow 2 complete. Return control to user.
                Do NOT start another workflow. <<<
@@ -217,12 +203,8 @@ Update backlog.jsonl:
 ## Workflow 3: Create and Implement a Story
 
 ```
-User question (2-step hybrid):
-  Step 1 - Category selection:
-    Present choices: ["Bug fix", "UX improvement", "New feature",
-                      "Performance", "Refactoring", "Other"]
-  Step 2 - Detail input:
-    After category selection, ask for a one-sentence description.
+User question:
+  "What feature would you like to develop?"
 
 Flow:
   Execute Workflow 1 (story creation)
@@ -333,26 +315,8 @@ tester/implementer/refactor update tasks.jsonl status and timestamps during TDD 
 Read the last line of stories/{story-id}/board.jsonl to restore current state
 and resume from that point.
 
-## Question Style Guidelines
-
-すべてのユーザーへの質問は選択肢を提示して行う。
-
-### 原則
-- 選択肢は5個以下にする (max 5 choices per question)
-- 選択肢テキストは動詞始まりで統一する (verb-first)
-- 「その他 (自由記述)」は必要な場合のみ、常に最後に配置する (Other free text always last)
-- 選択肢テキストは output-language-rule.md に従いユーザーの language で表示する
-- 差し戻し・修正の理由が必要な場合は、2段階で取得する (まず意思決定、次に理由)
-
 ## Strict Rules
 - Do not override agent decisions
 - Do not make your own technical or design judgments
 - Respect each agent's persona file instructions
-- When in doubt, ask the human with choices:
-  - For blocked reports forwarded to human:
-    Show the blocked note, then present:
-    ["Clarify the spec", "Mark as out of scope",
-     "Have the agent reconsider", "Other (free text)"]
-  - For orchestrator uncertainty:
-    Present situation-specific choices (max 5).
-    Always include "Other (free text)" as the last option.
+- When in doubt, ask the human
