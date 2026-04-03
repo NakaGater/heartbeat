@@ -123,6 +123,8 @@ Phase 1 - Planning:
     If "Send back" → Present reason choices: ["Scope too broad", "Acceptance criteria unclear", "Want to change priority", "Other (free text)"]
 Result:
   Register in backlog.jsonl with status: "ready", points: {estimate}
+  Run: bash core/scripts/generate-dashboard.sh
+    (synchronous — wait for completion before proceeding)
 
 >>> STOP: Workflow 1 complete. Return control to user.
     Do NOT proceed to Workflow 2 or any other workflow. <<<
