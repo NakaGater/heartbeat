@@ -366,19 +366,56 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     });
     var iters = Object.keys(iterMap).map(Number).sort(function(a,b){return a-b;});
     if (iters.length === 0) {
-      var hasDone = (BACKLOG_DATA || []).some(function(item) {
-        return item.status === 'done';
+      // フォールバック: done+points+completed有りストーリーを週番号でグルーピング
+      var doneWithPoints = (BACKLOG_DATA || []).filter(function(item) {
+        return item.status === 'done' && item.points != null && item.completed != null;
       });
-      if (hasDone) {
-        el.innerHTML = '<div class="chart-fallback">'
-          + 'イテレーション未設定<br>'
-          + '<span style="font-size:0.85rem;line-height:1.5;">backlog.jsonl の iteration フィールドを設定してください</span>'
-          + '</div>';
-      } else {
+      if (doneWithPoints.length === 0) {
         el.innerHTML = '<div class="chart-fallback">'
           + 'データ収集中…'
           + '</div>';
+        return;
       }
+      var weekMap = {};
+      doneWithPoints.forEach(function(item) {
+        var wn = getISOWeekNumber(item.completed);
+        if (wn != null) {
+          weekMap[wn] = (weekMap[wn] || 0) + item.points;
+        }
+      });
+      var weeks = Object.keys(weekMap).map(Number).sort(function(a,b){return a-b;});
+      if (weeks.length === 0) {
+        el.innerHTML = '<div class="chart-fallback">'
+          + 'データ収集中…'
+          + '</div>';
+        return;
+      }
+      var values = weeks.map(function(w){ return weekMap[w]; });
+      var maxVal = Math.max.apply(null, values);
+      var avg = values.reduce(function(a,b){return a+b;}, 0) / values.length;
+      var barW = 40, gap = 16, padL = 40, padR = 16, padT = 16, padB = 32;
+      var w = padL + weeks.length * (barW + gap) + padR;
+      var h = 160;
+      var chartH = h - padT - padB;
+      var scale = maxVal > 0 ? chartH / (maxVal * 1.1) : 1;
+
+      var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">';
+      svg += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="1"/>';
+      svg += '<line x1="' + padL + '" y1="' + (h - padB) + '" x2="' + (w - padR) + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="1"/>';
+      weeks.forEach(function(week, i) {
+        var val = weekMap[week];
+        var barH = val * scale;
+        var x = padL + i * (barW + gap) + gap / 2;
+        var y = h - padB - barH;
+        svg += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + barH + '" fill="var(--accent)" rx="3"/>';
+        svg += '<text x="' + (x + barW / 2) + '" y="' + (y - 4) + '" text-anchor="middle" font-size="10" fill="var(--text)">' + val + '</text>';
+        svg += '<text x="' + (x + barW / 2) + '" y="' + (h - padB + 14) + '" text-anchor="middle" font-size="10" fill="var(--text-muted)">Week ' + week + '</text>';
+      });
+      var avgY = h - padB - avg * scale;
+      svg += '<line x1="' + padL + '" y1="' + avgY + '" x2="' + (w - padR) + '" y2="' + avgY + '" stroke="var(--red-border)" stroke-width="1" stroke-dasharray="4,3"/>';
+      svg += '<text x="' + (w - padR - 2) + '" y="' + (avgY - 4) + '" text-anchor="end" font-size="9" fill="var(--red-border)">avg ' + avg.toFixed(1) + '</text>';
+      svg += '</svg>';
+      el.innerHTML = svg;
       return;
     }
     var values = iters.map(function(i){ return iterMap[i]; });

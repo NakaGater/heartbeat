@@ -24,10 +24,15 @@ BACKLOG
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  It 'displays descriptive message instead of "Collecting data" when done stories have null iteration'
+  It 'displays week-based fallback chart when done stories have null iteration but completed dates'
+    # Add completed dates so the week-based fallback activates
+    cat > "$TEST_HEARTBEAT/backlog.jsonl" <<'BACKLOG'
+{"story_id":"story-a","title":"Story A","status":"done","priority":1,"points":2,"iteration":null,"completed":"2026-01-05"}
+{"story_id":"story-b","title":"Story B","status":"done","priority":2,"points":1,"iteration":null,"completed":"2026-01-12"}
+BACKLOG
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
-    The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'イテレーション未設定'
+    The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'Week'
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should not include 'Collecting data'
   End
 End
