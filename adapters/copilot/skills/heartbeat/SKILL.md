@@ -352,14 +352,14 @@ and resume from that point.
 
 ## Question Style Guidelines
 
-すべてのユーザーへの質問は選択肢を提示して行う。
+All questions to users must be presented with choices.
 
-### 原則
-- 選択肢は5個以下にする (max 5 choices per question)
-- 選択肢テキストは動詞始まりで統一する (verb-first)
-- 「その他 (自由記述)」は必要な場合のみ、常に最後に配置する (Other free text always last)
-- 選択肢テキストは output-language-rule.md に従いユーザーの language で表示する
-- 差し戻し・修正の理由が必要な場合は、2段階で取得する (まず意思決定、次に理由)
+### Principles
+- Keep choices to 5 or fewer (max 5 choices per question)
+- Use verb-first style for all choice text (verb-first)
+- Include "Other (free text)" only when needed; always place it as the last option
+- Display choice text in the user's language, following output-language-rule.md
+- When rejection/revision reasons are needed, collect in two steps (decision first, then reason)
 
 ## Strict Rules
 - Do not override agent decisions
