@@ -954,8 +954,8 @@ Describe 'auto-commit.sh'
       End
     End
 
-    # Task 4, CC2: main() scope is based on file paths (not story ID from board.jsonl)
-    Describe 'CC2: scope is derived from file paths, not board.jsonl story ID'
+    # Task 4, CC2: main() scope is story-id from board.jsonl (priority over file paths)
+    Describe 'CC2: scope is story-id from board.jsonl, not file paths'
       setup() {
         TMPDIR_T4W2=$(mktemp -d)
         git init "$TMPDIR_T4W2" >/dev/null 2>&1
@@ -989,9 +989,9 @@ Describe 'auto-commit.sh'
         git -C "$TMPDIR_T4W2" log -1 --format=%s | sed 's/^[^(]*(\([^)]*\)).*/\1/'
       }
 
-      It 'uses scope "auto-commit" from file path, not "wrong-story" from board.jsonl'
+      It 'uses scope "wrong-story" from board.jsonl, not "auto-commit" from file path'
         When call run_main_scope_test
-        The output should equal "auto-commit"
+        The output should equal "wrong-story"
         The status should be success
       End
     End

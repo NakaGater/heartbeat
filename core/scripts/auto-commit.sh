@@ -358,7 +358,10 @@ main() {
 
   local type scope desc msg
   type=$(get_type_from_diff)
-  scope=$(get_scope_from_diff)
+  scope=$(get_story_scope)
+  if [ -z "$scope" ]; then
+    scope=$(get_scope_from_diff)
+  fi
   desc=$(get_description_from_diff)
 
   msg=$(format_commit_message "$type" "$scope" "$desc")
