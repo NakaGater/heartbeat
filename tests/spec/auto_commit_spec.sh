@@ -1322,4 +1322,52 @@ Describe 'auto-commit.sh'
       End
     End
   End
+
+  # Story: commit-scope-storyid, Task 1: main() は get_story_scope() を優先し、空の場合 get_scope_from_diff() にフォールバックする
+  Describe 'main() story scope priority (commit-scope-storyid)'
+
+    # Task 1, CC1: board.jsonl が存在する場合、スコープがストーリーIDになる
+    Describe 'CC1: scope is story-id when board.jsonl exists'
+      setup() {
+        TMPDIR_SS1=$(mktemp -d)
+        git init "$TMPDIR_SS1" >/dev/null 2>&1
+        git -C "$TMPDIR_SS1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # Pre-commit board.jsonl so get_story_scope() returns "my-active-story"
+        mkdir -p "$TMPDIR_SS1/.heartbeat/stories/my-active-story"
+        echo '{"from":"tester","note":"test note"}' \
+          > "$TMPDIR_SS1/.heartbeat/stories/my-active-story/board.jsonl"
+        git -C "$TMPDIR_SS1" add -A >/dev/null 2>&1
+        git -C "$TMPDIR_SS1" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit -m "add board" --no-verify >/dev/null 2>&1
+        # Create a test file -- get_scope_from_diff() would return "tests"
+        # but get_story_scope() should return "my-active-story" and take priority
+        mkdir -p "$TMPDIR_SS1/tests/spec"
+        echo 'test content' > "$TMPDIR_SS1/tests/spec/example_spec.sh"
+        echo 'test content2' > "$TMPDIR_SS1/tests/spec/another_spec.sh"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SS1"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SS1"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_story_scope() {
+        echo '' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        # Extract scope from commit message: type(SCOPE): desc
+        git -C "$TMPDIR_SS1" log -1 --format=%s | sed 's/^[^(]*(\([^)]*\)).*/\1/'
+      }
+
+      It 'uses story-id "my-active-story" as scope instead of "tests" from file paths'
+        When call run_main_story_scope
+        The output should equal "my-active-story"
+        The status should be success
+      End
+    End
+  End
 End
