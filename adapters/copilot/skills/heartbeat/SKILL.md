@@ -76,6 +76,12 @@ When user enters /heartbeat:
   📝 oauth: Google login (points not set)
 ```
 
+## Approval Rules
+
+All "Present choices" instructions MUST use vscode_askQuestions with
+selectable options. Never present approval points as free-text questions.
+This ensures a consistent, low-friction approval UX.
+
 ## Workflow 1: Create a Story
 
 ```

@@ -77,6 +77,24 @@ When user enters /heartbeat:
   📝 oauth: Google login (points not set)
 ```
 
+## Approval Rules
+
+All "Present choices" instructions MUST use the AskUserQuestion tool with
+options (label + description). Never present approval points as free-text
+questions. This ensures a consistent, low-friction approval UX.
+
+Example:
+```
+AskUserQuestion(
+  question: "ストーリー定義を承認しますか？",
+  header: "Approval",
+  options: [
+    {label: "承認する (Recommended)", description: "バックログに登録して次へ進む"},
+    {label: "修正が必要", description: "PdMに差し戻して再定義"}
+  ]
+)
+```
+
 ## Workflow 1: Create a Story
 
 ```
