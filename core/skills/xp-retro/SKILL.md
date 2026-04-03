@@ -4,6 +4,7 @@ description: >
   Run a retrospective and display learning insights.
   Aggregates patterns from past retrospectives and shows trends.
   Triggers on: "retro", "retrospective", "insights", "learnings"
+allowed-tools: Read, Bash, Grep, Glob
 ---
 
 ## Your Role

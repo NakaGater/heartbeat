@@ -4,6 +4,7 @@ description: >
   Manage the backlog. Change story points, priorities,
   or iteration assignments.
   Triggers on: "points", "priority", "backlog", "iteration"
+allowed-tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
 ## Your Role

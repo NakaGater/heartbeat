@@ -4,6 +4,7 @@ description: >
   Launch ad-hoc browser testing with the QA agent.
   Uses Playwright MCP for real browser verification.
   Triggers on: "browser test", "qa", "playwright", "verify in browser"
+allowed-tools: Agent, Read, Bash, Grep, mcp__playwright
 ---
 
 ## Your Role

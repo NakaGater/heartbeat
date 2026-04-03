@@ -4,6 +4,7 @@ description: >
   Display XP values and practices reference.
   Provides contextual guidance on XP principles for the current situation.
   Triggers on: "xp", "values", "practices", "principles"
+allowed-tools: Read, Grep, Glob
 ---
 
 ## Your Role

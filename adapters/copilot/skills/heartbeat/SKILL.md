@@ -116,10 +116,6 @@ Result:
 >>> STOP: Workflow 1 complete. Return control to user.
     Do NOT proceed to Workflow 2 or any other workflow. <<<
 
-Message to user:
-  "Story created (estimate: {N}pt).
-   To change points, use /heartbeat-backlog.
-   To implement, select 'Implement a story' from /heartbeat."
 END OF WORKFLOW 1 -- Do not execute any further agents.
 ```
 

@@ -4,6 +4,7 @@ description: >
   Launch the Heartbeat XP agent team. Entry point for all development work
   including story creation, implementation, and backlog management.
   Triggers on: "develop", "build", "create", "heartbeat"
+allowed-tools: Agent, Read, Write, Edit, Bash, Grep, Glob
 ---
 
 ## Your Role
