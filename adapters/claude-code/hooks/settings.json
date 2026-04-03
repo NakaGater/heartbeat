@@ -39,6 +39,11 @@
           },
           {
             "type": "command",
+            "command": "./core/scripts/generate-dashboard.sh",
+            "async": true
+          },
+          {
+            "type": "command",
             "command": "./core/scripts/auto-commit.sh"
           }
         ]
