@@ -270,6 +270,10 @@ Flow:
 
   Note: Point estimates from architect can be adjusted as actuals
   by human via /heartbeat-backlog after implementation.
+
+  Note: The status lifecycle (draft → ready → in_progress → done) is
+  inherited from Workflow 1 and Workflow 2. Workflow 1 handles
+  draft → ready, and Workflow 2 handles in_progress → done.
 ```
 
 ## Agent Startup Method
