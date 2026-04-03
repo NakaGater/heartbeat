@@ -462,7 +462,7 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     }
     // All agents from AGENT_COLORS (excluding human/orchestrator)
     var agents = Object.keys(AGENT_COLORS).filter(function(a) {
-      return a !== 'human' && a !== 'orchestrator';
+      return a !== 'human';
     });
 
     var tMin = new Date(entries[0].timestamp).getTime();
