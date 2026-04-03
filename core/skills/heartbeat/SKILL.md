@@ -106,6 +106,11 @@ User question (2-step hybrid):
     After category selection, ask for a one-sentence description.
     Example: "Bug fix" selected → "What is the issue? Describe in one sentence."
     "Other" selected → "What problem do you want to solve? Describe in one sentence."
+Phase 0 - Draft registration:
+  Register in backlog.jsonl with status: "draft", points: null,
+    title: "{user's one-sentence description}", created: current ISO 8601
+  Run: bash core/scripts/generate-dashboard.sh
+    (synchronous — wait for completion before proceeding)
 Phase 1 - Planning:
   pdm (hearing) → brief.md
   context-manager (investigation) → context.md
@@ -122,7 +127,7 @@ Phase 1 - Planning:
     Present choices: ["Approve", "Send back"]
     If "Send back" → Present reason choices: ["Scope too broad", "Acceptance criteria unclear", "Want to change priority", "Other (free text)"]
 Result:
-  Register in backlog.jsonl with status: "ready", points: {estimate}
+  Update backlog.jsonl entry: status -> "ready", points: {estimate}
   Run: bash core/scripts/generate-dashboard.sh
     (synchronous — wait for completion before proceeding)
 
