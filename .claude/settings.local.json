@@ -1,6 +1,6 @@
 {
-  "defaultMode": "auto",
   "permissions": {
+    "defaultMode": "auto",
     "allow": [
       "Bash(git *)",
       "Bash(curl *)",
@@ -21,12 +21,16 @@
       "Bash(head *)",
       "Bash(tail *)",
       "Bash(echo *)",
+      "Bash(printf *)",
       "Bash(sed *)",
       "Bash(date *)",
       "Bash(sort *)",
       "Bash(find *)",
       "Bash(gh *)",
       "Bash(npx *)",
+      "Bash(bash *)",
+      "Bash(while *)",
+      "Bash(for *)",
       "WebFetch(domain:docs.github.com)",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:www.makeareadme.com)",
