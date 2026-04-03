@@ -36,6 +36,7 @@ esac
 # Scan all lines: fill empty timestamps, preserve valid ones.
 # Safety net only — valid timestamps are never overwritten.
 ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+now_epoch=$(date "+%s")
 tmp_file=$(mktemp)
 has_empty=0
 
@@ -55,7 +56,6 @@ while IFS= read -r line || [ -n "$line" ]; do
     # Future timestamp detection
     cur_epoch=$(date -j -f "%Y-%m-%dT%H:%M:%SZ" "$cur_ts" "+%s" 2>/dev/null \
       || date -d "$cur_ts" "+%s" 2>/dev/null)
-    now_epoch=$(date "+%s")
     if [ -n "$cur_epoch" ] && [ "$cur_epoch" -gt "$now_epoch" ]; then
       echo "WARNING: future timestamp detected in $file_path: $cur_ts" >&2
     fi
