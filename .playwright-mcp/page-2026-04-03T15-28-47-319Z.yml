@@ -1,0 +1,162 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Heartbeat Dashboard" [level=1] [ref=e4]
+    - button "🔄" [ref=e6] [cursor=pointer]
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]: 📋 Backlog Board
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Draft
+          - generic [ref=e13]: —
+        - generic [ref=e14]:
+          - generic [ref=e15]: Ready
+          - generic [ref=e16]:
+            - generic [ref=e17]: 複数ストーリー並行実装 (git worktree)
+            - generic [ref=e18]: 3 pts
+        - generic [ref=e19]:
+          - generic [ref=e20]: In Progress
+          - generic [ref=e21]:
+            - generic [ref=e22]: DashboardのストーリーIn Progress遷移タイミングの遅延
+            - generic [ref=e23]: 1 pts
+        - generic [ref=e24]:
+          - generic [ref=e25]: Done
+          - generic [ref=e26]:
+            - generic [ref=e27]: コミットメッセージのスコープをstoryIdに統一
+            - generic [ref=e28]: 1 pts
+          - generic [ref=e29]:
+            - generic [ref=e30]: Dashboard Backlog・Current Story表示不具合の修正
+            - generic [ref=e31]: 1 pts
+          - generic [ref=e32]:
+            - generic [ref=e33]: Dashboardの更新タイミングがタイムリーでない（エージェント遷移の表示遅延）
+            - generic [ref=e34]: 1 pts
+          - button "他 33 件を表示" [ref=e35] [cursor=pointer]
+    - generic [ref=e36]:
+      - generic [ref=e37]: 📊 Velocity Chart
+      - generic [ref=e39]:
+        - text: イテレーション未設定
+        - generic [ref=e40]: backlog.jsonl の iteration フィールドを設定してください
+  - generic [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e43]: 🔄 Current Story
+      - combobox [ref=e44]:
+        - option "agent-skill-i18n-fix"
+        - option "ask-user-enforcement"
+        - option "ask-user-tool-fix"
+        - option "auto-commit-broken"
+        - option "auto-commit-fix"
+        - option "backlog-display-collapse"
+        - option "board-cleanup"
+        - option "claude-subagent-dispatch"
+        - option "commit-message-accuracy"
+        - option "commit-scope-storyid"
+        - option "copilot-hooks-fix"
+        - option "copilot-hooks"
+        - option "copilot-request-optimization"
+        - option "copilot-subagent-dispatch"
+        - option "copilot-tools"
+        - option "dashboard-backlog-current-fix"
+        - option "dashboard-backlog-sync"
+        - option "dashboard-current-story"
+        - option "dashboard-data-display"
+        - option "dashboard-done-collapse"
+        - option "dashboard-fix"
+        - option "dashboard-gantt-fix"
+        - option "dashboard-inprogress-timing" [selected]
+        - option "dashboard-status-sync"
+        - option "dashboard-timestamp-empty"
+        - option "dashboard-timestamp"
+        - option "dashboard-update-timing"
+        - option "gantt-timestamp-accuracy"
+        - option "gantt-timestamp-overwrite"
+        - option "i18n-docs"
+        - option "parallel-stories"
+        - option "plugin-config-cleanup"
+        - option "point-criteria"
+        - option "qa-playwright-hang"
+        - option "readable-commits"
+        - option "retro-enforcement"
+        - option "selective-questions"
+        - option "tdd-workflow"
+        - option "workflow-boundary"
+        - option "workflow-fix"
+    - img [ref=e46]:
+      - generic [ref=e48]: pdm
+      - generic [ref=e49]: context-manager
+      - generic [ref=e51]: designer
+      - generic [ref=e52]: architect
+      - generic [ref=e54]: tester
+      - generic [ref=e55]: implementer
+      - generic [ref=e57]: refactor
+      - generic [ref=e58]: reviewer
+      - generic [ref=e60]: qa
+      - generic [ref=e61]: orchestrator
+      - generic [ref=e62]: 4月4日 00:06
+      - generic [ref=e63]: 4月4日 00:09
+      - generic [ref=e64]: 4月4日 00:13
+      - generic [ref=e65]: 4月4日 00:16
+      - generic [ref=e66]: 4月4日 00:19
+      - generic [ref=e67]: 4月4日 00:23
+      - generic "pdm / hearing_done / 2026-04-03T15:06:22Z" [ref=e68]
+      - generic "context-manager / investigation_done / 2026-04-03T15:07:30Z" [ref=e70]
+      - generic "pdm / story_defined / 2026-04-03T15:09:01Z" [ref=e72]
+      - generic "architect / tasks_defined / 2026-04-03T15:10:20Z" [ref=e74]
+      - generic "designer / design_done / 2026-04-03T15:12:59Z" [ref=e76]
+      - generic "tester / make_green / 2026-04-03T15:15:17Z" [ref=e78]
+      - generic "implementer / implement / 2026-04-03T15:19:08Z" [ref=e80]
+      - generic "refactor / refactor_done / 2026-04-03T15:20:57Z" [ref=e82]
+      - generic "reviewer / review_done / 2026-04-03T15:23:12Z" [ref=e84]
+    - generic [ref=e86]: Tasks
+    - generic [ref=e87]:
+      - generic [ref=e88]: ✅ SKILL.md Workflow 3 に明示的な in_progress 更新指示を追加
+      - generic [ref=e89]: ✅ Workflow 3 の Note（status lifecycle）の整合性確認・更新
+      - generic [ref=e90]: ✅ 構造テストの追加
+      - generic [ref=e91]: ✅ 回帰テストの実行と確認
+  - generic [ref=e92]:
+    - generic [ref=e93]: 💬 Agent Messages
+    - generic [ref=e94]:
+      - generic [ref=e96]:
+        - generic [ref=e97]: pdm
+        - generic [ref=e98]: hearing_done → context-manager
+        - generic [ref=e99]: ヒアリング完了、コンテキスト調査を依頼
+        - generic [ref=e100]: 4月4日 00:06
+      - generic [ref=e102]:
+        - generic [ref=e103]: context-manager
+        - generic [ref=e104]: investigation_done → pdm
+        - generic [ref=e105]: コンテキスト調査完了
+        - generic [ref=e106]: 4月4日 00:07
+      - generic [ref=e108]:
+        - generic [ref=e109]: pdm
+        - generic [ref=e110]: story_defined → architect
+        - generic [ref=e111]: ストーリー定義完了、タスク分解を依頼
+        - generic [ref=e112]: 4月4日 00:09
+      - generic [ref=e114]:
+        - generic [ref=e115]: architect
+        - generic [ref=e116]: tasks_defined → orchestrator
+        - generic [ref=e117]: "タスク分解完了、見積もり: 1pt"
+        - generic [ref=e118]: 4月4日 00:10
+      - generic [ref=e120]:
+        - generic [ref=e121]: designer
+        - generic [ref=e122]: design_done → architect
+        - generic [ref=e123]: 設計完了。Workflow 3のFlowセクションにin_progress更新指示を追加する設計。変更箇所の前後テキストと根拠を記載済み
+        - generic [ref=e124]: 4月4日 00:12
+      - generic [ref=e126]:
+        - generic [ref=e127]: tester
+        - generic [ref=e128]: make_green → implementer
+        - generic [ref=e129]: "Test 1/1 for task 1: Workflow 3セクションにin_progress更新指示とgenerate-dashboard.sh呼び出しが存在すること（6テスト中4失敗）。実装を依頼。"
+        - generic [ref=e130]: 4月4日 00:15
+      - generic [ref=e132]:
+        - generic [ref=e133]: implementer
+        - generic [ref=e134]: implement → refactor
+        - generic [ref=e135]: テスト全件パス（Green）、リファクタリングを依頼
+        - generic [ref=e136]: 4月4日 00:19
+      - generic [ref=e138]:
+        - generic [ref=e139]: refactor
+        - generic [ref=e140]: refactor_done → tester
+        - generic [ref=e141]: リファクタリング完了、変更不要と判断。254テスト全件パス。次のタスクへ
+        - generic [ref=e142]: 4月4日 00:20
+      - generic [ref=e144]:
+        - generic [ref=e145]: reviewer
+        - generic [ref=e146]: review_done → qa
+        - generic [ref=e147]: レビュー完了、QA検証を依頼
+        - generic [ref=e148]: 4月4日 00:23
