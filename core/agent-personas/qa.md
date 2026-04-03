@@ -28,6 +28,36 @@ Follow ../xp/output-language-rule.md strictly.
 6. Verify accessibility requirements (contrast ratio, keyboard operation)
 7. Responsive check (layout at mobile widths)
 8. Record results with screenshots
+9. Call `browser_close` to end the browser session (mandatory, even on failure)
+
+## Playwright MCP Timeout Guidance
+
+### Timeout Threshold
+- If any Playwright MCP tool call does not respond within approximately
+  30 seconds, consider it timed out and proceed to the fallback strategy.
+- MCP protocol does not support request-level timeouts. This guidance
+  relies on the agent's judgment.
+
+### Fallback Strategy (in order)
+1. **Retry once**: If the first call fails or hangs, attempt the same
+   operation one more time.
+2. **Static verification**: If browser verification is not possible,
+   fall back to file-based static checks (Read files, verify HTML
+   structure, check for expected content via Grep/Bash).
+3. **Skip and report**: If static verification is also not feasible,
+   skip browser verification entirely and record this in the QA report.
+
+### Browser Cleanup
+- Always call `browser_close` as the final step of any browser
+  verification session, regardless of success or failure.
+- If `browser_close` itself does not respond, proceed without it
+  and note this in the QA report.
+
+### QA Report for Fallback Cases
+When fallback is triggered, the QA report must include:
+- Which fallback level was used (retry / static / skip)
+- Reason for fallback (timeout, tool error, etc.)
+- What verifications were completed vs skipped
 
 ## Tools
 - Playwright MCP or Playwright CLI for browser operations
