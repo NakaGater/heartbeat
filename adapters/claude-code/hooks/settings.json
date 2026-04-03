@@ -2,12 +2,7 @@
   "hooks": {
     "SubagentStart": [
       {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./core/scripts/board-stamp.sh"
-          }
-        ]
+        "hooks": []
       }
     ],
     "PostToolUse": [
