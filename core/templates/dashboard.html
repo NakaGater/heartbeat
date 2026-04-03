@@ -341,6 +341,19 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     el.innerHTML = html;
   }
 
+  // ── ISO 8601 Week Number Helper ──
+  function getISOWeekNumber(dateStr) {
+    if (dateStr == null) return null;
+    var d = new Date(dateStr + 'T00:00:00');
+    if (isNaN(d.getTime())) return null;
+    d.setHours(0, 0, 0, 0);
+    var dayOfWeek = d.getDay() || 7;
+    d.setDate(d.getDate() + 4 - dayOfWeek);
+    var yearStart = new Date(d.getFullYear(), 0, 1);
+    var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+    return weekNo;
+  }
+
   // ── Velocity Chart ──
   function renderVelocity() {
     var el = document.getElementById('velocity-chart');
