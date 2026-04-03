@@ -321,13 +321,16 @@ Each subagent is responsible for:
 
 5. Verify retro.jsonl contains a new entry with the subagent's name.
    If missing, re-invoke the subagent to complete retrospective.
-6. Check current workflow context:
+6. Update dashboard to reflect latest agent transition:
+   Run: bash core/scripts/generate-dashboard.sh
+     (synchronous — wait for completion before proceeding)
+7. Check current workflow context:
    - If executing Workflow 1: After Phase 1 completes, STOP. Do not proceed.
    - If executing Workflow 2: After Phase 4 Pass + Post-Completion, STOP.
    - If executing Workflow 3: After Phase 1 completes, transition to Phase 2.
      After Phase 4 Pass + Post-Completion, STOP.
-7. Determine next action based on last stories/{story-id}/board.jsonl entry
-   (only if not stopped by step 6)
+8. Determine next action based on last stories/{story-id}/board.jsonl entry
+   (only if not stopped by step 7)
 
 ## State Management
 

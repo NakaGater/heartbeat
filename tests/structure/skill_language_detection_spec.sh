@@ -11,7 +11,8 @@ check_claude_code_skill_steps_are_sequential_1_to_7() {
   [ -f "$skill_file" ] || return 1
 
   # After subagent dispatch rewrite, responsibilities are split:
-  # Subagent (1-4) and Orchestrator (5-7) = 7 sequential steps.
+  # Subagent (1-4) and Orchestrator (5-8) = 8 sequential steps.
+  # (Step 6: dashboard update was added in dashboard-update-timing story)
   section=$(sed -n '/^## Agent Startup Method$/,/^## /{ /^## /d; p; }' "$skill_file")
 
   step_numbers=$(echo "$section" | grep -E '^[0-9]+\.' | sed 's/^\([0-9]*\)\..*/\1/')
@@ -22,7 +23,8 @@ check_claude_code_skill_steps_are_sequential_1_to_7() {
 4
 5
 6
-7"
+7
+8"
 
   [ "$step_numbers" = "$expected" ] || return 1
 }
@@ -46,7 +48,7 @@ Describe 'SKILL.md language detection step'
     The status should be success
   End
 
-  It 'when checking step numbers in claude-code SKILL.md Agent Startup Method, should be sequential 1 through 7'
+  It 'when checking step numbers in claude-code SKILL.md Agent Startup Method, should be sequential 1 through 8'
     When call check_claude_code_skill_steps_are_sequential_1_to_7
     The status should be success
   End
