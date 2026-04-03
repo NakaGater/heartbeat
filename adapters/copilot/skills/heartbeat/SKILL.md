@@ -197,9 +197,10 @@ For each entry in stories/{story-id}/retro.jsonl:
 Then run core/scripts/insights-aggregate.sh
   → regenerates .heartbeat/retrospectives/insights.md from log.jsonl
 
-**Checkpoint**: Append to stories/{story-id}/board.jsonl:
-```json
-{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "retro-transfer", "status": "done", "note": "Post-Completion Step 1 complete", "timestamp": ""}
+**Checkpoint**: Write to stories/{story-id}/board.jsonl via `board-write.sh`:
+```bash
+echo '{"from":"orchestrator","to":"orchestrator","action":"checkpoint","output":"retro-transfer","status":"done","note":"Post-Completion Step 1 complete","timestamp":""}' \
+  | bash core/scripts/board-write.sh .heartbeat/stories/{story-id}/board.jsonl
 ```
 
 ### Step 2: Update knowledge base
@@ -210,9 +211,10 @@ context-manager will:
   - Update only changed files in .heartbeat/knowledge/
   - Do NOT rescan the entire repository (diff-only)
 
-**Checkpoint**: Append to stories/{story-id}/board.jsonl:
-```json
-{"from": "orchestrator", "to": "orchestrator", "action": "checkpoint", "output": "knowledge-update", "status": "done", "note": "Post-Completion Step 2 complete", "timestamp": ""}
+**Checkpoint**: Write to stories/{story-id}/board.jsonl via `board-write.sh`:
+```bash
+echo '{"from":"orchestrator","to":"orchestrator","action":"checkpoint","output":"knowledge-update","status":"done","note":"Post-Completion Step 2 complete","timestamp":""}' \
+  | bash core/scripts/board-write.sh .heartbeat/stories/{story-id}/board.jsonl
 ```
 
 ### Step 3: Finalize story
@@ -288,9 +290,12 @@ Each subagent is responsible for:
 2. Saving artifacts to .heartbeat/stories/{story-id}/
 3. Conducting retrospective per core/xp/retrospective-template.md and appending to
    stories/{story-id}/retro.jsonl
-4. Appending entry to stories/{story-id}/board.jsonl with all required fields:
-   Required fields: from, to, action, output, status, note, timestamp
-   - timestamp: Write an empty string `""`. The SubagentStart/SubagentStop hooks automatically inject accurate UTC timestamps via `board-stamp.sh` (auto-injected by hook). Do not fabricate a time value.
+4. Appending entry to stories/{story-id}/board.jsonl via `board-write.sh`:
+   The `"timestamp"` field is auto-injected by `board-write.sh` (auto-injected by hook). Do not set it manually.
+   ```bash
+   echo '{"from":"agent-name","to":"next-agent",...,"timestamp":""}' \
+     | bash core/scripts/board-write.sh .heartbeat/stories/{story-id}/board.jsonl
+   ```
    - note: follows output-language-rule.md (write in user's language)
 
 ### Orchestrator responsibilities (after subagent returns)

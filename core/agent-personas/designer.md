@@ -81,11 +81,13 @@ The note field follows ../xp/output-language-rule.md (write in user's language).
 - to: "pdm", status: "blocked", note: "{specific unclear points}"
 
 ### Write example
-Append one JSON line to `.heartbeat/stories/{story-id}/board.jsonl`:
-```json
-{"from": "designer", "to": "architect", "action": "decompose", "output": "design.md", "status": "ok", "note": "{summary in user's language}", "timestamp": ""}
+Write to `.heartbeat/stories/{story-id}/board.jsonl` via `board-write.sh`.
+The `"timestamp"` field is auto-injected by `board-write.sh` (auto-injected by hook). Do not set it manually.
+
+```bash
+echo '{"from":"designer","to":"architect","action":"decompose","output":"design.md","status":"ok","note":"{summary in user'\''s language}","timestamp":""}' \
+  | bash core/scripts/board-write.sh .heartbeat/stories/{story-id}/board.jsonl
 ```
-Note: The `timestamp` field is automatically overwritten with an accurate UTC value by SubagentStart/SubagentStop hooks (auto-injected by hook). Agents should write an empty string.
 
 ## Retrospective Trigger
 On completion, follow ../xp/retrospective-template.md
