@@ -40,17 +40,12 @@ Describe 'board-stamp.sh'
   timestamp_is_recent() { assert_timestamp_recent "$TEST_BOARD_FILE"; }
 
   Describe 'Normal cases'
-    It 'overwrites placeholder timestamp with current system time'
+    It 'preserves valid timestamp (no-op for already-stamped entries)'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
       The contents of file "$TEST_BOARD_FILE" should include '"timestamp"'
-      The contents of file "$TEST_BOARD_FILE" should not include '2026-01-01T00:00:00Z'
-    End
-
-    It 'injects a timestamp within 5 seconds of actual system time'
-      When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
-      The status should be success
-      Assert timestamp_is_recent
+      # Valid timestamps are never overwritten (design principle: timestamp immutability)
+      The contents of file "$TEST_BOARD_FILE" should include '2026-01-01T00:00:00Z'
     End
 
     It 'adds timestamp field when last line has no timestamp'
@@ -61,11 +56,17 @@ Describe 'board-stamp.sh'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
       The contents of file "$TEST_BOARD_FILE" should include '"timestamp"'
+      Assert timestamp_is_recent
     End
 
-    It 'replaces fabricated placeholder with actual current time'
+    It 'fills empty-string timestamp with current time'
+      setup_empty_ts() {
+        echo '{"from":"tester","to":"implementer","action":"make_green","status":"ok","note":"empty ts","timestamp":""}' > "$TEST_BOARD_FILE"
+      }
+      BeforeCall 'setup_empty_ts'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
+      The contents of file "$TEST_BOARD_FILE" should not include '"timestamp":""'
       Assert timestamp_is_recent
     End
   End
@@ -121,19 +122,30 @@ Describe 'board-stamp.sh'
     # SubagentStop の stdin は file_path を含まない JSON
     # （例: {"event":"SubagentStop","subagent_id":"..."}）
 
-    It 'overwrites timestamp of most recently modified board.jsonl last line'
+    It 'preserves valid timestamps in most recently modified board.jsonl (no-op)'
       When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
       The status should be success
-      # story-beta が最新のため、そのタイムスタンプが上書きされるべき
-      The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should not include '2026-02-01T00:00:00Z'
+      # 有効なタイムスタンプは上書きされない（設計原則: タイムスタンプ不変性）
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should include '2026-02-01T00:00:00Z'
     End
 
-    It 'injects accurate ISO 8601 UTC timestamp within 5 seconds of system time'
+    It 'fills empty timestamp in most recently modified board.jsonl'
+      setup_empty_ts_beta() {
+        # story-beta に空タイムスタンプのエントリを追加
+        echo '{"from":"implementer","to":"tester","action":"test","status":"ok","note":"empty","timestamp":""}' \
+          >> "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
+      }
+      BeforeCall 'setup_empty_ts_beta'
       timestamp_is_recent_for() {
+        # 最終行（追加した空TS行）が補完されているか
         assert_timestamp_recent "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
       }
       When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
       The status should be success
+      # 空タイムスタンプが補完される
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should not include '"timestamp":""'
+      # 元の有効タイムスタンプは保持される
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should include '2026-02-01T00:00:00Z'
       Assert timestamp_is_recent_for
     End
 
@@ -186,18 +198,28 @@ Describe 'board-stamp.sh'
     BeforeEach 'setup_subagent_start'
     AfterEach 'cleanup_subagent_start'
 
-    It 'overwrites timestamp when called from SubagentStart context'
+    It 'preserves valid timestamp in SubagentStart context (no-op)'
       When call run_board_stamp '{"event":"SubagentStart","subagent_id":"sub-789"}'
       The status should be success
-      The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should not include '2026-03-01T00:00:00Z'
+      # 有効なタイムスタンプは SubagentStart でも上書きされない
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should include '2026-03-01T00:00:00Z'
     End
 
-    It 'injects accurate timestamp in SubagentStart context'
+    It 'fills empty timestamp in SubagentStart context'
+      setup_empty_ts_start() {
+        echo '{"from":"tester","to":"implementer","action":"test","status":"ok","note":"empty","timestamp":""}' \
+          >> "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl"
+      }
+      BeforeCall 'setup_empty_ts_start'
       timestamp_is_recent_start() {
         assert_timestamp_recent "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl"
       }
       When call run_board_stamp '{"event":"SubagentStart","subagent_id":"sub-789"}'
       The status should be success
+      # 空タイムスタンプが補完される
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should not include '"timestamp":""'
+      # 元の有効タイムスタンプは保持される
+      The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should include '2026-03-01T00:00:00Z'
       Assert timestamp_is_recent_start
     End
   End
@@ -229,14 +251,26 @@ Describe 'board-stamp.sh'
     End
   End
 
-  Describe 'PostToolUse backward compatibility'
-    # 既存の PostToolUse パス（file_path あり）が引き続き正常動作することを確認
+  Describe 'PostToolUse safety net'
+    # PostToolUse パス（file_path あり）で安全網として正常動作することを確認
 
-    It 'still overwrites timestamp via file_path path'
+    It 'preserves valid timestamp via file_path path (no-op)'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
-      The contents of file "$TEST_BOARD_FILE" should not include '2026-01-01T00:00:00Z'
-      Assert timestamp_is_recent
+      # 有効なタイムスタンプは保持される
+      The contents of file "$TEST_BOARD_FILE" should include '2026-01-01T00:00:00Z'
+    End
+
+    It 'fills empty timestamp via file_path path'
+      setup_empty_ts_post() {
+        echo '{"from":"tester","to":"implementer","action":"test","status":"ok","note":"empty","timestamp":""}' >> "$TEST_BOARD_FILE"
+      }
+      BeforeCall 'setup_empty_ts_post'
+      When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
+      The status should be success
+      The contents of file "$TEST_BOARD_FILE" should not include '"timestamp":""'
+      # 既存行の有効タイムスタンプも保持される
+      The contents of file "$TEST_BOARD_FILE" should include '2026-01-01T00:00:00Z'
     End
   End
 End

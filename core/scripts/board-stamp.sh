@@ -1,5 +1,5 @@
 #!/bin/bash
-# Inject accurate UTC timestamp into last line of board.jsonl
+# Safety net: fill empty timestamps in board.jsonl (valid ones are never overwritten).
 # Called by PostToolUse, SubagentStart, and SubagentStop hooks.
 # - PostToolUse: uses tool_input.file_path from stdin to locate the file.
 # - SubagentStart/SubagentStop: no file_path; finds the most recently
@@ -34,8 +34,7 @@ esac
 [ -f "$file_path" ] || exit 0
 
 # Scan all lines: fill empty timestamps, preserve valid ones.
-# If no empty timestamps found, fall back to overwriting last line
-# (backward compatibility for hooks that expect timestamp refresh).
+# Safety net only — valid timestamps are never overwritten.
 ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 tmp_file=$(mktemp)
 has_empty=0
@@ -60,20 +59,6 @@ done < "$file_path"
 if [ "$has_empty" -eq 1 ]; then
   # Had empty timestamps — write back the filled version
   cat "$tmp_file" > "$file_path"
-else
-  # No empty timestamps found — backward-compatible last-line overwrite
-  rm -f "$tmp_file"
-  last_line=$(tail -1 "$file_path")
-  [ -z "$last_line" ] && exit 0
-  new_last_line=$(echo "$last_line" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' 2>/dev/null)
-  [ -z "$new_last_line" ] && exit 0
-  if sed --version 2>/dev/null | grep -q GNU; then
-    sed -i '$d' "$file_path"
-  else
-    sed -i '' '$d' "$file_path"
-  fi
-  echo "$new_last_line" >> "$file_path"
-  exit 0
 fi
 rm -f "$tmp_file"
 
