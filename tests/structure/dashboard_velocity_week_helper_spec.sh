@@ -41,6 +41,18 @@ check_null_input_returns_null() {
   return $?
 }
 
+# QA差し戻し: ISO 8601 完全日時文字列 (例: "2026-03-29T00:00:00Z") を渡したとき
+# 有効な週番号を返す（null ではない）
+check_iso_datetime_returns_week_number() {
+  command -v node >/dev/null 2>&1 || return 1
+  local func
+  func=$(sed -n '/function getISOWeekNumber/,/^  }/p' "$DASHBOARD")
+  [ -z "$func" ] && return 1
+  local result
+  result=$(node -e "${func}; var r = getISOWeekNumber('2026-03-29T00:00:00Z'); if (r === null || typeof r !== 'number') process.exit(1);")
+  return $?
+}
+
 # Task 1 completion condition 5:
 # 不正な日付文字列を渡したとき null が返る
 check_invalid_date_returns_null() {
@@ -66,6 +78,11 @@ Describe 'dashboard.html getISOWeekNumber ヘルパー関数'
 
   It '"2026-01-01" を渡すと週番号 1 を返す'
     When call check_week_number_jan1
+    The status should be success
+  End
+
+  It 'ISO 8601 完全日時文字列 "2026-03-29T00:00:00Z" を渡すと有効な週番号を返す'
+    When call check_iso_datetime_returns_week_number
     The status should be success
   End
 
