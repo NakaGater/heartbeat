@@ -52,6 +52,13 @@ Group by iteration, show point totals:
   📝 search: Search feature (points not set)
 ```
 
+## Dashboard Sync
+
+After any update to backlog.jsonl (points change, iteration assignment,
+priority change), run:
+  bash core/scripts/generate-dashboard.sh
+  (synchronous — wait for completion before responding to user)
+
 ## Important Notes
 - Valid point values: 1 (Clear), 2 (Challenging), or 3 (Uncertain). Points
   measure complexity/uncertainty, not workload.
