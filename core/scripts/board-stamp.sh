@@ -41,7 +41,7 @@ has_empty=0
 
 while IFS= read -r line || [ -n "$line" ]; do
   cur_ts=$(echo "$line" | jq -r '.timestamp // empty' 2>/dev/null)
-  if [ -z "$cur_ts" ]; then
+  if [ -z "$cur_ts" ] || ! echo "$cur_ts" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$'; then
     # Empty or missing timestamp — fill it
     new_line=$(echo "$line" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' 2>/dev/null)
     if [ -n "$new_line" ]; then
