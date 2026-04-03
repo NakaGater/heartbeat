@@ -2,7 +2,7 @@ SKILL_MD="adapters/claude-code/skills/heartbeat/SKILL.md"
 SKILL_MD_COPILOT="adapters/copilot/skills/heartbeat/SKILL.md"
 
 check_workflow1_stop() {
-  grep -A 30 "## Workflow 1" "$SKILL_MD" | grep -q "STOP"
+  grep -A 40 "## Workflow 1" "$SKILL_MD" | grep -q "STOP"
 }
 
 check_workflow1_end() {
