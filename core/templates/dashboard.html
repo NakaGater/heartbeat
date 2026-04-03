@@ -353,7 +353,19 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     });
     var iters = Object.keys(iterMap).map(Number).sort(function(a,b){return a-b;});
     if (iters.length === 0) {
-      el.innerHTML = '<div class="chart-fallback">Collecting data…</div>';
+      var hasDone = (BACKLOG_DATA || []).some(function(item) {
+        return item.status === 'done';
+      });
+      if (hasDone) {
+        el.innerHTML = '<div class="chart-fallback">'
+          + 'イテレーション未設定<br>'
+          + '<span style="font-size:0.85rem;line-height:1.5;">backlog.jsonl の iteration フィールドを設定してください</span>'
+          + '</div>';
+      } else {
+        el.innerHTML = '<div class="chart-fallback">'
+          + 'データ収集中…'
+          + '</div>';
+      }
       return;
     }
     var values = iters.map(function(i){ return iterMap[i]; });
