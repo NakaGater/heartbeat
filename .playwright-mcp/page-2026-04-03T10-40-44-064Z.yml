@@ -1,0 +1,206 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Heartbeat Dashboard" [level=1] [ref=e4]
+    - button "🔄" [ref=e6] [cursor=pointer]
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]: 📋 Backlog Board
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Draft
+          - generic [ref=e13]: —
+        - generic [ref=e14]:
+          - generic [ref=e15]: Ready
+          - generic [ref=e16]:
+            - generic [ref=e17]: 複数ストーリー並行実装 (git worktree)
+            - generic [ref=e18]: 3 pts
+        - generic [ref=e19]:
+          - generic [ref=e20]: In Progress
+          - generic [ref=e21]:
+            - generic [ref=e22]: ダッシュボードとバックログの同期不整合修正
+            - generic [ref=e23]: 2 pts
+        - generic [ref=e24]:
+          - generic [ref=e25]: Done
+          - generic [ref=e26]:
+            - generic [ref=e27]: ダッシュボードデータ表示不具合の修正
+            - generic [ref=e28]: 2 pts
+          - generic [ref=e29]:
+            - generic [ref=e30]: エージェント・スキル定義ファイルの日本語テキスト英語化
+            - generic [ref=e31]: 1 pts
+          - generic [ref=e32]:
+            - generic [ref=e33]: ガントチャートのタイムスタンプ上書き問題の根本修正
+            - generic [ref=e34]: 2 pts
+          - button "他 26 件を表示" [ref=e35] [cursor=pointer]
+    - generic [ref=e36]:
+      - generic [ref=e37]: 📊 Velocity Chart
+      - generic [ref=e39]:
+        - text: イテレーション未設定
+        - generic [ref=e40]: backlog.jsonl の iteration フィールドを設定してください
+  - generic [ref=e41]:
+    - generic [ref=e42]:
+      - generic [ref=e43]: 🔄 Current Story
+      - combobox [ref=e44]:
+        - option "agent-skill-i18n-fix"
+        - option "ask-user-enforcement"
+        - option "ask-user-tool-fix"
+        - option "auto-commit-broken"
+        - option "auto-commit-fix"
+        - option "backlog-display-collapse"
+        - option "board-cleanup"
+        - option "claude-subagent-dispatch"
+        - option "commit-message-accuracy"
+        - option "copilot-hooks-fix"
+        - option "copilot-hooks"
+        - option "copilot-request-optimization"
+        - option "copilot-subagent-dispatch"
+        - option "copilot-tools"
+        - option "dashboard-backlog-sync" [selected]
+        - option "dashboard-current-story"
+        - option "dashboard-data-display"
+        - option "dashboard-done-collapse"
+        - option "dashboard-fix"
+        - option "dashboard-timestamp-empty"
+        - option "dashboard-timestamp"
+        - option "gantt-timestamp-accuracy"
+        - option "gantt-timestamp-overwrite"
+        - option "i18n-docs"
+        - option "parallel-stories"
+        - option "plugin-config-cleanup"
+        - option "point-criteria"
+        - option "readable-commits"
+        - option "retro-enforcement"
+        - option "selective-questions"
+        - option "tdd-workflow"
+        - option "workflow-boundary"
+        - option "workflow-fix"
+    - img [ref=e46]:
+      - generic [ref=e48]: pdm
+      - generic [ref=e49]: context-manager
+      - generic [ref=e51]: designer
+      - generic [ref=e52]: architect
+      - generic [ref=e54]: tester
+      - generic [ref=e55]: implementer
+      - generic [ref=e57]: refactor
+      - generic [ref=e58]: reviewer
+      - generic [ref=e60]: qa
+      - generic [ref=e61]: 4月3日 19:00
+      - generic [ref=e62]: 4月3日 19:39
+      - generic [ref=e63]: 4月3日 20:18
+      - generic [ref=e64]: 4月3日 20:57
+      - generic [ref=e65]: 4月3日 21:36
+      - generic [ref=e66]: 4月3日 22:15
+    - generic [ref=e88]: Tasks
+    - generic [ref=e89]:
+      - generic [ref=e90]: ✅ T1
+      - generic [ref=e91]: ✅ T2
+      - generic [ref=e92]: ✅ T3
+      - generic [ref=e93]: ✅ T4
+      - generic [ref=e94]: ✅ T5
+  - generic [ref=e95]:
+    - generic [ref=e96]: 💬 Agent Messages
+    - generic [ref=e97]:
+      - generic [ref=e99]:
+        - generic [ref=e100]: pdm
+        - generic [ref=e101]: investigate → context-manager
+        - generic [ref=e102]: ストーリー作成・バックログ追加後にダッシュボードが更新されない問題のヒアリング完了。フック発火タイミングと非同期実行の競合状態を調査対象として特定。
+        - generic [ref=e103]: 4月3日 19:00
+      - generic [ref=e105]:
+        - generic [ref=e106]: context-manager
+        - generic [ref=e107]: investigation_complete → pdm
+        - generic [ref=e108]: ダッシュボード未更新の根本原因を特定。非同期実行の競合状態とワークフロー末尾の明示的再生成欠如が主因。推奨修正方針を短期・中期に分けて記載。
+        - generic [ref=e109]: 4月3日 19:02
+      - generic [ref=e111]:
+        - generic [ref=e112]: pdm
+        - generic [ref=e113]: story_defined → architect
+        - generic [ref=e114]: ストーリー定義完了。受け入れ基準7項目、短期（SKILL.md同期呼び出し追加）と中期（generate-dashboard.sh排他制御）のタスク分割方針を記載。macOSでのflock非対応制約あり。
+        - generic [ref=e115]: 4月3日 19:05
+      - generic [ref=e117]:
+        - generic [ref=e118]: designer
+        - generic [ref=e119]: decompose → architect
+        - generic [ref=e120]: 設計完了。SKILL.md 3箇所への同期呼び出し挿入位置と、mkdirベースの排他制御の詳細設計（ロックパス、タイムアウト、stale検出、cleanup）を記載。
+        - generic [ref=e121]: 4月3日 19:08
+      - generic [ref=e123]:
+        - generic [ref=e124]: architect
+        - generic [ref=e125]: task_decomposition_complete → pdm
+        - generic [ref=e126]: 5タスクに分解、2pt見積もり。短期修正（SKILL.md同期呼び出し3件）と中期修正（排他制御+テスト）に分類。Task 1-3は並行実行可能、Task 5はTask 4に依存。
+        - generic [ref=e127]: 4月3日 19:10
+      - generic [ref=e129]:
+        - generic [ref=e130]: implementer
+        - generic [ref=e131]: make_green → tester
+        - generic [ref=e132]: T1実装完了（Green）。Workflow 1のResultセクションにgenerate-dashboard.sh同期呼び出しを追加。backlog.jsonl登録行の直後、STOP行の直前に配置。shellspec 3テスト全パス確認済み。
+        - generic [ref=e133]: 4月3日 19:12
+      - generic [ref=e135]:
+        - generic [ref=e136]: refactor
+        - generic [ref=e137]: write_test → tester
+        - generic [ref=e138]: "T1リファクタリング完了。実装は設計書通りで変更不要。テスト3件全パス。tasks.jsonl T1をdoneに更新。次アクション: T2のテスト作成。"
+        - generic [ref=e139]: 4月3日 19:13
+      - generic [ref=e141]:
+        - generic [ref=e142]: tester
+        - generic [ref=e143]: make_green → implementer
+        - generic [ref=e144]: "T2用の失敗テスト作成完了（Red）。3テストケース: (1) Post-Completion Flow Step 3にGD指示が存在する (2) backlog.jsonl status更新行より後にある (3) Workflow 3セクションより前にある。全3件FAILED確認済み。Test 1/1 for T2。implementerはcore/skills/heartbeat/SKILL.mdのPost-Completion Flow Step 3にgenerate-dashboard.sh同期呼び出しを追加すること。"
+        - generic [ref=e145]: 4月3日 19:15
+      - generic [ref=e147]:
+        - generic [ref=e148]: implementer
+        - generic [ref=e149]: make_green → tester
+        - generic [ref=e150]: T2実装完了（Green）。Post-Completion Flow Step 3にgenerate-dashboard.sh同期呼び出しを追加。backlog.jsonl status更新行の直後、Workflow 3セクションの直前に配置。shellspec 3テスト全パス確認済み。T1テストもリグレッションなし。
+        - generic [ref=e151]: 4月3日 19:16
+      - generic [ref=e153]:
+        - generic [ref=e154]: refactor
+        - generic [ref=e155]: write_test → tester
+        - generic [ref=e156]: "T2リファクタリング完了。Post-Completion Flow Step 3のgenerate-dashboard.sh同期呼び出しを検証。テスト6件全パス（T1: 3件、T2: 3件）。リファクタリング不要。tasks.jsonl T2をdoneに更新。次アクション: T3のテスト作成。"
+        - generic [ref=e157]: 4月3日 19:17
+      - generic [ref=e159]:
+        - generic [ref=e160]: tester
+        - generic [ref=e161]: make_red → implementer
+        - generic [ref=e162]: "T1用の失敗テスト作成完了（Red）。3テストケース: (1) Workflow 1 ResultセクションにGD指示が存在する (2) backlog.jsonl登録行より後にある (3) STOP行より前にある。全3件FAILED確認済み。implementerはcore/skills/heartbeat/SKILL.mdのResultセクションにgenerate-dashboard.sh同期呼び出しを追加すること。"
+        - generic [ref=e163]: 4月3日 19:30
+      - generic [ref=e165]:
+        - generic [ref=e166]: refactor
+        - generic [ref=e167]: write_test → tester
+        - generic [ref=e168]: "T4リファクタリング完了。設計書との乖離（INT/TERM trap → EXIT trap）を修正し設計書通りに統一。不要な_DASHBOARD_LOCK_OWNER変数を除去。テスト2を「正常終了後のクリーンアップ検証」に改善（タイミング依存排除）。テスト4にstderr expectation追加でwarning解消。4テスト全パス。tasks.jsonl T4をdoneに更新。次アクション: T5のテスト作成。"
+        - generic [ref=e169]: 4月3日 19:31
+      - generic [ref=e171]:
+        - generic [ref=e172]: reviewer
+        - generic [ref=e173]: verify → implementer
+        - generic [ref=e174]: "make testで既存構造テスト1件が破損（workflow_boundary_spec.sh: grep -A 30がWorkflow 1に追加された2行でSTOPディレクティブを捕捉できなくなった）。grep -A 30を-A 40に修正すれば解消する軽微な問題。ストーリー固有テスト16件は全パス。"
+        - generic [ref=e175]: 4月3日 19:37
+      - generic [ref=e177]:
+        - generic [ref=e178]: implementer
+        - generic [ref=e179]: verify → reviewer
+        - generic [ref=e180]: レビュー指摘のリグレッション修正完了。check_workflow1_stop() の grep -A 30 を -A 40 に変更。make test で全345テスト（unit 125件 + structure 220件）が0 failuresで通過。
+        - generic [ref=e181]: 4月3日 19:38
+      - generic [ref=e183]:
+        - generic [ref=e184]: tester
+        - generic [ref=e185]: make_red → implementer
+        - generic [ref=e186]: "T3用の失敗テスト作成完了（Red）。3テストケース: (1) Dashboard SyncセクションにGD指示が存在する (2) Dashboard SyncセクションがImportant Notesより前にある (3) synchronousの記述がある。全3件FAILED確認済み。implementerはcore/skills/heartbeat-backlog/SKILL.mdに## Dashboard Syncセクションを## Important Notesの直前に追加すること。"
+        - generic [ref=e187]: 4月3日 20:00
+      - generic [ref=e189]:
+        - generic [ref=e190]: implementer
+        - generic [ref=e191]: make_green → tester
+        - generic [ref=e192]: T3実装完了（Green）。heartbeat-backlog SKILL.mdに## Dashboard Syncセクションを## Important Notesの直前に追加。generate-dashboard.shの同期呼び出し指示を記載。shellspec 3テスト全パス。T1/T2テスト含め9テスト全パスでリグレッションなし。
+        - generic [ref=e193]: 4月3日 20:05
+      - generic [ref=e195]:
+        - generic [ref=e196]: refactor
+        - generic [ref=e197]: write_test → tester
+        - generic [ref=e198]: "T3リファクタリング完了。heartbeat-backlog SKILL.mdのDashboard Syncセクションを検証。テスト9件全パス（T1: 3件、T2: 3件、T3: 3件）。リファクタリング不要。tasks.jsonl T3をdoneに更新。次アクション: T4のテスト作成。"
+        - generic [ref=e199]: 4月3日 20:10
+      - generic [ref=e201]:
+        - generic [ref=e202]: tester
+        - generic [ref=e203]: make_red → implementer
+        - generic [ref=e204]: "T4用の失敗テスト作成完了（Red）。4テストケース: (1) スクリプトにdashboard-lockコードが存在する (2) 生成中にロックディレクトリとPIDファイルが作成される (3) ロック競合時にタイムアウトでエラー終了する (4) 競合時に既存ファイルを破損させない。全4件FAILED確認済み。implementerはcore/scripts/generate-dashboard.shにmkdirベースの排他制御を追加すること。"
+        - generic [ref=e205]: 4月3日 21:00
+      - generic [ref=e207]:
+        - generic [ref=e208]: implementer
+        - generic [ref=e209]: make_green → tester
+        - generic [ref=e210]: T4実装完了（Green）。generate-dashboard.shにmkdirベースの排他制御を追加。ロックディレクトリ作成・PIDファイル書き込み・stale検出（find -mmin +1）・シグナル時trapクリーンアップ・環境変数によるリトライ設定オーバーライドを実装。shellspec 4テスト全パス、既存122テスト全パスでリグレッションなし。
+        - generic [ref=e211]: 4月3日 21:10
+      - generic [ref=e213]:
+        - generic [ref=e214]: tester
+        - generic [ref=e215]: write_test → implementer
+        - generic [ref=e216]: "T5エッジケーステスト作成完了。3テストケース: (1) staleロック（1分超）の自動除去と生成成功 (2) PIDファイル書き込みコードの存在確認 (3) cleanup関数のPID確認ロジック検証。全3件パス確認済み。既存T4テスト4件もリグレッションなし。"
+        - generic [ref=e217]: 4月3日 22:00
+      - generic [ref=e219]:
+        - generic [ref=e220]: refactor
+        - generic [ref=e221]: all_tasks_complete → pdm
+        - generic [ref=e222]: "全5タスク（T1-T5）完了。最終テスト実行: 16 examples, 0 failures。T5をdoneに更新し、レトロスペクティブを記録。ストーリーはPhase 4（Verification）へ移行可能。"
+        - generic [ref=e223]: 4月3日 22:15
