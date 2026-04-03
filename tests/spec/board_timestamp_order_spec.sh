@@ -1,5 +1,5 @@
 Describe 'dashboard-backlog-sync board.jsonl タイムスタンプ整合性'
-  BOARD_FILE=".heartbeat/stories/0031/board.jsonl"
+  BOARD_FILE=".heartbeat/stories/0031-dashboard-backlog-sync/board.jsonl"
 
   It 'TDDサイクル内でタイムスタンプが単調増加である'
     # 各行のタイムスタンプを抽出し、隣接する行のペアを比較する。
