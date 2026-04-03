@@ -1,2 +1,3 @@
 {"id":"T4","story":"plugin-config-cleanup","title":"Copilot plugin.json にオーケストレータ登録","status":"done","agent":"implementer","updated":"2026-03-30T00:00:00Z"}
 {"id":"T3","story":"dashboard-gantt-fix","title":"board-stamp.sh 未来タイムスタンプ検知ロジック追加","status":"done","agent":"refactorer","updated":"2026-04-03T00:00:00Z"}
+{"id":"T5","story":"dashboard-gantt-fix","title":"ガントチャートのバーにツールチップ追加","status":"done","agent":"refactorer","updated":"2026-04-03T00:00:00Z"}
