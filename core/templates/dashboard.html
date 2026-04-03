@@ -365,7 +365,14 @@ const AGENT_COLORS = {{AGENT_COLORS}};
       }
     });
     var iters = Object.keys(iterMap).map(Number).sort(function(a,b){return a-b;});
-    if (iters.length === 0) {
+
+    // Prepare labels and values: iteration path or week fallback path
+    var labels = [];
+    var values = [];
+    if (iters.length > 0) {
+      labels = iters.map(function(i){ return 'Iter ' + i; });
+      values = iters.map(function(i){ return iterMap[i]; });
+    } else {
       // フォールバック: done+points+completed有りストーリーを週番号でグルーピング
       var doneWithPoints = (BACKLOG_DATA || []).filter(function(item) {
         return item.status === 'done' && item.points != null && item.completed != null;
@@ -390,39 +397,15 @@ const AGENT_COLORS = {{AGENT_COLORS}};
           + '</div>';
         return;
       }
-      var values = weeks.map(function(w){ return weekMap[w]; });
-      var maxVal = Math.max.apply(null, values);
-      var avg = values.reduce(function(a,b){return a+b;}, 0) / values.length;
-      var barW = 40, gap = 16, padL = 40, padR = 16, padT = 16, padB = 32;
-      var w = padL + weeks.length * (barW + gap) + padR;
-      var h = 160;
-      var chartH = h - padT - padB;
-      var scale = maxVal > 0 ? chartH / (maxVal * 1.1) : 1;
-
-      var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg">';
-      svg += '<line x1="' + padL + '" y1="' + padT + '" x2="' + padL + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="1"/>';
-      svg += '<line x1="' + padL + '" y1="' + (h - padB) + '" x2="' + (w - padR) + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="1"/>';
-      weeks.forEach(function(week, i) {
-        var val = weekMap[week];
-        var barH = val * scale;
-        var x = padL + i * (barW + gap) + gap / 2;
-        var y = h - padB - barH;
-        svg += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + barH + '" fill="var(--accent)" rx="3"/>';
-        svg += '<text x="' + (x + barW / 2) + '" y="' + (y - 4) + '" text-anchor="middle" font-size="10" fill="var(--text)">' + val + '</text>';
-        svg += '<text x="' + (x + barW / 2) + '" y="' + (h - padB + 14) + '" text-anchor="middle" font-size="10" fill="var(--text-muted)">Week ' + week + '</text>';
-      });
-      var avgY = h - padB - avg * scale;
-      svg += '<line x1="' + padL + '" y1="' + avgY + '" x2="' + (w - padR) + '" y2="' + avgY + '" stroke="var(--red-border)" stroke-width="1" stroke-dasharray="4,3"/>';
-      svg += '<text x="' + (w - padR - 2) + '" y="' + (avgY - 4) + '" text-anchor="end" font-size="9" fill="var(--red-border)">avg ' + avg.toFixed(1) + '</text>';
-      svg += '</svg>';
-      el.innerHTML = svg;
-      return;
+      labels = weeks.map(function(w){ return 'Week ' + w; });
+      values = weeks.map(function(w){ return weekMap[w]; });
     }
-    var values = iters.map(function(i){ return iterMap[i]; });
+
+    // Unified SVG rendering for both iteration and week fallback paths
     var maxVal = Math.max.apply(null, values);
     var avg = values.reduce(function(a,b){return a+b;}, 0) / values.length;
     var barW = 40, gap = 16, padL = 40, padR = 16, padT = 16, padB = 32;
-    var w = padL + iters.length * (barW + gap) + padR;
+    var w = padL + labels.length * (barW + gap) + padR;
     var h = 160;
     var chartH = h - padT - padB;
     var scale = maxVal > 0 ? chartH / (maxVal * 1.1) : 1;
@@ -433,14 +416,14 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     // X-axis
     svg += '<line x1="' + padL + '" y1="' + (h - padB) + '" x2="' + (w - padR) + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="1"/>';
     // Bars
-    iters.forEach(function(iter, i) {
-      var val = iterMap[iter];
+    labels.forEach(function(label, i) {
+      var val = values[i];
       var barH = val * scale;
       var x = padL + i * (barW + gap) + gap / 2;
       var y = h - padB - barH;
       svg += '<rect x="' + x + '" y="' + y + '" width="' + barW + '" height="' + barH + '" fill="var(--accent)" rx="3"/>';
       svg += '<text x="' + (x + barW / 2) + '" y="' + (y - 4) + '" text-anchor="middle" font-size="10" fill="var(--text)">' + val + '</text>';
-      svg += '<text x="' + (x + barW / 2) + '" y="' + (h - padB + 14) + '" text-anchor="middle" font-size="10" fill="var(--text-muted)">Iter ' + iter + '</text>';
+      svg += '<text x="' + (x + barW / 2) + '" y="' + (h - padB + 14) + '" text-anchor="middle" font-size="10" fill="var(--text-muted)">' + label + '</text>';
     });
     // Average line
     var avgY = h - padB - avg * scale;
