@@ -147,6 +147,9 @@ END OF WORKFLOW 1 -- Do not execute any further agents.
 ```
 Show backlog.jsonl stories with status: "ready"
 User selects a story
+Update backlog.jsonl entry: status -> "in_progress"
+Run: bash core/scripts/generate-dashboard.sh
+  (synchronous — wait for completion before proceeding)
 
 Phase 2 - Design:
   designer
