@@ -9,6 +9,52 @@ HEARTBEAT_DIR="$PROJECT_ROOT/.heartbeat"
 TEMPLATE="$(dirname "$0")/../templates/dashboard.html"
 OUTPUT="$HEARTBEAT_DIR/dashboard.html"
 
+# --- Lock mechanism (mkdir-based) ---
+LOCK_DIR="$HEARTBEAT_DIR/.dashboard-lock"
+MAX_RETRIES="${DASHBOARD_LOCK_MAX_RETRIES:-10}"
+RETRY_INTERVAL="${DASHBOARD_LOCK_RETRY_INTERVAL:-1}"
+
+_DASHBOARD_LOCK_OWNER=""
+
+cleanup() {
+  if [ "$_DASHBOARD_LOCK_OWNER" = "$$" ] && [ -f "$LOCK_DIR/pid" ] && [ "$(cat "$LOCK_DIR/pid")" = "$$" ]; then
+    rm -rf "$LOCK_DIR"
+  fi
+}
+# Clean up lock on signals (INT/TERM) so it doesn't remain stale
+trap 'cleanup; exit 130' INT
+trap 'cleanup; exit 143' TERM
+
+is_lock_stale() {
+  # Stale if older than 1 minute (macOS/Linux compatible)
+  stale=$(find "$LOCK_DIR" -maxdepth 0 -mmin +1 2>/dev/null)
+  [ -n "$stale" ] && return 0
+  return 1
+}
+
+acquire_lock() {
+  local retries=0
+  while [ "$retries" -lt "$MAX_RETRIES" ]; do
+    # Stale lock detection and removal
+    if [ -d "$LOCK_DIR" ] && is_lock_stale; then
+      rm -rf "$LOCK_DIR"
+    fi
+
+    if mkdir "$LOCK_DIR" 2>/dev/null; then
+      echo $$ > "$LOCK_DIR/pid"
+      _DASHBOARD_LOCK_OWNER=$$
+      return 0
+    fi
+    retries=$((retries + 1))
+    sleep "$RETRY_INTERVAL"
+  done
+  echo "Error: Could not acquire dashboard lock after ${MAX_RETRIES} retries" >&2
+  return 1
+}
+
+acquire_lock || exit 1
+# --- End lock mechanism ---
+
 export BACKLOG_DATA=$(cat "$HEARTBEAT_DIR/backlog.jsonl" 2>/dev/null | jq -s '.')
 [ -z "$BACKLOG_DATA" ] && export BACKLOG_DATA="[]"
 
