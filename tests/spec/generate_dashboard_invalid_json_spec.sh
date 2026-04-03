@@ -1,0 +1,36 @@
+Describe 'generate-dashboard.sh 不正JSON行の防御的パース'
+  setup() {
+    TEST_PROJECT=$(mktemp -d)
+    TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
+    mkdir -p "$TEST_HEARTBEAT/stories/valid-story"
+
+    # backlog.jsonl: 有効行2行 + 不正行1行（先頭に余分な " がある行）
+    cat > "$TEST_HEARTBEAT/backlog.jsonl" <<'JSONL'
+{"story_id":"story-alpha","title":"Alpha Story","status":"draft","priority":1,"points":1}
+"{"story_id":"story-broken","title":"Broken Story","status":"draft","priority":2,"points":1}
+{"story_id":"story-beta","title":"Beta Story","status":"in_progress","priority":3,"points":2}
+JSONL
+
+    echo '{"from":"tester","to":"implementer","action":"make_green","status":"done","note":"test","timestamp":"2026-04-03T00:00:00Z"}' > "$TEST_HEARTBEAT/stories/valid-story/board.jsonl"
+    echo '{"task_id":1,"name":"Task 1","status":"done"}' > "$TEST_HEARTBEAT/stories/valid-story/tasks.jsonl"
+  }
+  cleanup() {
+    rm -rf "$TEST_PROJECT"
+  }
+  BeforeEach 'setup'
+  AfterEach 'cleanup'
+
+  Describe '不正JSON行を含むbacklog.jsonlの処理'
+    It '不正行をスキップして有効行のみでダッシュボードを生成する'
+      When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
+      The output should include 'Dashboard generated'
+      The file "$TEST_HEARTBEAT/dashboard.html" should be exist
+      # 有効行のstory-alphaが含まれること
+      The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'story-alpha'
+      # 有効行のstory-betaが含まれること
+      The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'story-beta'
+      # 不正行のstory-brokenは含まれないこと
+      The contents of file "$TEST_HEARTBEAT/dashboard.html" should not include 'story-broken'
+    End
+  End
+End
