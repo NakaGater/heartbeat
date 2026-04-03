@@ -262,7 +262,14 @@ Flow:
   Execute Workflow 1 (story creation)
     NOTE: When executing as part of Workflow 3, IGNORE the
     "STOP/END OF WORKFLOW 1" directive. Instead:
-    → After story approval, automatically transition to Workflow 2 (implementation)
+    → After story approval:
+      1. Update backlog.jsonl entry: status -> "in_progress"
+      2. Run: bash core/scripts/generate-dashboard.sh
+           (synchronous — wait for completion before proceeding)
+      3. Automatically transition to Workflow 2 (implementation)
+         NOTE: Skip Workflow 2's "Show backlog / User selects / Update status"
+         block (lines 148-152) — the story is already selected and status
+         is already "in_progress". Begin directly at Phase 2.
     → Execute all phases to completion
 
   After Workflow 2 completes:
@@ -271,9 +278,11 @@ Flow:
   Note: Point estimates from architect can be adjusted as actuals
   by human via /heartbeat-backlog after implementation.
 
-  Note: The status lifecycle (draft → ready → in_progress → done) is
-  inherited from Workflow 1 and Workflow 2. Workflow 1 handles
-  draft → ready, and Workflow 2 handles in_progress → done.
+  Note: The status lifecycle (draft → ready → in_progress → done):
+  Workflow 1 handles draft → ready; Workflow 2 handles in_progress → done.
+  In Workflow 3, the transition ready → in_progress is handled
+  explicitly above (before Phase 2). In Workflow 2 standalone, it is
+  handled by the "Show backlog / User selects / Update status" block.
 ```
 
 ## Agent Startup Method
