@@ -50,8 +50,18 @@ acquire_lock() {
 acquire_lock || exit 1
 # --- End lock mechanism ---
 
-export BACKLOG_DATA=$(cat "$HEARTBEAT_DIR/backlog.jsonl" 2>/dev/null | jq -s '.')
-[ -z "$BACKLOG_DATA" ] && export BACKLOG_DATA="[]"
+BACKLOG_DATA="[]"
+if [ -f "$HEARTBEAT_DIR/backlog.jsonl" ]; then
+  _valid_lines=""
+  while IFS= read -r _line || [ -n "$_line" ]; do
+    [ -z "$_line" ] && continue
+    echo "$_line" | jq -e '.' >/dev/null 2>&1 && _valid_lines="${_valid_lines}${_line}"$'\n'
+  done < "$HEARTBEAT_DIR/backlog.jsonl"
+  if [ -n "$_valid_lines" ]; then
+    BACKLOG_DATA=$(printf '%s' "$_valid_lines" | jq -s '.')
+  fi
+fi
+export BACKLOG_DATA
 
 STORIES_RAW=$(
   for story_dir in "$HEARTBEAT_DIR/stories"/*/; do
