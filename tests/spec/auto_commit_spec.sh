@@ -1369,5 +1369,41 @@ Describe 'auto-commit.sh'
         The status should be success
       End
     End
+
+    # Task 2, CC1: board.jsonl が存在しない場合、get_scope_from_diff() のフォールバックが使われる
+    Describe 'CC1: scope falls back to get_scope_from_diff() when no board.jsonl exists'
+      setup() {
+        TMPDIR_SS2=$(mktemp -d)
+        git init "$TMPDIR_SS2" >/dev/null 2>&1
+        git -C "$TMPDIR_SS2" \
+          -c user.name="test" -c user.email="test@test.com" \
+          commit --allow-empty -m "initial" >/dev/null 2>&1
+        # NO board.jsonl -- no .heartbeat/stories/ at all
+        # Create test files so get_scope_from_diff() would return "tests"
+        mkdir -p "$TMPDIR_SS2/tests/spec"
+        echo 'test content' > "$TMPDIR_SS2/tests/spec/fallback_spec.sh"
+        echo 'test content2' > "$TMPDIR_SS2/tests/spec/fallback2_spec.sh"
+        export CLAUDE_PROJECT_DIR="$TMPDIR_SS2"
+      }
+      cleanup() {
+        rm -rf "$TMPDIR_SS2"
+        unset CLAUDE_PROJECT_DIR
+      }
+      BeforeEach 'setup'
+      AfterEach 'cleanup'
+
+      run_main_fallback_scope() {
+        echo '' \
+          | "$SHELLSPEC_PROJECT_ROOT/core/scripts/auto-commit.sh" >/dev/null 2>&1
+        # Extract scope from commit message: type(SCOPE): desc
+        git -C "$TMPDIR_SS2" log -1 --format=%s | sed 's/^[^(]*(\([^)]*\)).*/\1/'
+      }
+
+      It 'uses "tests" from get_scope_from_diff() when no board.jsonl exists'
+        When call run_main_fallback_scope
+        The output should equal "tests"
+        The status should be success
+      End
+    End
   End
 End
