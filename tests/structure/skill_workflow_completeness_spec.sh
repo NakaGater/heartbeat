@@ -48,12 +48,12 @@ check_copilot_ask_questions() {
 check_copilot_auto_approve_task_decomposition() {
   grep -q "AP2" adapters/copilot/skills/heartbeat/SKILL.md &&
   grep -q "Phase 3" adapters/copilot/skills/heartbeat/SKILL.md &&
-  grep -q "自動" adapters/copilot/skills/heartbeat/SKILL.md
+  grep -qi "auto.*approve\|automatically" adapters/copilot/skills/heartbeat/SKILL.md
 }
 
 check_copilot_workflow3_input_merge() {
   grep -q "Workflow 3" adapters/copilot/skills/heartbeat/SKILL.md &&
-  grep -q "入力統合\|入力で受け取" adapters/copilot/skills/heartbeat/SKILL.md
+  grep -qi "consolidate\|workflow selection.*problem description" adapters/copilot/skills/heartbeat/SKILL.md
 }
 
 Describe 'SKILL.md workflow completeness'

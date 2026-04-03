@@ -6,28 +6,28 @@ COPILOT_SKILL="adapters/copilot/skills/heartbeat/SKILL.md"
 # Rule 1: AP1 の選択肢が vscode_askQuestions と共に明示されている
 check_rule1_ap1_choices() {
   # Rule 1 セクション内で AP1 の選択肢リストが明示されていること
-  grep -A 20 'Rule 1' "$COPILOT_SKILL" | grep -q '承認する.*差し戻す'
+  grep -A 20 'Rule 1' "$COPILOT_SKILL" | grep -q 'Approve.*Reject'
 }
 
 # Rule 1: AP3 の選択肢が vscode_askQuestions と共に明示されている
 check_rule1_ap3_choices() {
   # Rule 1 セクション内で AP3 の選択肢リストが明示されていること
-  grep -A 20 'Rule 1' "$COPILOT_SKILL" | grep -q '合格.*差し戻す'
+  grep -A 20 'Rule 1' "$COPILOT_SKILL" | grep -q 'Pass.*Reject'
 }
 
 # Rule 1: 差し戻し理由の取得方法が記載されている
 check_rule1_sendback_reason() {
-  grep -A 20 'Rule 1' "$COPILOT_SKILL" | grep -q 'vscode_askQuestions.*理由'
+  grep -A 30 'Rule 1' "$COPILOT_SKILL" | grep -q 'vscode_askQuestions.*reason'
 }
 
 # Rule 3: カテゴリ自動推定の記述がある
 check_rule3_category_inference() {
-  grep -A 20 'Rule 3' "$COPILOT_SKILL" | grep -q 'カテゴリ.*推定'
+  grep -A 20 'Rule 3' "$COPILOT_SKILL" | grep -qi 'auto.*infer.*category\|category.*infer'
 }
 
 # Rule 3: 推定不可時に vscode_askQuestions でカテゴリ選択肢を提示する記述がある
 check_rule3_fallback_ask() {
-  grep -A 20 'Rule 3' "$COPILOT_SKILL" | grep -q 'vscode_askQuestions.*カテゴリ'
+  grep -A 20 'Rule 3' "$COPILOT_SKILL" | grep -q 'vscode_askQuestions.*category'
 }
 
 # --- Task 1: 8箇所の vscode_askQuestions 義務化 ---
@@ -38,42 +38,42 @@ rule1_section() {
 
 # Rule 1: ワークフロー選択で vscode_askQuestions を使用する指示がある
 check_rule1_workflow_selection() {
-  rule1_section | grep -q 'ワークフロー選択'
+  rule1_section | grep -qi 'workflow selection'
 }
 
 # Rule 1: WF1 カテゴリ選択で vscode_askQuestions を使用する指示がある
 check_rule1_wf1_category() {
-  rule1_section | grep -q 'カテゴリ選択'
+  rule1_section | grep -qi 'category selection'
 }
 
 # Rule 1: WF1 詳細入力（自由記述）で vscode_askQuestions を使用する指示がある
 check_rule1_wf1_detail_input() {
-  rule1_section | grep -q '詳細入力'
+  rule1_section | grep -qi 'detail input'
 }
 
 # Rule 1: 3pt エスケープハッチで vscode_askQuestions を使用する指示がある
 check_rule1_3pt_escape_hatch() {
-  rule1_section | grep -q 'エスケープハッチ'
+  rule1_section | grep -qi 'escape hatch'
 }
 
 # Rule 1: WF2 ストーリー選択で vscode_askQuestions を使用する指示がある
 check_rule1_wf2_story_selection() {
-  rule1_section | grep -q 'ストーリー選択'
+  rule1_section | grep -qi 'story selection'
 }
 
 # Rule 1: AP3 差し戻し先フェーズ選択で vscode_askQuestions を使用する指示がある
 check_rule1_ap3_phase_selection() {
-  rule1_section | grep -q '差し戻し先フェーズ'
+  rule1_section | grep -qi 'rejection target phase'
 }
 
 # Rule 1: ブロック報告時で vscode_askQuestions を使用する指示がある
 check_rule1_blocked_report() {
-  rule1_section | grep -q 'ブロック報告'
+  rule1_section | grep -qi 'block report'
 }
 
 # Rule 1: オーケストレーター不確実時で vscode_askQuestions を使用する指示がある
 check_rule1_orchestrator_uncertainty() {
-  rule1_section | grep -q 'オーケストレーター不確実'
+  rule1_section | grep -qi 'orchestrator uncertainty'
 }
 
 Describe 'Copilot SKILL.md vscode_askQuestions choice parameter guidance'
