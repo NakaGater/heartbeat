@@ -1,0 +1,139 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Heartbeat Dashboard" [level=1] [ref=e4]
+    - button "🔄" [ref=e6] [cursor=pointer]
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]: 📋 Backlog Board
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Draft
+          - generic [ref=e13]: —
+        - generic [ref=e14]:
+          - generic [ref=e15]: Ready
+          - generic [ref=e16]:
+            - generic [ref=e17]: 複数ストーリー並行実装 (git worktree)
+            - generic [ref=e18]: 3 pts
+        - generic [ref=e19]:
+          - generic [ref=e20]: In Progress
+          - generic [ref=e21]:
+            - generic [ref=e22]: vscode_askQuestions指示の到達性修正とワークフロー継続プロンプト追加
+            - generic [ref=e23]: 1 pts
+          - generic [ref=e24]:
+            - generic [ref=e25]: ダッシュボードデータ表示不具合の修正
+            - generic [ref=e26]: 2 pts
+        - generic [ref=e27]:
+          - generic [ref=e28]: Done
+          - generic [ref=e29]:
+            - generic [ref=e30]: プラグイン構成の重複・欠落修正
+            - generic [ref=e31]: 10 pts
+          - generic [ref=e32]:
+            - generic [ref=e33]: ガントチャートのタイムスタンプ精度
+            - generic [ref=e34]: 2 pts
+          - generic [ref=e35]:
+            - generic [ref=e36]: ask_userツール利用の全面義務化
+            - generic [ref=e37]: 1 pts
+          - button "他 22 件を表示" [ref=e38] [cursor=pointer]
+    - generic [ref=e39]:
+      - generic [ref=e40]: 📊 Velocity Chart
+      - generic [ref=e42]:
+        - text: イテレーション未設定
+        - generic [ref=e43]: backlog.jsonl の iteration フィールドを設定してください
+  - generic [ref=e44]:
+    - generic [ref=e45]:
+      - generic [ref=e46]: 🔄 Current Story
+      - combobox [ref=e47]:
+        - option "ask-user-enforcement"
+        - option "ask-user-tool-fix" [selected]
+        - option "auto-commit-broken"
+        - option "auto-commit-fix"
+        - option "backlog-display-collapse"
+        - option "board-cleanup"
+        - option "claude-subagent-dispatch"
+        - option "commit-message-accuracy"
+        - option "copilot-hooks-fix"
+        - option "copilot-hooks"
+        - option "copilot-request-optimization"
+        - option "copilot-subagent-dispatch"
+        - option "copilot-tools"
+        - option "dashboard-current-story"
+        - option "dashboard-data-display"
+        - option "dashboard-done-collapse"
+        - option "dashboard-fix"
+        - option "dashboard-timestamp-empty"
+        - option "dashboard-timestamp"
+        - option "gantt-timestamp-accuracy"
+        - option "i18n-docs"
+        - option "parallel-stories"
+        - option "plugin-config-cleanup"
+        - option "point-criteria"
+        - option "readable-commits"
+        - option "retro-enforcement"
+        - option "selective-questions"
+        - option "tdd-workflow"
+        - option "workflow-boundary"
+        - option "workflow-fix"
+    - img [ref=e49]:
+      - generic [ref=e51]: pdm
+      - generic [ref=e52]: context-manager
+      - generic [ref=e54]: designer
+      - generic [ref=e55]: architect
+      - generic [ref=e57]: tester
+      - generic [ref=e58]: implementer
+      - generic [ref=e60]: refactor
+      - generic [ref=e61]: reviewer
+      - generic [ref=e63]: qa
+      - generic [ref=e64]: 4月3日 14:12
+      - generic [ref=e65]: 4月3日 14:26
+      - generic [ref=e66]: 4月3日 14:40
+      - generic [ref=e67]: 4月3日 14:54
+      - generic [ref=e68]: 4月3日 15:08
+      - generic [ref=e69]: 4月3日 15:22
+    - generic [ref=e78]: Tasks
+    - generic [ref=e79]:
+      - generic [ref=e80]: 🔄 ワークフローセクション内への vscode_askQuestions 指示の直接埋め込み
+      - generic [ref=e81]: 🔄 ワークフロー完了時の継続プロンプト追加
+      - generic [ref=e82]: 🔄 構造テストの追加
+  - generic [ref=e83]:
+    - generic [ref=e84]: 💬 Agent Messages
+    - generic [ref=e85]:
+      - generic [ref=e87]:
+        - generic [ref=e88]: pdm
+        - generic [ref=e89]: investigate → context-manager
+        - generic [ref=e90]: ヒアリング完了。ask_userツール登録とワークフロー継続プロンプトの調査依頼
+        - generic [ref=e91]: 4月3日 14:12
+      - generic [ref=e93]:
+        - generic [ref=e94]: context-manager
+        - generic [ref=e95]: define_story → pdm
+        - generic [ref=e96]: "調査完了。バグ1: vscode_askQuestions は全エージェント未登録だがVS Codeビルトインの可能性高（2仮説提示）。バグ2: 4箇所のSTOPディレクティブに継続プロンプトなし。関連5ストーリーの経緯を整理済み"
+        - generic [ref=e97]: 4月3日 14:22
+      - generic [ref=e99]:
+        - generic [ref=e100]: pdm
+        - generic [ref=e101]: approve → human
+        - generic [ref=e102]: ストーリー定義完了。承認待機中。
+        - generic [ref=e103]: 4月3日 14:32
+      - generic [ref=e105]:
+        - generic [ref=e106]: architect
+        - generic [ref=e107]: approve → human
+        - generic [ref=e108]: "タスク分解完了（3タスク、1pt Clear）。バグ1: 11箇所のワークフロー内 vscode_askQuestions 埋め込み、バグ2: 3箇所の継続プロンプト追加、テスト新規1ファイル。承認待機中。"
+        - generic [ref=e109]: 4月3日 14:42
+      - generic [ref=e111]:
+        - generic [ref=e112]: orchestrator
+        - generic [ref=e113]: approve → orchestrator
+        - generic [ref=e114]: ストーリー承認済み。実装開始。
+        - generic [ref=e115]: 4月3日 14:52
+      - generic [ref=e117]:
+        - generic [ref=e118]: designer
+        - generic [ref=e119]: write_test → tester
+        - generic [ref=e120]: デザイン完了。注釈トークン3パターン（同行末尾・自由記述・独立行）と継続プロンプトブロック構造を定義。WF1のMessage to userブロック削除を提案。
+        - generic [ref=e121]: 4月3日 15:02
+      - generic [ref=e123]:
+        - generic [ref=e124]: tester
+        - generic [ref=e125]: make_green → implementer
+        - generic [ref=e126]: "全タスクのテスト作成完了（Red）。Task1: 4テスト（各セクション内vscode_askQuestions参照）、Task2: 4テスト（STOP前継続プロンプト+Exit選択肢）。8件全FAIL確認。既存13件PASS確認。"
+        - generic [ref=e127]: 4月3日 15:12
+      - generic [ref=e129]:
+        - generic [ref=e130]: implementer
+        - generic [ref=e131]: refactor → refactor
+        - generic [ref=e132]: "Task 1+2: インライン注釈11箇所+継続プロンプト3箇所追加。全テストGreen。"
+        - generic [ref=e133]: 4月3日 15:22

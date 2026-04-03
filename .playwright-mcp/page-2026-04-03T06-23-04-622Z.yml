@@ -1,0 +1,178 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Heartbeat Dashboard" [level=1] [ref=e4]
+    - button "🔄" [ref=e6] [cursor=pointer]
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]: 📋 Backlog Board
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Draft
+          - generic [ref=e13]: —
+        - generic [ref=e14]:
+          - generic [ref=e15]: Ready
+          - generic [ref=e16]:
+            - generic [ref=e17]: 複数ストーリー並行実装 (git worktree)
+            - generic [ref=e18]: 3 pts
+        - generic [ref=e19]:
+          - generic [ref=e20]: In Progress
+          - generic [ref=e21]:
+            - generic [ref=e22]: vscode_askQuestions指示の到達性修正とワークフロー継続プロンプト追加
+            - generic [ref=e23]: 1 pts
+          - generic [ref=e24]:
+            - generic [ref=e25]: ダッシュボードデータ表示不具合の修正
+            - generic [ref=e26]: 2 pts
+        - generic [ref=e27]:
+          - generic [ref=e28]: Done
+          - generic [ref=e29]:
+            - generic [ref=e30]: プラグイン構成の重複・欠落修正
+            - generic [ref=e31]: 10 pts
+          - generic [ref=e32]:
+            - generic [ref=e33]: ガントチャートのタイムスタンプ精度
+            - generic [ref=e34]: 2 pts
+          - generic [ref=e35]:
+            - generic [ref=e36]: ask_userツール利用の全面義務化
+            - generic [ref=e37]: 1 pts
+          - button "他 22 件を表示" [ref=e38] [cursor=pointer]
+    - generic [ref=e39]:
+      - generic [ref=e40]: 📊 Velocity Chart
+      - generic [ref=e42]:
+        - text: イテレーション未設定
+        - generic [ref=e43]: backlog.jsonl の iteration フィールドを設定してください
+  - generic [ref=e44]:
+    - generic [ref=e45]:
+      - generic [ref=e46]: 🔄 Current Story
+      - combobox [ref=e47]:
+        - option "ask-user-enforcement" [selected]
+        - option "ask-user-tool-fix"
+        - option "auto-commit-broken"
+        - option "auto-commit-fix"
+        - option "backlog-display-collapse"
+        - option "board-cleanup"
+        - option "claude-subagent-dispatch"
+        - option "commit-message-accuracy"
+        - option "copilot-hooks-fix"
+        - option "copilot-hooks"
+        - option "copilot-request-optimization"
+        - option "copilot-subagent-dispatch"
+        - option "copilot-tools"
+        - option "dashboard-current-story"
+        - option "dashboard-data-display"
+        - option "dashboard-done-collapse"
+        - option "dashboard-fix"
+        - option "dashboard-timestamp-empty"
+        - option "dashboard-timestamp"
+        - option "gantt-timestamp-accuracy"
+        - option "i18n-docs"
+        - option "parallel-stories"
+        - option "plugin-config-cleanup"
+        - option "point-criteria"
+        - option "readable-commits"
+        - option "retro-enforcement"
+        - option "selective-questions"
+        - option "tdd-workflow"
+        - option "workflow-boundary"
+        - option "workflow-fix"
+    - img [ref=e134]:
+      - generic [ref=e136]: pdm
+      - generic [ref=e137]: context-manager
+      - generic [ref=e139]: designer
+      - generic [ref=e140]: architect
+      - generic [ref=e142]: tester
+      - generic [ref=e143]: implementer
+      - generic [ref=e145]: refactor
+      - generic [ref=e146]: reviewer
+      - generic [ref=e148]: qa
+      - generic [ref=e149]: 4月3日 12:53
+      - generic [ref=e150]: 4月3日 13:23
+      - generic [ref=e151]: 4月3日 13:53
+      - generic [ref=e152]: 4月3日 14:23
+      - generic [ref=e153]: 4月3日 14:53
+      - generic [ref=e154]: 4月3日 15:23
+    - generic [ref=e78]: Tasks
+    - generic [ref=e79]:
+      - generic [ref=e171]: ✅ Rule 1 の対象拡大（8箇所の vscode_askQuestions 義務化）
+      - generic [ref=e172]: ✅ 構造テストの追加（8箇所の検証）
+  - generic [ref=e83]:
+    - generic [ref=e84]: 💬 Agent Messages
+    - generic [ref=e85]:
+      - generic [ref=e174]:
+        - generic [ref=e175]: pdm
+        - generic [ref=e176]: investigate → context-manager
+        - generic [ref=e177]: ヒアリング完了。ask_userツール利用の強制について調査依頼。SKILL.md内の全質問箇所洗い出しとvscode_askQuestionsの仕様確認が必要。
+        - generic [ref=e178]: 4月3日 12:53
+      - generic [ref=e180]:
+        - generic [ref=e181]: context-manager
+        - generic [ref=e182]: define_story → pdm
+        - generic [ref=e183]: 調査完了。Copilot SKILL.md内の全ユーザー質問箇所15箇所を特定し、vscode_askQuestions義務化が必要な8箇所を洗い出した。Rule 1の拡張方針を提案。
+        - generic [ref=e184]: 4月3日 13:03
+      - generic [ref=e186]:
+        - generic [ref=e187]: pdm
+        - generic [ref=e188]: approve → human
+        - generic [ref=e189]: ストーリー定義完了。承認を待機中。
+        - generic [ref=e190]: 4月3日 13:13
+      - generic [ref=e192]:
+        - generic [ref=e193]: architect
+        - generic [ref=e194]: approve → human
+        - generic [ref=e195]: タスク分解完了（2タスク、1pt Clear）。Rule 1 を全ユーザー対話箇所に拡大し、既存テストファイルに8件追加する方針。承認を待機中。
+        - generic [ref=e196]: 4月3日 13:23
+      - generic [ref=e198]:
+        - generic [ref=e199]: orchestrator
+        - generic [ref=e200]: approve → orchestrator
+        - generic [ref=e201]: ストーリー承認済み。バックログに登録（1pt, ready）。
+        - generic [ref=e202]: 4月3日 13:33
+      - generic [ref=e204]:
+        - generic [ref=e205]: designer
+        - generic [ref=e206]: task_decomposition → architect
+        - generic [ref=e207]: デザイン完了。Rule 1 を「全ユーザー対話での vscode_askQuestions 使用」に拡張する書き換え構造と具体的記述案を作成。総則＋11箇所の対象一覧表形式。既存 AP1/AP3 の文言は保持。
+        - generic [ref=e208]: 4月3日 13:43
+      - generic [ref=e210]:
+        - generic [ref=e211]: tester
+        - generic [ref=e212]: make_green → implementer
+        - generic [ref=e213]: "Task 1: 8箇所の vscode_askQuestions 義務化テストを追加（Red）。既存5テストはパス、新規8テストはフェイル確認済み。"
+        - generic [ref=e214]: 4月3日 13:53
+      - generic [ref=e216]:
+        - generic [ref=e217]: implementer
+        - generic [ref=e218]: refactor → refactor
+        - generic [ref=e219]: "Task 1: Rule 1 を全ユーザー対話に拡大。13テスト全パス（Green）"
+        - generic [ref=e220]: 4月3日 14:03
+      - generic [ref=e222]:
+        - generic [ref=e223]: refactor
+        - generic [ref=e224]: write_test → tester
+        - generic [ref=e225]: Task 1 完了（リファクタリング済み）。Task 2 のテスト作成へ
+        - generic [ref=e226]: 4月3日 14:13
+      - generic [ref=e228]:
+        - generic [ref=e229]: orchestrator
+        - generic [ref=e230]: review → reviewer
+        - generic [ref=e231]: 全タスク完了。Phase 4 検証開始。
+        - generic [ref=e232]: 4月3日 14:23
+      - generic [ref=e234]:
+        - generic [ref=e235]: reviewer
+        - generic [ref=e236]: verify → qa
+        - generic [ref=e237]: レビュー完了。全10受け入れ基準を確認、全189テストパス。
+        - generic [ref=e238]: 4月3日 14:33
+      - generic [ref=e240]:
+        - generic [ref=e241]: qa
+        - generic [ref=e242]: judge → pdm
+        - generic [ref=e243]: QA検証完了。受け入れ基準10項目すべて適合、構造テスト189件全パス、core SKILL.md未変更確認済み。問題なし。
+        - generic [ref=e244]: 4月3日 14:43
+      - generic [ref=e246]:
+        - generic [ref=e247]: pdm
+        - generic [ref=e248]: complete → done
+        - generic [ref=e249]: "受け入れ判定: Pass。全10基準適合。"
+        - generic [ref=e250]: 4月3日 14:53
+      - generic [ref=e252]:
+        - generic [ref=e253]: orchestrator
+        - generic [ref=e254]: checkpoint → orchestrator
+        - generic [ref=e255]: Post-Completion Step 1 complete
+        - generic [ref=e256]: 4月3日 15:03
+      - generic [ref=e258]:
+        - generic [ref=e259]: context-manager
+        - generic [ref=e260]: knowledge_update → orchestrator
+        - generic [ref=e261]: ナレッジベース更新完了（accumulation mode）
+        - generic [ref=e262]: 4月3日 15:13
+      - generic [ref=e264]:
+        - generic [ref=e265]: orchestrator
+        - generic [ref=e266]: checkpoint → orchestrator
+        - generic [ref=e267]: Post-Completion Step 2 complete
+        - generic [ref=e268]: 4月3日 15:23
