@@ -50,28 +50,34 @@ acquire_lock() {
 acquire_lock || exit 1
 # --- End lock mechanism ---
 
-BACKLOG_DATA="[]"
-if [ -f "$HEARTBEAT_DIR/backlog.jsonl" ]; then
-  _valid_lines=""
+# Parse a JSONL file safely, skipping invalid lines.
+# Outputs a JSON array. Returns "[]" if file is missing or all lines are invalid.
+_parse_jsonl_safe() {
+  local file="$1"
+  [ -f "$file" ] || { echo "[]"; return; }
+  local _valid=""
   while IFS= read -r _line || [ -n "$_line" ]; do
     [ -z "$_line" ] && continue
-    echo "$_line" | jq -e '.' >/dev/null 2>&1 && _valid_lines="${_valid_lines}${_line}"$'\n'
-  done < "$HEARTBEAT_DIR/backlog.jsonl"
-  if [ -n "$_valid_lines" ]; then
-    BACKLOG_DATA=$(printf '%s' "$_valid_lines" | jq -s '.')
+    echo "$_line" | jq -e '.' >/dev/null 2>&1 && _valid="${_valid}${_line}"$'\n'
+  done < "$file"
+  if [ -n "$_valid" ]; then
+    printf '%s' "$_valid" | jq -s '.'
+  else
+    echo "[]"
   fi
-fi
-export BACKLOG_DATA
+}
+
+export BACKLOG_DATA=$(_parse_jsonl_safe "$HEARTBEAT_DIR/backlog.jsonl")
 
 STORIES_RAW=$(
   for story_dir in "$HEARTBEAT_DIR/stories"/*/; do
     [ -d "$story_dir" ] || continue
     story_id=$(basename "$story_dir")
-    board=$(cat "$story_dir/board.jsonl" 2>/dev/null | jq -s '.')
-    tasks=$(cat "$story_dir/tasks.jsonl" 2>/dev/null | jq -s '.')
+    board=$(_parse_jsonl_safe "$story_dir/board.jsonl")
+    tasks=$(_parse_jsonl_safe "$story_dir/tasks.jsonl")
     jq -n --arg id "$story_id" \
-           --argjson board "${board:-[]}" \
-           --argjson tasks "${tasks:-[]}" \
+           --argjson board "$board" \
+           --argjson tasks "$tasks" \
            '{story_id: $id, board: $board, tasks: $tasks}'
   done
 )
