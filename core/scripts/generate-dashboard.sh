@@ -14,16 +14,12 @@ LOCK_DIR="$HEARTBEAT_DIR/.dashboard-lock"
 MAX_RETRIES="${DASHBOARD_LOCK_MAX_RETRIES:-10}"
 RETRY_INTERVAL="${DASHBOARD_LOCK_RETRY_INTERVAL:-1}"
 
-_DASHBOARD_LOCK_OWNER=""
-
 cleanup() {
-  if [ "$_DASHBOARD_LOCK_OWNER" = "$$" ] && [ -f "$LOCK_DIR/pid" ] && [ "$(cat "$LOCK_DIR/pid")" = "$$" ]; then
+  if [ -f "$LOCK_DIR/pid" ] && [ "$(cat "$LOCK_DIR/pid")" = "$$" ]; then
     rm -rf "$LOCK_DIR"
   fi
 }
-# Clean up lock on signals (INT/TERM) so it doesn't remain stale
-trap 'cleanup; exit 130' INT
-trap 'cleanup; exit 143' TERM
+trap cleanup EXIT
 
 is_lock_stale() {
   # Stale if older than 1 minute (macOS/Linux compatible)
@@ -42,7 +38,6 @@ acquire_lock() {
 
     if mkdir "$LOCK_DIR" 2>/dev/null; then
       echo $$ > "$LOCK_DIR/pid"
-      _DASHBOARD_LOCK_OWNER=$$
       return 0
     fi
     retries=$((retries + 1))

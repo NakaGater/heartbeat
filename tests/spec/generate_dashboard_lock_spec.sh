@@ -24,28 +24,12 @@ Describe 'generate-dashboard.sh 排他制御'
       The output should equal 'HAS_LOCK_CODE'
     End
 
-    It '生成中にロックディレクトリが作成される (PIDファイル含む)'
-      # ロック取得後にPIDファイルが書き込まれることを検証するため、
-      # スクリプト実行中の状態をスナップショットする wrapper を使う
-      snapshot_lock() {
-        # バックグラウンドでスクリプト実行中のロック状態を記録
-        (
-          ./core/scripts/generate-dashboard.sh "$TEST_PROJECT" &
-          local pid=$!
-          # スクリプトが起動してロック取得するまで少し待機
-          sleep 0.2
-          if [ -d "$TEST_HEARTBEAT/.dashboard-lock" ]; then
-            echo "LOCK_EXISTS"
-          fi
-          if [ -f "$TEST_HEARTBEAT/.dashboard-lock/pid" ]; then
-            echo "PID_FILE_EXISTS"
-          fi
-          wait "$pid"
-        )
-      }
-      When call snapshot_lock
-      The output should include 'LOCK_EXISTS'
-      The output should include 'PID_FILE_EXISTS'
+    It '正常終了後にロックディレクトリが自動クリーンアップされる'
+      # EXIT trapによりロックが確実に解放されることを検証
+      When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
+      The status should equal 0
+      The output should include 'Dashboard generated'
+      The path "$TEST_HEARTBEAT/.dashboard-lock" should not be exist
     End
   End
 
@@ -78,6 +62,7 @@ Describe 'generate-dashboard.sh 排他制御'
 
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The status should equal 1
+      The stderr should include 'lock'
       # 既存のdashboard.htmlが変更されていないことを確認
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist
     End
