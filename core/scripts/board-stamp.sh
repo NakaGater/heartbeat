@@ -33,21 +33,48 @@ esac
 # File must exist
 [ -f "$file_path" ] || exit 0
 
-# Read last line
-last_line=$(tail -1 "$file_path")
-[ -z "$last_line" ] && exit 0
-
-# Inject/overwrite timestamp with current UTC time
+# Scan all lines: fill empty timestamps, preserve valid ones.
+# If no empty timestamps found, fall back to overwriting last line
+# (backward compatibility for hooks that expect timestamp refresh).
 ts=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-new_last_line=$(echo "$last_line" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' 2>/dev/null)
-[ -z "$new_last_line" ] && exit 0
+tmp_file=$(mktemp)
+has_empty=0
 
-# Replace last line in-place (platform-aware sed)
-if sed --version 2>/dev/null | grep -q GNU; then
-  sed -i '$d' "$file_path"
+while IFS= read -r line || [ -n "$line" ]; do
+  cur_ts=$(echo "$line" | jq -r '.timestamp // empty' 2>/dev/null)
+  if [ -z "$cur_ts" ]; then
+    # Empty or missing timestamp — fill it
+    new_line=$(echo "$line" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' 2>/dev/null)
+    if [ -n "$new_line" ]; then
+      echo "$new_line" >> "$tmp_file"
+      has_empty=1
+    else
+      echo "$line" >> "$tmp_file"
+    fi
+  else
+    # Non-empty timestamp — preserve as-is
+    echo "$line" >> "$tmp_file"
+  fi
+done < "$file_path"
+
+if [ "$has_empty" -eq 1 ]; then
+  # Had empty timestamps — write back the filled version
+  cat "$tmp_file" > "$file_path"
 else
-  sed -i '' '$d' "$file_path"
+  # No empty timestamps found — backward-compatible last-line overwrite
+  rm -f "$tmp_file"
+  last_line=$(tail -1 "$file_path")
+  [ -z "$last_line" ] && exit 0
+  new_last_line=$(echo "$last_line" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' 2>/dev/null)
+  [ -z "$new_last_line" ] && exit 0
+  if sed --version 2>/dev/null | grep -q GNU; then
+    sed -i '$d' "$file_path"
+  else
+    sed -i '' '$d' "$file_path"
+  fi
+  echo "$new_last_line" >> "$file_path"
+  exit 0
 fi
-echo "$new_last_line" >> "$file_path"
+rm -f "$tmp_file"
 
 exit 0
