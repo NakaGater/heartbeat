@@ -127,7 +127,8 @@ Phase 1 - Planning:
     Present choices: ["Approve", "Send back"]
     If "Send back" → Present reason choices: ["Scope too broad", "Acceptance criteria unclear", "Want to change priority", "Other (free text)"]
 Result:
-  Update backlog.jsonl entry: status -> "ready", points: {estimate}
+  Update backlog.jsonl entry: status -> "ready", points: {estimate},
+    title: story.md title (if changed from draft)
   Run: bash core/scripts/generate-dashboard.sh
     (synchronous — wait for completion before proceeding)
 
