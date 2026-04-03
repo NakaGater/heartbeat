@@ -236,6 +236,8 @@ the missing step first.
 Update backlog.jsonl:
   - status → "done"
   - completed → current ISO 8601 timestamp
+Run: bash core/scripts/generate-dashboard.sh
+  (synchronous — wait for completion before proceeding)
 
 ## Workflow 3: Create and Implement a Story
 
