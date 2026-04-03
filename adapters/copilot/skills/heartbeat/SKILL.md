@@ -376,39 +376,36 @@ All questions to users must be presented with choices.
 
 ## Copilot-Specific: Request Optimization
 
-Copilot ではAIの各応答がプレミアムリクエストを消費するため、
-以下のルールでリクエスト消費を最小化する。
+In Copilot, each AI response consumes a premium request. Follow the rules below to minimize request consumption.
 
-### Rule 1: 全ユーザー対話での `vscode_askQuestions` 使用
-ユーザーへのすべての質問・入力取得には `vscode_askQuestions` ツールを使用せよ。
-通常の応答生成でユーザー入力を求めてはならない。
-対象箇所:
+### Rule 1: Use `vscode_askQuestions` for all user interactions
+Use the `vscode_askQuestions` tool for all questions and input collection from users.
+Never request user input via normal response generation.
+Applicable interaction points:
 
-| 箇所 | 質問タイプ | 選択肢 |
+| Interaction Point | Question Type | Choices |
 |---|---|---|
-| ワークフロー選択 | 選択式 | 5択（Startup Behavior の Choices 参照） |
-| WF1 カテゴリ選択 | 選択式 | カテゴリ選択肢（Workflow 1 Step 1 参照） |
-| WF1 詳細入力 | 自由記述 | なし（自由記述モードで取得） |
-| エスケープハッチ | 選択式 | 2択（続行 / 分割） |
-| AP1 ストーリー承認 | 選択式 | ["承認する", "差し戻す"] |
-| AP1 差し戻し理由 | 選択式 | 理由選択肢（Workflow 1 AP1 参照） |
-| WF2 ストーリー選択 | 選択式 | backlog.jsonl の ready ストーリー一覧 |
-| AP3 最終結果報告 | 選択式 | ["合格", "差し戻す"] |
-| AP3 差し戻し先フェーズ | 選択式 | フェーズ選択肢（Workflow 2 AP3 参照） |
-| ブロック報告時 | 選択式 | 報告選択肢（Strict Rules 参照） |
-| オーケストレーター不確実時 | 選択式 | 状況依存（最大5択、Strict Rules 参照） |
+| Workflow selection | Selection | 5 choices (see Startup Behavior Choices) |
+| WF1 category selection | Selection | Category choices (see Workflow 1 Step 1) |
+| WF1 detail input | Free text | None (use free text mode) |
+| Escape hatch | Selection | 2 choices (Continue / Split) |
+| AP1 story approval | Selection | ["Approve", "Reject"] |
+| AP1 rejection reason | Selection | Reason choices (see Workflow 1 AP1) |
+| WF2 story selection | Selection | Ready stories from backlog.jsonl |
+| AP3 final result report | Selection | ["Pass", "Reject"] |
+| AP3 rejection target phase | Selection | Phase choices (see Workflow 2 AP3) |
+| Block report | Selection | Report choices (see Strict Rules) |
+| Orchestrator uncertainty | Selection | Context-dependent (max 5 choices, see Strict Rules) |
 
-自由記述入力（WF1 詳細入力）も `vscode_askQuestions` を選択肢パラメータなしで使用する。
-差し戻し時の理由選択肢も `vscode_askQuestions` で理由を取得する。
+For free text input (WF1 detail input), also use `vscode_askQuestions` without the choices parameter.
+For rejection reason choices, also use `vscode_askQuestions` to collect the reason.
 
-### Rule 2: タスク分解の自動承認
-AP2（タスク分解承認）はスキップする。architect がタスク分解を
-完了したら、ユーザー承認を求めずに自動的に Phase 3 に進行せよ。
+### Rule 2: Auto-approve task decomposition
+Skip AP2 (task decomposition approval). When the architect completes task decomposition, proceed to Phase 3 automatically without requesting user approval.
 
-### Rule 3: ワークフロー3の入力統合
-Workflow 3 が選択された場合、問題説明のための追加入力を求めるな。
-ユーザーの入力を「ワークフロー選択 + 問題説明」として解釈せよ。
-例: 「3. ログイン画面にバリデーション追加」→ WF3 + 問題説明
-入力テキストからカテゴリを自動推定し、ハイブリッド方式の
-第1段階（カテゴリ選択）をスキップしてよい。
-カテゴリが推定できない場合のみ `vscode_askQuestions` でカテゴリ選択肢を提示する。
+### Rule 3: Consolidate Workflow 3 input
+When Workflow 3 is selected, do not request additional input for the problem description.
+Interpret the user's input as "workflow selection + problem description".
+Example: "3. Add validation to login screen" -> WF3 + problem description
+Auto-infer the category from the input text and skip the first step (category selection) of the hybrid approach.
+Only present category choices via `vscode_askQuestions` when the category cannot be inferred.
