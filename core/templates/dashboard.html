@@ -344,7 +344,7 @@ const AGENT_COLORS = {{AGENT_COLORS}};
   // ── ISO 8601 Week Number Helper ──
   function getISOWeekNumber(dateStr) {
     if (dateStr == null) return null;
-    var d = new Date(dateStr + 'T00:00:00');
+    var d = new Date(String(dateStr).indexOf('T') !== -1 ? dateStr : dateStr + 'T00:00:00');
     if (isNaN(d.getTime())) return null;
     d.setHours(0, 0, 0, 0);
     var dayOfWeek = d.getDay() || 7;
