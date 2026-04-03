@@ -1,0 +1,83 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - heading "Heartbeat Dashboard" [level=1] [ref=e4]
+    - button "🔄" [ref=e6] [cursor=pointer]
+  - generic [ref=e7]:
+    - generic [ref=e8]:
+      - generic [ref=e9]: 📋 Backlog Board
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: Draft
+          - generic [ref=e13]: —
+        - generic [ref=e14]:
+          - generic [ref=e15]: Ready
+          - generic [ref=e16]:
+            - generic [ref=e17]: 複数ストーリー並行実装 (git worktree)
+            - generic [ref=e18]: 3 pts
+        - generic [ref=e19]:
+          - generic [ref=e20]: In Progress
+          - generic [ref=e21]: —
+        - generic [ref=e22]:
+          - generic [ref=e23]: Done
+          - generic [ref=e24]:
+            - generic [ref=e25]: エージェント・スキル定義ファイルの日本語テキスト英語化
+            - generic [ref=e26]: 1 pts
+          - generic [ref=e27]:
+            - generic [ref=e28]: ガントチャートのタイムスタンプ上書き問題の根本修正
+            - generic [ref=e29]: 2 pts
+          - generic [ref=e30]:
+            - generic [ref=e31]: ダッシュボードとバックログの同期不整合修正
+            - generic [ref=e32]: 2 pts
+          - button "他 27 件を表示" [ref=e33] [cursor=pointer]
+    - generic [ref=e34]:
+      - generic [ref=e35]: 📊 Velocity Chart
+      - generic [ref=e37]:
+        - text: イテレーション未設定
+        - generic [ref=e38]: backlog.jsonl の iteration フィールドを設定してください
+  - generic [ref=e39]:
+    - generic [ref=e40]:
+      - generic [ref=e41]: 🔄 Current Story
+      - combobox [active] [ref=e42]:
+        - option "agent-skill-i18n-fix" [selected]
+        - option "ask-user-enforcement"
+        - option "ask-user-tool-fix"
+        - option "auto-commit-broken"
+        - option "auto-commit-fix"
+        - option "backlog-display-collapse"
+        - option "board-cleanup"
+        - option "claude-subagent-dispatch"
+        - option "commit-message-accuracy"
+        - option "copilot-hooks-fix"
+        - option "copilot-hooks"
+        - option "copilot-request-optimization"
+        - option "copilot-subagent-dispatch"
+        - option "copilot-tools"
+        - option "dashboard-backlog-sync"
+        - option "dashboard-current-story"
+        - option "dashboard-data-display"
+        - option "dashboard-done-collapse"
+        - option "dashboard-fix"
+        - option "dashboard-gantt-fix"
+        - option "dashboard-timestamp-empty"
+        - option "dashboard-timestamp"
+        - option "gantt-timestamp-accuracy"
+        - option "gantt-timestamp-overwrite"
+        - option "i18n-docs"
+        - option "parallel-stories"
+        - option "plugin-config-cleanup"
+        - option "point-criteria"
+        - option "readable-commits"
+        - option "retro-enforcement"
+        - option "selective-questions"
+        - option "tdd-workflow"
+        - option "workflow-boundary"
+        - option "workflow-fix"
+    - generic [ref=e44]: No board data
+    - generic [ref=e45]: Tasks
+    - generic [ref=e46]:
+      - generic [ref=e47]: ✅ Question Style Guidelines セクションの英語化 (2ファイル共通)
+      - generic [ref=e48]: ✅ Copilot Request Optimization セクションの英語化
+      - generic [ref=e49]: ✅ 全体検証 (構造テスト + 日本語残留チェック)
+  - generic [ref=e50]:
+    - generic [ref=e51]: 💬 Agent Messages
+    - generic [ref=e53]: No messages
