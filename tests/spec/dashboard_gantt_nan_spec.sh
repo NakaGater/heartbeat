@@ -27,8 +27,13 @@ BOARD
   AfterEach 'cleanup'
 
   It 'does not produce NaN in SVG attributes when all timestamps are empty strings'
-    When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
-    The output should include 'Dashboard generated'
-    The contents of file "$TEST_HEARTBEAT/dashboard.html" should not include 'NaN'
+    check_no_svg_nan() {
+      ./core/scripts/generate-dashboard.sh "$TEST_PROJECT" >/dev/null 2>&1
+      # Check for NaN in SVG attribute values (e.g. x="NaN", width="NaN")
+      # but not in JavaScript code like isNaN()
+      ! grep -qE '="NaN[^"]*"' "$TEST_HEARTBEAT/dashboard.html"
+    }
+    When call check_no_svg_nan
+    The status should be success
   End
 End

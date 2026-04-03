@@ -35,15 +35,15 @@ check_done_stories_retain_original_points() {
   # Expected: tdd-workflow=5, i18n-docs=3, auto-commit-fix=3,
   #           dashboard-fix=5, workflow-fix=5, workflow-boundary=3,
   #           copilot-hooks=1, board-cleanup=3, copilot-tools=2
-  check_done_story_points "tdd-workflow" 5 || return 1
-  check_done_story_points "i18n-docs" 3 || return 1
-  check_done_story_points "auto-commit-fix" 3 || return 1
-  check_done_story_points "dashboard-fix" 5 || return 1
-  check_done_story_points "workflow-fix" 5 || return 1
-  check_done_story_points "workflow-boundary" 3 || return 1
-  check_done_story_points "copilot-hooks" 1 || return 1
-  check_done_story_points "board-cleanup" 3 || return 1
-  check_done_story_points "copilot-tools" 2 || return 1
+  check_done_story_points "0001" 5 || return 1
+  check_done_story_points "0002" 3 || return 1
+  check_done_story_points "0003" 3 || return 1
+  check_done_story_points "0004" 5 || return 1
+  check_done_story_points "0005" 5 || return 1
+  check_done_story_points "0006" 3 || return 1
+  check_done_story_points "0008" 1 || return 1
+  check_done_story_points "0009" 3 || return 1
+  check_done_story_points "0011" 2 || return 1
 }
 
 check_done_story_points() {
@@ -56,7 +56,7 @@ check_done_story_points() {
 # --- CC3: parallel-stories re-estimated to 1-3 range ---
 
 check_parallel_stories_re_estimated() {
-  pts=$(jq -r 'select(.story_id == "parallel-stories") | .points' "$BACKLOG" 2>/dev/null)
+  pts=$(jq -r 'select(.story_id == "0007") | .points' "$BACKLOG" 2>/dev/null)
   case "$pts" in
     1|2|3) return 0 ;;
     *) return 1 ;;
