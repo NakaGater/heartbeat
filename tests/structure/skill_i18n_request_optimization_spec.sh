@@ -19,6 +19,21 @@ extract_rule1_table() {
   echo "$section" | sed -n '/^|/,/^[^|]/{/^|/p;}'
 }
 
+# Helper: perl で日本語文字 (ひらがな・カタカナ・漢字) を検出する
+# grep の文字クラス [ぁ-んァ-ヶ一-龥] はロケール依存で誤検出するため
+# perl の Unicode プロパティを使用する (fullcheck と同一手法)
+has_japanese() {
+  perl -e 'use open ":std", ":encoding(UTF-8)";
+    my $found = 0;
+    while (<STDIN>) {
+      if (/\p{Hiragana}|\p{Katakana}|\p{Han}/) {
+        $found = 1;
+        last;
+      }
+    }
+    exit($found ? 0 : 1);'
+}
+
 # 条件 1: Request Optimization セクション全体に日本語文字が含まれていないこと
 check_no_japanese_in_request_optimization() {
   section=$(extract_request_optimization_section)
@@ -26,7 +41,7 @@ check_no_japanese_in_request_optimization() {
     # セクションが見つからない場合も失敗
     return 1
   fi
-  if echo "$section" | grep -q '[ぁ-んァ-ヶ一-龥]'; then
+  if echo "$section" | has_japanese; then
     return 1
   fi
   return 0
@@ -53,7 +68,7 @@ check_rule1_table_cells_no_japanese() {
   if [ -z "$table" ]; then
     return 1
   fi
-  if echo "$table" | grep -q '[ぁ-んァ-ヶ一-龥]'; then
+  if echo "$table" | has_japanese; then
     return 1
   fi
   return 0
@@ -87,23 +102,23 @@ check_english_content_matches_context() {
   echo "$section" | grep -q 'vscode_askQuestions' || return 1
 }
 
-Describe 'SKILL.md Request Optimization セクションに日本語が含まれていないこと'
-  It 'Request Optimization セクション全体に日本語文字（ひらがな・カタカナ・漢字）がないこと'
+Describe 'SKILL.md Request Optimization has no Japanese (copilot)'
+  It 'contains no Japanese characters in Request Optimization section'
     When call check_no_japanese_in_request_optimization
     The status should be success
   End
 
-  It 'Rule 1 テーブルのヘッダーが英語であること'
+  It 'Rule 1 table headers are in English'
     When call check_rule1_table_headers_english
     The status should be success
   End
 
-  It 'Rule 1 テーブルのデータセルに日本語が含まれていないこと'
+  It 'Rule 1 table data cells contain no Japanese characters'
     When call check_rule1_table_cells_no_japanese
     The status should be success
   End
 
-  It '英訳が context.md の意味記述のキーフレーズと一致していること'
+  It 'contains expected English translation key phrases matching context.md'
     When call check_english_content_matches_context
     The status should be success
   End

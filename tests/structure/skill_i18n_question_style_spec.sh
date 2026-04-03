@@ -13,12 +13,24 @@ extract_question_style_section() {
   sed -n '/^## Question Style Guidelines$/,/^## /{ /^## Question Style Guidelines$/d; /^## /d; p; }' "$file"
 }
 
-# 日本語文字（ひらがな・カタカナ・漢字）の検出
-# grep -P で Unicode プロパティを使用
+# Helper: perl で日本語文字 (ひらがな・カタカナ・漢字) を検出する
+# grep の文字クラス [ぁ-んァ-ヶ一-龥] はロケール依存で誤検出するため
+# perl の Unicode プロパティを使用する (fullcheck と同一手法)
+has_japanese() {
+  perl -e 'use open ":std", ":encoding(UTF-8)";
+    my $found = 0;
+    while (<STDIN>) {
+      if (/\p{Hiragana}|\p{Katakana}|\p{Han}/) {
+        $found = 1;
+        last;
+      }
+    }
+    exit($found ? 0 : 1);'
+}
+
 check_core_no_japanese() {
   section=$(extract_question_style_section "$CORE_SKILL")
-  # 日本語文字が見つかったら失敗 (grep が成功 = 日本語あり = テスト失敗)
-  if echo "$section" | grep -q '[ぁ-んァ-ヶ一-龥]'; then
+  if echo "$section" | has_japanese; then
     return 1
   fi
   return 0
@@ -26,7 +38,7 @@ check_core_no_japanese() {
 
 check_copilot_no_japanese() {
   section=$(extract_question_style_section "$COPILOT_SKILL")
-  if echo "$section" | grep -q '[ぁ-んァ-ヶ一-龥]'; then
+  if echo "$section" | has_japanese; then
     return 1
   fi
   return 0
