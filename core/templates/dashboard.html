@@ -511,9 +511,12 @@ const AGENT_COLORS = {{AGENT_COLORS}};
       var bw = Math.max((end - start) * tScale, 2);
       var by = padT + agentIdx * rowH + (rowH - barH) / 2;
       var isRework = e.status === 'rework';
+      svg += '<g>';
       svg += '<rect x="' + x + '" y="' + by + '" width="' + bw + '" height="' + barH + '" fill="' + agentColor(e.from) + '" rx="3" opacity="0.8"';
       if (isRework) svg += ' stroke="' + agentColor(e.from) + '" stroke-dasharray="4,2" fill-opacity="0.4"';
       svg += '/>';
+      svg += '<title>' + esc(e.from) + ' / ' + esc(e.action || '') + ' / ' + esc(e.timestamp || '') + '</title>';
+      svg += '</g>';
     }
 
     svg += '</svg>';
