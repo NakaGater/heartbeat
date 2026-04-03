@@ -460,8 +460,6 @@ const AGENT_COLORS = {{AGENT_COLORS}};
         e.timestamp = new Date(now.getTime() - (entries.length - 1 - idx) * 600000).toISOString();
       });
     }
-    entries.sort(function(a,b){ return new Date(a.timestamp) - new Date(b.timestamp); });
-
     // All agents from AGENT_COLORS (excluding human/orchestrator)
     var agents = Object.keys(AGENT_COLORS).filter(function(a) {
       return a !== 'human' && a !== 'orchestrator';
