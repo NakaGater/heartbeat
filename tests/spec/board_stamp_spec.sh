@@ -251,6 +251,27 @@ Describe 'board-stamp.sh'
     End
   End
 
+  Describe '不正タイムスタンプ値の補完'
+    # ISO 8601 形式に合致しない不正な値（例: "invalid"）は
+    # 空文字と同様に補完対象とし、正確な UTC 時刻で上書きすべき。
+
+    It 'overwrites invalid non-ISO-8601 timestamp with current UTC time'
+      setup_invalid_ts() {
+        {
+          echo '{"from":"pdm","to":"architect","action":"define_story","status":"ok","note":"valid","timestamp":"2026-03-15T10:00:00Z"}'
+          echo '{"from":"architect","to":"designer","action":"estimate","status":"ok","note":"invalid ts","timestamp":"invalid"}'
+        } > "$TEST_BOARD_FILE"
+      }
+      BeforeCall 'setup_invalid_ts'
+      When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
+      The status should be success
+      # 有効なタイムスタンプは保持される
+      The contents of file "$TEST_BOARD_FILE" should include '2026-03-15T10:00:00Z'
+      # 不正値 "invalid" は正確な UTC 時刻で置換されるべき
+      The contents of file "$TEST_BOARD_FILE" should not include '"invalid"'
+    End
+  End
+
   Describe 'PostToolUse safety net'
     # PostToolUse パス（file_path あり）で安全網として正常動作することを確認
 
