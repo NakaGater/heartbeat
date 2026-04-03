@@ -202,6 +202,33 @@ Describe 'board-stamp.sh'
     End
   End
 
+  Describe '全行走査・空タイムスタンプのみ補完'
+    # 複数行の board.jsonl で、空タイムスタンプの行のみ補完し、
+    # 既存の有効なタイムスタンプは上書きしないことを検証する。
+
+    setup_multi_line() {
+      # 3行: 有効TS → 空TS → 有効TS
+      {
+        echo '{"from":"pdm","to":"architect","action":"define_story","status":"ok","note":"line1","timestamp":"2026-03-15T10:00:00Z"}'
+        echo '{"from":"architect","to":"designer","action":"estimate","status":"ok","note":"line2","timestamp":""}'
+        echo '{"from":"designer","to":"tester","action":"design","status":"ok","note":"line3","timestamp":"2026-03-15T12:00:00Z"}'
+      } > "$TEST_BOARD_FILE"
+    }
+
+    BeforeEach 'setup_multi_line'
+
+    It 'fills empty timestamps and preserves existing ones across all lines'
+      When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
+      The status should be success
+      # line1 の有効なタイムスタンプは変更されない
+      The contents of file "$TEST_BOARD_FILE" should include '2026-03-15T10:00:00Z'
+      # line3 の有効なタイムスタンプも変更されない
+      The contents of file "$TEST_BOARD_FILE" should include '2026-03-15T12:00:00Z'
+      # line2 の空タイムスタンプが補完されている（空文字が残っていない）
+      The contents of file "$TEST_BOARD_FILE" should not include '"timestamp":""'
+    End
+  End
+
   Describe 'PostToolUse backward compatibility'
     # 既存の PostToolUse パス（file_path あり）が引き続き正常動作することを確認
 
