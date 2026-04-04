@@ -49,4 +49,5 @@ main() {
 # When executed directly, main runs.
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
   main "$@"
+  exit 0
 fi
