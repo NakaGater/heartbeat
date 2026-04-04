@@ -29,7 +29,7 @@ check_helper_before_render_velocity() {
 check_week_number_jan1() {
   command -v node >/dev/null 2>&1 || return 1
   extract_dashboard_functions || return 1
-  node -e "${DASHBOARD_HELPER}; var r = getISOWeekNumber('2026-01-01'); if (r !== 1) process.exit(1);"
+  node -e "${DASHBOARD_HELPER}; var r = getISOWeekNumber('2026-01-01'); if (r !== '2026-W01') process.exit(1);"
   return $?
 }
 
@@ -43,7 +43,7 @@ check_null_input_returns_null() {
 check_iso_datetime_returns_week_number() {
   command -v node >/dev/null 2>&1 || return 1
   extract_dashboard_functions || return 1
-  node -e "${DASHBOARD_HELPER}; var r = getISOWeekNumber('2026-03-29T00:00:00Z'); if (r === null || typeof r !== 'number') process.exit(1);"
+  node -e "${DASHBOARD_HELPER}; var r = getISOWeekNumber('2026-03-29T00:00:00Z'); if (r === null || typeof r !== 'string' || !/^\d{4}-W\d{2}$/.test(r)) process.exit(1);"
   return $?
 }
 
@@ -84,9 +84,9 @@ check_week_labels_in_svg_output() {
     ${DASHBOARD_HELPER}
     ${DASHBOARD_RENDER}
     renderVelocity();
-    var weekMatches = _innerHTML.match(/Week \d+/g);
+    var weekMatches = _innerHTML.match(/\d{4}-W\d{2}/g);
     if (!weekMatches || weekMatches.length < 2) {
-      console.error('FAIL: Expected at least 2 Week labels, got ' + (weekMatches ? weekMatches.length : 0));
+      console.error('FAIL: Expected at least 2 YYYY-Wnn labels, got ' + (weekMatches ? weekMatches.length : 0));
       process.exit(1);
     }
     process.exit(0);
@@ -146,12 +146,12 @@ Describe 'dashboard.html getISOWeekNumber helper function'
     The status should be success
   End
 
-  It 'returns week number 1 for "2026-01-01"'
+  It 'returns "2026-W01" for "2026-01-01"'
     When call check_week_number_jan1
     The status should be success
   End
 
-  It 'returns valid week number for ISO 8601 datetime "2026-03-29T00:00:00Z"'
+  It 'returns YYYY-Wnn string for ISO 8601 datetime "2026-03-29T00:00:00Z"'
     When call check_iso_datetime_returns_week_number
     The status should be success
   End
@@ -175,7 +175,7 @@ Describe 'renderVelocity() fallback aggregation logic'
 End
 
 Describe 'renderVelocity() fallback week labels and average line'
-  It 'displays X-axis labels in Week N format during fallback'
+  It 'displays X-axis labels in YYYY-Wnn format during fallback'
     When call check_week_labels_in_svg_output
     The status should be success
   End

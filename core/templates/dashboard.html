@@ -344,14 +344,14 @@ const AGENT_COLORS = {{AGENT_COLORS}};
   // ── ISO 8601 Week Number Helper ──
   function getISOWeekNumber(dateStr) {
     if (dateStr == null) return null;
-    var d = new Date(String(dateStr).indexOf('T') !== -1 ? dateStr : dateStr + 'T00:00:00');
+    var d = new Date(String(dateStr).indexOf('T') !== -1 ? dateStr : dateStr + 'T00:00:00Z');
     if (isNaN(d.getTime())) return null;
-    d.setHours(0, 0, 0, 0);
-    var dayOfWeek = d.getDay() || 7;
-    d.setDate(d.getDate() + 4 - dayOfWeek);
-    var yearStart = new Date(d.getFullYear(), 0, 1);
+    d.setUTCHours(0, 0, 0, 0);
+    var dayOfWeek = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayOfWeek);
+    var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
     var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    return weekNo;
+    return d.getUTCFullYear() + '-W' + String(weekNo).padStart(2, '0');
   }
 
   // ── Velocity Chart ──
@@ -390,14 +390,14 @@ const AGENT_COLORS = {{AGENT_COLORS}};
           weekMap[wn] = (weekMap[wn] || 0) + (Number(item.points) || 0);
         }
       });
-      var weeks = Object.keys(weekMap).map(Number).sort(function(a,b){return a-b;});
+      var weeks = Object.keys(weekMap).sort();
       if (weeks.length === 0) {
         el.innerHTML = '<div class="chart-fallback">'
           + 'データ収集中…'
           + '</div>';
         return;
       }
-      labels = weeks.map(function(w){ return 'Week ' + w; });
+      labels = weeks;
       values = weeks.map(function(w){ return weekMap[w]; });
     }
 
