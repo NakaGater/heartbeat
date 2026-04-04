@@ -226,6 +226,8 @@ header h1 {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+.panel-title--inline { margin-bottom: 0; }
+.panel-title--sm { font-size: var(--text-caption); }
 
 /* Backlog Board */
 .kanban {
@@ -416,18 +418,17 @@ header h1 {
   50% { opacity: 0.7; }
 }
 
-.panel, header, .top-row {
+.panel, .hero-metrics, .bento-card {
   animation: fadeSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Stagger animation-delay using #app > :nth-child for robust DOM ordering */
-#app > :nth-child(1)                { animation-delay: 0ms; }    /* header */
-#app > :nth-child(2)                { animation-delay: 80ms; }   /* .top-row */
-#app > :nth-child(3)                { animation-delay: 160ms; }  /* Current Story panel */
-#app > :nth-child(4)                { animation-delay: 240ms; }  /* Insights panel */
-#app > :nth-child(5)                { animation-delay: 320ms; }  /* Messages panel */
-.top-row > .panel:nth-child(1)      { animation-delay: 80ms; }
-.top-row > .panel:nth-child(2)      { animation-delay: 120ms; }
+/* Stagger animation-delay using #app > :nth-child for Bento grid DOM ordering */
+#app > :nth-child(1)                { animation-delay: 0ms; }    /* .hero-metrics */
+#app > :nth-child(2)                { animation-delay: 80ms; }   /* .bento-card.card-backlog */
+#app > :nth-child(3)                { animation-delay: 160ms; }  /* .bento-card.card-velocity */
+#app > :nth-child(4)                { animation-delay: 240ms; }  /* .bento-card.card-story */
+#app > :nth-child(5)                { animation-delay: 320ms; }  /* .bento-card.card-messages */
+#app > :nth-child(6)                { animation-delay: 400ms; }  /* .bento-card.card-insights */
 
 /* Hover depth transition */
 .panel {
@@ -503,11 +504,11 @@ header h1 {
   <div class="bento-card card-story">
     <div class="panel">
       <div class="story-header">
-        <div class="panel-title" style="margin-bottom:0;">&#x1f504; Current Story</div>
+        <div class="panel-title panel-title--inline">&#x1f504; Current Story</div>
         <select id="story-select" class="story-select" onchange="renderStoryDetail()"></select>
       </div>
       <div id="gantt-chart" class="gantt-container"></div>
-      <div class="panel-title" style="font-size:0.75rem;">Tasks</div>
+      <div class="panel-title panel-title--sm">Tasks</div>
       <div id="task-list" class="tasks-list"></div>
     </div>
   </div>
