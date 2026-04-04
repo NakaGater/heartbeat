@@ -361,7 +361,7 @@ const AGENT_COLORS = {{AGENT_COLORS}};
     (BACKLOG_DATA || []).forEach(function(item) {
       if (item.iteration != null && item.status === 'done' && item.points != null) {
         var k = item.iteration;
-        iterMap[k] = (iterMap[k] || 0) + item.points;
+        iterMap[k] = (iterMap[k] || 0) + (Number(item.points) || 0);
       }
     });
     var iters = Object.keys(iterMap).map(Number).sort(function(a,b){return a-b;});
@@ -387,7 +387,7 @@ const AGENT_COLORS = {{AGENT_COLORS}};
       doneWithPoints.forEach(function(item) {
         var wn = getISOWeekNumber(item.completed);
         if (wn != null) {
-          weekMap[wn] = (weekMap[wn] || 0) + item.points;
+          weekMap[wn] = (weekMap[wn] || 0) + (Number(item.points) || 0);
         }
       });
       var weeks = Object.keys(weekMap).map(Number).sort(function(a,b){return a-b;});
