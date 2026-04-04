@@ -43,3 +43,8 @@ setup_dashboard_project() {
   printf '{"story_id":"DASH-001","status":"in_progress"}\n' > "$DASHBOARD_PROJECT/.heartbeat/backlog.jsonl"
   printf '{"from":"tester","to":"implementer","action":"make_green","timestamp":"2026-01-01T00:00:00Z"}\n' > "$story_dir/board.jsonl"
 }
+
+cleanup_dashboard_project() {
+  rm -rf "$DASHBOARD_PROJECT"
+  unset DASHBOARD_PROJECT
+}

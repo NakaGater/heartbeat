@@ -109,11 +109,7 @@ End
 # Completion condition: setup_dashboard_project() がダッシュボードテスト用の共通環境を構築する
 
 Describe 'setup_dashboard_project() helper'
-  cleanup_dashboard() {
-    rm -rf "$DASHBOARD_PROJECT"
-  }
-
-  After 'cleanup_dashboard'
+  After 'cleanup_dashboard_project'
 
   It 'creates a temporary project directory'
     When call setup_dashboard_project
