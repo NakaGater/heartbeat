@@ -125,6 +125,8 @@
     --gradient-mesh: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
                      radial-gradient(ellipse at 80% 20%, rgba(8, 145, 178, 0.04) 0%, transparent 50%),
                      radial-gradient(ellipse at 50% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 50%);
+    --gradient-header: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(8, 145, 178, 0.05) 100%);
+    --gradient-surface: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(241, 245, 249, 0.3) 100%);
     /* ライトモード シャドウ */
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
@@ -159,18 +161,18 @@ header {
   justify-content: space-between;
   align-items: center;
   padding: var(--space-3) var(--space-4);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(17, 24, 39, 0.7);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   backdrop-filter: blur(12px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius);
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--space-5);
 }
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   header {
-    background: rgba(17, 24, 39, 0.7);
-    border-color: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.06);
   }
 }
 header h1 {
