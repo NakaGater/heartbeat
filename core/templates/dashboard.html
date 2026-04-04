@@ -6,44 +6,52 @@
 <title>Heartbeat Dashboard</title>
 <style>
 :root {
-  /* Base colors — warm slate */
-  --bg: #f8fafc;
-  --bg-panel: #ffffff;
-  --bg-card: #f1f5f9;
-  --bg-elevated: #ffffff;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --text-subtle: #94a3b8;
-  --border: #e2e8f0;
-  --border-subtle: #f1f5f9;
-  --shadow: 0 1px 3px rgba(0,0,0,0.1);
+  /* 深海ネイビー -- ダークファースト既定 (Vercel/Raycast風) */
+  --bg: #080c19;
+  --bg-panel: rgba(15, 20, 40, 0.6);
+  --bg-card: rgba(20, 28, 50, 0.5);
+  --bg-elevated: rgba(25, 35, 60, 0.7);
+  --text: #e8ecf4;
+  --text-muted: #7a8bad;
+  --text-subtle: #4a5878;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-subtle: rgba(255, 255, 255, 0.03);
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
   --radius: 8px;
-  /* Accent — indigo/violet (Stripe-inspired) */
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
-  --accent-subtle: #eef2ff;
-  --accent-muted: #a5b4fc;
-  /* Secondary accent — teal */
-  --secondary: #14b8a6;
-  --secondary-subtle: #f0fdfa;
-  /* Semantic colors */
-  --success: #10b981;
-  --success-subtle: #ecfdf5;
-  --warning: #f59e0b;
-  --warning-subtle: #fffbeb;
-  --error: #ef4444;
-  --error-subtle: #fef2f2;
-  --info: #3b82f6;
-  --info-subtle: #eff6ff;
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
-  --gradient-header: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(139, 92, 246, 0.06) 100%);
-  --gradient-surface: linear-gradient(180deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.4) 100%);
-  /* Message bubbles */
-  --bubble-human: #eef2ff;
-  --bubble-agent: #f1f5f9;
-  --red-border: #ef4444;
-  /* Spacing tokens (4px base) */
+  /* アクセント -- 電気バイオレット/インディゴ */
+  --accent: #7c6aef;
+  --accent-hover: #9b8afb;
+  --accent-subtle: rgba(124, 106, 239, 0.12);
+  --accent-muted: rgba(124, 106, 239, 0.25);
+  --accent-glow: 0 0 20px rgba(124, 106, 239, 0.3);
+  /* セカンダリ -- シアン/ティール */
+  --secondary: #22d3ee;
+  --secondary-subtle: rgba(34, 211, 238, 0.1);
+  /* ターシャリ -- アンバー/ゴールド */
+  --tertiary: #f59e0b;
+  --tertiary-subtle: rgba(245, 158, 11, 0.1);
+  /* セマンティック */
+  --success: #34d399;
+  --success-subtle: rgba(52, 211, 153, 0.1);
+  --warning: #fbbf24;
+  --warning-subtle: rgba(251, 191, 36, 0.1);
+  --error: #f87171;
+  --error-subtle: rgba(248, 113, 113, 0.1);
+  --info: #60a5fa;
+  --info-subtle: rgba(96, 165, 250, 0.1);
+  /* グラデーション */
+  --gradient-primary: linear-gradient(135deg, #7c6aef 0%, #22d3ee 100%);
+  --gradient-hero: linear-gradient(135deg, rgba(124, 106, 239, 0.15) 0%, rgba(34, 211, 238, 0.08) 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(15, 20, 40, 0.8) 0%, rgba(8, 12, 25, 0.4) 100%);
+  --gradient-mesh: radial-gradient(ellipse at 20% 50%, rgba(124, 106, 239, 0.08) 0%, transparent 50%),
+                   radial-gradient(ellipse at 80% 20%, rgba(34, 211, 238, 0.06) 0%, transparent 50%),
+                   radial-gradient(ellipse at 50% 80%, rgba(245, 158, 11, 0.04) 0%, transparent 50%);
+  --gradient-header: linear-gradient(135deg, rgba(124, 106, 239, 0.05) 0%, rgba(34, 211, 238, 0.08) 100%);
+  /* メッセージバブル */
+  --bubble-human: rgba(124, 106, 239, 0.15);
+  --bubble-agent: rgba(20, 28, 50, 0.7);
+  --red-border: #f87171;
+  /* スペーシング (4px基準) */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -52,13 +60,20 @@
   --space-6: 32px;
   --space-7: 48px;
   --space-8: 64px;
-  /* Shadow tokens */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-  /* Typography scale tokens (Major Third 1.25 ratio + practical stops) */
+  /* シャドウ (ダークファースト) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 30px rgba(124, 106, 239, 0.15);
+  /* ボーダー半径 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  /* タイポグラフィ (Major Third 1.25 ratio + practical stops) */
   --text-2xs: 0.65rem;
   --text-xs: 0.7rem;
   --text-caption: 0.75rem;
@@ -68,57 +83,58 @@
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.563rem;
-  /* Border radius tokens */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-full: 9999px;
+  --text-3xl: 2rem;
+  --text-4xl: 3rem;
 }
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    /* Base colors — deep navy/slate (Vercel-inspired) */
-    --bg: #0a0f1e;
-    --bg-panel: #111827;
-    --bg-card: #1e293b;
-    --bg-elevated: #1e293b;
-    --text: #f1f5f9;
-    --text-muted: #94a3b8;
-    --text-subtle: #64748b;
-    --border: #1e293b;
-    --border-subtle: #1a2332;
-    --shadow: 0 1px 3px rgba(0,0,0,0.4);
-    /* Dark mode accent — brighter for dark backgrounds */
-    --accent: #818cf8;
-    --accent-hover: #a5b4fc;
-    --accent-subtle: rgba(99, 102, 241, 0.12);
-    --accent-muted: rgba(99, 102, 241, 0.25);
-    /* Dark mode secondary */
-    --secondary: #2dd4bf;
-    --secondary-subtle: rgba(20, 184, 166, 0.1);
-    /* Dark mode semantic colors (400-level for contrast) */
-    --success: #34d399;
-    --success-subtle: rgba(16, 185, 129, 0.1);
-    --warning: #fbbf24;
-    --warning-subtle: rgba(245, 158, 11, 0.1);
-    --error: #f87171;
-    --error-subtle: rgba(239, 68, 68, 0.1);
-    --info: #60a5fa;
-    --info-subtle: rgba(59, 130, 246, 0.1);
-    /* Dark mode gradients */
-    --gradient-primary: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c4b5fd 100%);
-    --gradient-header: linear-gradient(135deg, rgba(129, 140, 248, 0.05) 0%, rgba(167, 139, 250, 0.08) 100%);
-    --gradient-surface: linear-gradient(180deg, rgba(17, 24, 39, 0.9) 0%, rgba(10, 15, 30, 0.6) 100%);
-    /* Dark mode shadow tokens */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
-    --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    /* Dark mode bubbles */
-    --bubble-human: rgba(99, 102, 241, 0.15);
-    --bubble-agent: #1e293b;
-    --red-border: #f87171;
+    --bg: #f0f2f8;
+    --bg-panel: rgba(255, 255, 255, 0.7);
+    --bg-card: rgba(241, 245, 249, 0.6);
+    --bg-elevated: rgba(255, 255, 255, 0.85);
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+    --border: rgba(0, 0, 0, 0.06);
+    --border-subtle: rgba(0, 0, 0, 0.03);
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+    /* ライトモード アクセント */
+    --accent: #6366f1;
+    --accent-hover: #4f46e5;
+    --accent-subtle: rgba(99, 102, 241, 0.08);
+    --accent-muted: rgba(99, 102, 241, 0.2);
+    --accent-glow: 0 0 20px rgba(99, 102, 241, 0.15);
+    /* ライトモード セカンダリ */
+    --secondary: #0891b2;
+    --secondary-subtle: rgba(8, 145, 178, 0.08);
+    /* ライトモード ターシャリ */
+    --tertiary: #d97706;
+    --tertiary-subtle: rgba(217, 119, 6, 0.08);
+    /* ライトモード セマンティック */
+    --success: #10b981;
+    --success-subtle: rgba(16, 185, 129, 0.08);
+    --warning: #f59e0b;
+    --warning-subtle: rgba(245, 158, 11, 0.08);
+    --error: #ef4444;
+    --error-subtle: rgba(239, 68, 68, 0.08);
+    --info: #3b82f6;
+    --info-subtle: rgba(59, 130, 246, 0.08);
+    /* ライトモード グラデーション */
+    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #0891b2 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(8, 145, 178, 0.05) 100%);
+    --gradient-mesh: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.06) 0%, transparent 50%),
+                     radial-gradient(ellipse at 80% 20%, rgba(8, 145, 178, 0.04) 0%, transparent 50%),
+                     radial-gradient(ellipse at 50% 80%, rgba(245, 158, 11, 0.03) 0%, transparent 50%);
+    /* ライトモード シャドウ */
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.1);
+    /* ライトモード バブル */
+    --bubble-human: rgba(99, 102, 241, 0.1);
+    --bubble-agent: rgba(241, 245, 249, 0.8);
+    --red-border: #ef4444;
   }
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }

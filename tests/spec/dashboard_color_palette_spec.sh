@@ -69,28 +69,28 @@ Describe 'dashboard.html: プレミアムカラーパレット（タスク2 - AC
     The contents of file "$TEMPLATE" should include '--gradient-surface:'
   End
 
-  # --- ダークモード独立カラー定義 ---
-  It 'ダークモード内でアクセントカラーが独立定義されている'
-    dark_section() {
-      sed -n '/prefers-color-scheme: dark/,/^[[:space:]]*}/p' "$TEMPLATE"
+  # --- ダークモード独立カラー定義 (v2: ダークファースト = :root が既定ダーク) ---
+  It 'ダークモード(:root)にアクセントカラーが独立定義されている'
+    root_block() {
+      sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
     }
-    When call dark_section
+    When call root_block
     The output should include '--accent:'
   End
 
-  It 'ダークモード内でセマンティックカラー --success が独立定義されている'
-    dark_section() {
-      sed -n '/prefers-color-scheme: dark/,/^[[:space:]]*}/p' "$TEMPLATE"
+  It 'ダークモード(:root)にセマンティックカラー --success が独立定義されている'
+    root_block() {
+      sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
     }
-    When call dark_section
+    When call root_block
     The output should include '--success:'
   End
 
-  It 'ダークモード内でグラデーション --gradient-primary が独立定義されている'
-    dark_section() {
-      sed -n '/prefers-color-scheme: dark/,/^[[:space:]]*}/p' "$TEMPLATE"
+  It 'ダークモード(:root)にグラデーション --gradient-primary が独立定義されている'
+    root_block() {
+      sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
     }
-    When call dark_section
+    When call root_block
     The output should include '--gradient-primary:'
   End
 End
