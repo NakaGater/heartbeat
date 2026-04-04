@@ -1,0 +1,48 @@
+{
+  "hooks": {
+    "SubagentStart": [
+      {
+        "hooks": []
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./core/scripts/board-stamp.sh"
+          },
+          {
+            "type": "command",
+            "command": "./core/scripts/retrospective-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "./core/scripts/generate-dashboard.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./core/scripts/board-stamp.sh"
+          },
+          {
+            "type": "command",
+            "command": "./core/scripts/generate-dashboard.sh",
+            "async": true
+          },
+          {
+            "type": "command",
+            "command": "./core/scripts/auto-commit.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
