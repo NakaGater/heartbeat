@@ -30,3 +30,76 @@ Describe 'has_japanese() helper'
     The status should be failure
   End
 End
+
+# --- extract_skill_section() tests ---
+# Story: 0042-test-cleanup / Task 1 (AC-5)
+# Completion condition: extract_skill_section() が SKILL.md からセクションを抽出できる
+
+Describe 'extract_skill_section() helper'
+  setup() {
+    TEST_MD=$(mktemp)
+    cat > "$TEST_MD" <<'FIXTURE'
+# Main Title
+
+## Section Alpha
+
+Alpha content line 1.
+Alpha content line 2.
+
+## Section Beta
+
+Beta content line 1.
+
+### Beta subsection
+
+Beta sub content.
+
+## Section Gamma
+
+Gamma content.
+FIXTURE
+  }
+
+  cleanup() {
+    rm -f "$TEST_MD"
+  }
+
+  Before 'setup'
+  After 'cleanup'
+
+  It 'extracts content of a named section'
+    When call extract_skill_section "$TEST_MD" "Section Alpha"
+    The output should include "Alpha content line 1."
+    The output should include "Alpha content line 2."
+    The status should be success
+  End
+
+  It 'does not include content from other sections'
+    When call extract_skill_section "$TEST_MD" "Section Alpha"
+    The output should not include "Beta content"
+    The output should not include "Gamma content"
+  End
+
+  It 'extracts a section that contains subsections'
+    When call extract_skill_section "$TEST_MD" "Section Beta"
+    The output should include "Beta content line 1."
+    The output should include "### Beta subsection"
+    The output should include "Beta sub content."
+  End
+
+  It 'extracts the last section (no trailing heading)'
+    When call extract_skill_section "$TEST_MD" "Section Gamma"
+    The output should include "Gamma content."
+    The status should be success
+  End
+
+  It 'returns failure for a non-existent section'
+    When call extract_skill_section "$TEST_MD" "No Such Section"
+    The status should be failure
+  End
+
+  It 'returns failure when file does not exist'
+    When call extract_skill_section "/tmp/nonexistent_file_xxxxx.md" "Section Alpha"
+    The status should be failure
+  End
+End
