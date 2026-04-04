@@ -19,25 +19,25 @@ Describe 'retrospective-record.sh'
     End
   End
 
-  Describe 'Error cases'
-    It 'rejects invalid JSON with exit 1'
+  Describe 'Error cases (hook-safe: exit 0 with warning)'
+    It 'rejects invalid JSON with exit 0 and warning'
       Data 'this is not json'
       When run ./core/scripts/retrospective-record.sh
-      The status should be failure
+      The status should be success
       The stderr should include 'invalid JSON'
     End
 
-    It 'rejects empty input'
+    It 'rejects empty input with exit 0 and warning'
       Data ''
       When run ./core/scripts/retrospective-record.sh
-      The status should be failure
+      The status should be success
       The stderr should include 'empty input'
     End
 
-    It 'rejects JSON without agent field'
+    It 'rejects JSON without agent field with exit 0 and warning'
       Data '{"foo":"bar"}'
       When run ./core/scripts/retrospective-record.sh
-      The status should be failure
+      The status should be success
       The stderr should include 'agent field required'
     End
   End

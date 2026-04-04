@@ -34,7 +34,7 @@ Describe 'generate-dashboard.sh 排他制御'
   End
 
   Describe 'ロック競合時のグレースフル終了'
-    It '他プロセスがロックを保持している場合、タイムアウト後にエラー終了する'
+    It '他プロセスがロックを保持している場合、タイムアウト後にフックセーフで exit 0 する'
       # 先にロックディレクトリを作成して他プロセスが保持している状態をシミュレート
       mkdir -p "$TEST_HEARTBEAT/.dashboard-lock"
       echo "99999" > "$TEST_HEARTBEAT/.dashboard-lock/pid"
@@ -44,7 +44,7 @@ Describe 'generate-dashboard.sh 排他制御'
       export DASHBOARD_LOCK_RETRY_INTERVAL=0
 
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
-      The status should equal 1
+      The status should equal 0
       The stderr should include 'lock'
     End
 
@@ -61,7 +61,7 @@ Describe 'generate-dashboard.sh 排他制御'
       export DASHBOARD_LOCK_RETRY_INTERVAL=0
 
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
-      The status should equal 1
+      The status should equal 0
       The stderr should include 'lock'
       # 既存のdashboard.htmlが変更されていないことを確認
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist

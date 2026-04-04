@@ -1,6 +1,7 @@
 #!/bin/bash
 # Record retrospective to JSONL
 # Dependency: jq
+set +e
 
 # Worktree support: use HEARTBEAT_MAIN_DIR for global retro log
 if [ -n "${HEARTBEAT_MAIN_DIR:-}" ]; then
@@ -14,18 +15,18 @@ input=$(cat)
 
 if [ -z "$input" ]; then
   echo "Error: empty input" >&2
-  exit 1
+  exit 0
 fi
 
 if ! echo "$input" | jq empty 2>/dev/null; then
   echo "Error: invalid JSON" >&2
-  exit 1
+  exit 0
 fi
 
 agent=$(echo "$input" | jq -r '.agent // empty')
 if [ -z "$agent" ]; then
   echo "Error: agent field required" >&2
-  exit 1
+  exit 0
 fi
 
 mkdir -p "$(dirname "$LOG_FILE")"

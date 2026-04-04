@@ -2,6 +2,7 @@
 # Auto-commit when a subagent finishes.
 # Reads SubagentStop hook stdin JSON to extract agent info.
 # Dependency: jq
+set +e
 
 # --- Load shared libraries ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -13,7 +14,6 @@ source "$SCRIPT_DIR/lib/commit-message.sh"
 # Orchestrate agent detection, type mapping, scope/description extraction,
 # and git commit.
 main() {
-  set -euo pipefail
   local project_dir="${CLAUDE_PROJECT_DIR:-.}"
   cd "$project_dir"
 

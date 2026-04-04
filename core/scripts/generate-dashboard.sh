@@ -24,7 +24,7 @@ RETRY_INTERVAL="${DASHBOARD_LOCK_RETRY_INTERVAL:-1}"
 
 trap 'release_lock "$LOCK_DIR"' EXIT
 
-acquire_lock "$LOCK_DIR" "$MAX_RETRIES" "$RETRY_INTERVAL" || exit 1
+acquire_lock "$LOCK_DIR" "$MAX_RETRIES" "$RETRY_INTERVAL" || exit 0
 # --- End lock mechanism ---
 
 # Parse a JSONL file safely, skipping invalid lines.
