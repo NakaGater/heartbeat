@@ -33,3 +33,13 @@ extract_skill_section() {
   END { if (!found) exit 1 }
   ' "$file_path"
 }
+
+# Create a temporary project directory structure for dashboard tests
+# Sets DASHBOARD_PROJECT variable to the created directory path
+setup_dashboard_project() {
+  DASHBOARD_PROJECT=$(mktemp -d)
+  local story_dir="$DASHBOARD_PROJECT/.heartbeat/stories/DASH-001"
+  mkdir -p "$story_dir"
+  printf '{"story_id":"DASH-001","status":"in_progress"}\n' > "$DASHBOARD_PROJECT/.heartbeat/backlog.jsonl"
+  printf '{"from":"tester","to":"implementer","action":"make_green","timestamp":"2026-01-01T00:00:00Z"}\n' > "$story_dir/board.jsonl"
+}
