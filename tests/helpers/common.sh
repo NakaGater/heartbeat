@@ -21,6 +21,7 @@ has_japanese() {
 extract_skill_section() {
   local file_path="$1"
   local section_name="$2"
+  [ -n "$section_name" ] || return 1
   [ -f "$file_path" ] || return 1
   awk -v section="$section_name" '
     /^## / {
