@@ -264,6 +264,10 @@ Flow:
 
 ## Agent Startup Method
 
+**IMPORTANT — Plan Mode Guard**: Do NOT launch subagents while Plan Mode
+is active. Plan Mode propagates to subagents via plan files, causing them
+to be unable to write files. Exit Plan Mode first, then launch subagents.
+
 When starting each agent, use the `agent` tool to invoke them as subagents.
 Each subagent runs in its own context with its own tool permissions.
 
