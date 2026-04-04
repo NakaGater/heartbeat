@@ -40,9 +40,12 @@ LAYER="$1"
 JSON_INPUT="$2"
 INSIGHTS_DIR="${3:-.heartbeat/insights}"
 
-# --- レイヤー名バリデーション ---
+# --- レイヤー名バリデーション & ファイル名・IDプレフィックス設定 ---
 case "$LAYER" in
-  raw|findings|insights|opportunities) ;;
+  raw)            FILE="raw.jsonl";            PREFIX="RAW" ;;
+  findings)       FILE="findings.jsonl";       PREFIX="FND" ;;
+  insights)       FILE="insights.jsonl";       PREFIX="INS" ;;
+  opportunities)  FILE="opportunities.jsonl";  PREFIX="OPP" ;;
   *)
     echo "エラー: 不正なレイヤー名 '${LAYER}'。有効な値: raw, findings, insights, opportunities" >&2
     exit 1
@@ -55,7 +58,7 @@ if [ "$JSON_INPUT" = "-" ]; then
 fi
 
 # --- JSONバリデーション ---
-if ! echo "$JSON_INPUT" | jq empty 2>/dev/null; then
+if ! printf '%s' "$JSON_INPUT" | jq empty 2>/dev/null; then
   echo "エラー: 不正なJSON入力です。" >&2
   exit 1
 fi
@@ -63,20 +66,14 @@ fi
 # --- ディレクトリ自動作成 ---
 mkdir -p "$INSIGHTS_DIR"
 
-# --- レイヤーごとのファイル名とIDプレフィックス ---
-case "$LAYER" in
-  raw)            FILE="raw.jsonl";            PREFIX="RAW" ;;
-  findings)       FILE="findings.jsonl";       PREFIX="FND" ;;
-  insights)       FILE="insights.jsonl";       PREFIX="INS" ;;
-  opportunities)  FILE="opportunities.jsonl";  PREFIX="OPP" ;;
-esac
-
 TARGET="${INSIGHTS_DIR}/${FILE}"
 
 # --- ID自動採番 ---
 if [ -f "$TARGET" ] && [ -s "$TARGET" ]; then
-  LAST_NUM=$(jq -r '.id' "$TARGET" 2>/dev/null | grep -E "^${PREFIX}-[0-9]{3}$" | sed "s/${PREFIX}-//" | sort -n | tail -1)
-  NEXT_NUM=$(( 10#${LAST_NUM:-0} + 1 ))
+  LAST_NUM=$(jq -r --arg pfx "$PREFIX" \
+    '.id // "" | select(test("^" + $pfx + "-[0-9]{3}$")) | ltrimstr($pfx + "-") | tonumber' \
+    "$TARGET" 2>/dev/null | sort -n | tail -1)
+  NEXT_NUM=$(( ${LAST_NUM:-0} + 1 ))
 else
   NEXT_NUM=1
 fi
@@ -87,7 +84,7 @@ NEW_ID=$(printf "%s-%03d" "$PREFIX" "$NEXT_NUM")
 TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 # --- エントリにID・タイムスタンプを付与して追記 ---
-ENTRY=$(echo "$JSON_INPUT" | jq -c --arg id "$NEW_ID" --arg ts "$TIMESTAMP" '. + {"id": $id, "timestamp": $ts}')
+ENTRY=$(printf '%s' "$JSON_INPUT" | jq -c --arg id "$NEW_ID" --arg ts "$TIMESTAMP" '. + {"id": $id, "timestamp": $ts}')
 
 echo "$ENTRY" >> "$TARGET"
 
