@@ -45,4 +45,93 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
       The status should be success
     End
   End
+
+  # Task 3, CC2: release_lock は PID が一致する場合のみロックを削除する
+  # 他プロセスの PID が記録されている場合、削除しない
+  # Design spec 13
+  Describe 'release_lock の PID 照合 (CC2)'
+    It '現プロセスの PID が記録されている場合、ロックディレクトリが削除される'
+      release_own_lock() {
+        source ./core/scripts/lib/common.sh
+        mkdir -p "$LOCK_DIR"
+        echo "$$" > "$LOCK_DIR/pid"
+        release_lock "$LOCK_DIR"
+        if [ -d "$LOCK_DIR" ]; then
+          echo "NOT_REMOVED"
+        else
+          echo "REMOVED"
+        fi
+      }
+      When call release_own_lock
+      The output should equal "REMOVED"
+      The status should be success
+    End
+
+    It '他プロセスの PID が記録されている場合、ロックディレクトリは削除されない'
+      release_other_lock() {
+        source ./core/scripts/lib/common.sh
+        mkdir -p "$LOCK_DIR"
+        echo "99999" > "$LOCK_DIR/pid"
+        release_lock "$LOCK_DIR"
+        if [ -d "$LOCK_DIR" ]; then
+          echo "KEPT"
+        else
+          echo "REMOVED"
+        fi
+      }
+      When call release_other_lock
+      The output should equal "KEPT"
+      The status should be success
+    End
+  End
+
+  # Task 3, CC3: acquire_lock はリトライ後に失敗する (return 1)
+  # Design spec 14
+  Describe 'acquire_lock のリトライと失敗 (CC3)'
+    It 'ロックが既に取得されている場合、リトライ後に非ゼロで終了する'
+      acquire_with_existing_lock() {
+        source ./core/scripts/lib/common.sh
+        # 他プロセスのロックをシミュレート
+        mkdir -p "$LOCK_DIR"
+        echo "99999" > "$LOCK_DIR/pid"
+        # リトライ回数を最小にして高速化
+        acquire_lock "$LOCK_DIR" 2 0
+        return $?
+      }
+      When call acquire_with_existing_lock
+      The status should be failure
+      The stderr should be present
+    End
+  End
+
+  # Task 3, CC4: stale ロック検出 (find -mmin による古いロックの除去)
+  # Design spec 15
+  Describe 'stale ロック検出 (CC4)'
+    It '1分以上前に作成されたロックが存在する場合、acquire_lock が除去して取得に成功する'
+      acquire_with_stale_lock() {
+        source ./core/scripts/lib/common.sh
+        # stale ロックを作成
+        mkdir -p "$LOCK_DIR"
+        echo "99999" > "$LOCK_DIR/pid"
+        # タイムスタンプを2分前に設定して stale にする
+        touch -t "$(date -v-2M '+%Y%m%d%H%M.%S' 2>/dev/null || date -d '2 minutes ago' '+%Y%m%d%H%M.%S' 2>/dev/null)" "$LOCK_DIR"
+        acquire_lock "$LOCK_DIR" 1 0
+        local result=$?
+        if [ $result -eq 0 ] && [ -f "$LOCK_DIR/pid" ]; then
+          local recorded_pid
+          recorded_pid=$(cat "$LOCK_DIR/pid")
+          if [ "$recorded_pid" = "$$" ]; then
+            echo "STALE_CLEANED_AND_ACQUIRED"
+          else
+            echo "PID_MISMATCH"
+          fi
+        else
+          echo "ACQUIRE_FAILED"
+        fi
+      }
+      When call acquire_with_stale_lock
+      The output should equal "STALE_CLEANED_AND_ACQUIRED"
+      The status should be success
+    End
+  End
 End
