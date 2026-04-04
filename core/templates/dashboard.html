@@ -160,8 +160,16 @@ header h1 {
   cursor: pointer;
   color: var(--text);
   font-size: var(--text-md);
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.refresh-btn:hover { background: var(--bg-card); }
+.refresh-btn:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent-muted);
+  transform: scale(1.05);
+}
+.refresh-btn:active {
+  transform: scale(0.95);
+}
 .top-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -207,6 +215,13 @@ header h1 {
   border-radius: 6px;
   padding: 8px;
   font-size: var(--text-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  border-left: 3px solid transparent;
+}
+.kanban-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+  border-left-color: var(--accent);
 }
 .kanban-card .card-title {
   font-weight: 500;
@@ -228,7 +243,14 @@ header h1 {
   width: 100%;
   text-align: center;
 }
-.done-toggle-btn:hover { background: var(--bg-card); }
+.done-toggle-btn {
+  transition: all 0.2s ease;
+}
+.done-toggle-btn:hover {
+  background: var(--accent-subtle);
+  color: var(--accent);
+  border-color: var(--accent-muted);
+}
 
 /* Velocity Chart */
 .chart-container { width: 100%; overflow-x: auto; }
@@ -338,17 +360,28 @@ header h1 {
   }
 }
 
-.panel, header {
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.panel, header, .top-row {
   animation: fadeSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Stagger animation-delay */
-header                              { animation-delay: 0ms; }
+/* Stagger animation-delay using #app > :nth-child for robust DOM ordering */
+#app > :nth-child(1)                { animation-delay: 0ms; }    /* header */
+#app > :nth-child(2)                { animation-delay: 80ms; }   /* .top-row */
+#app > :nth-child(3)                { animation-delay: 160ms; }  /* Current Story panel */
+#app > :nth-child(4)                { animation-delay: 240ms; }  /* Insights panel */
+#app > :nth-child(5)                { animation-delay: 320ms; }  /* Messages panel */
 .top-row > .panel:nth-child(1)      { animation-delay: 80ms; }
-.top-row > .panel:nth-child(2)      { animation-delay: 160ms; }
-.top-row ~ .panel:nth-of-type(1)    { animation-delay: 240ms; }
-.top-row ~ .panel:nth-of-type(2)    { animation-delay: 320ms; }
-.top-row ~ .panel:nth-of-type(3)    { animation-delay: 400ms; }
+.top-row > .panel:nth-child(2)      { animation-delay: 120ms; }
 
 /* Hover depth transition */
 .panel {
