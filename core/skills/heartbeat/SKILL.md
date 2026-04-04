@@ -306,7 +306,8 @@ Flow:
     → Execute all phases to completion
 
   After Workflow 2 completes:
-    >>> STOP: Workflow 3 complete. Return control to user. <<<
+    Workflow 2 includes Continuation Flow at completion.
+    No additional stop needed — control flows through Workflow 2's Continuation Flow.
 
   Note: Point estimates from architect can be adjusted as actuals
   by human via /heartbeat-backlog after implementation.
