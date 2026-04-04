@@ -103,3 +103,72 @@ FIXTURE
     The status should be failure
   End
 End
+
+# --- setup_dashboard_project() tests ---
+# Story: 0042-test-cleanup / Task 1 (AC-5)
+# Completion condition: setup_dashboard_project() がダッシュボードテスト用の共通環境を構築する
+
+Describe 'setup_dashboard_project() helper'
+  cleanup_dashboard() {
+    rm -rf "$DASHBOARD_PROJECT"
+  }
+
+  After 'cleanup_dashboard'
+
+  It 'creates a temporary project directory'
+    When call setup_dashboard_project
+    The status should be success
+    The variable DASHBOARD_PROJECT should be present
+    The path "$DASHBOARD_PROJECT" should be directory
+  End
+
+  It 'creates .heartbeat directory structure'
+    setup_dashboard_project
+    When call test -d "$DASHBOARD_PROJECT/.heartbeat"
+    The status should be success
+  End
+
+  It 'creates a story directory under .heartbeat/stories'
+    setup_dashboard_project
+    count_story_dirs() {
+      find "$DASHBOARD_PROJECT/.heartbeat/stories" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' '
+    }
+    When call count_story_dirs
+    The output should equal "1"
+  End
+
+  It 'places a valid backlog.jsonl file'
+    setup_dashboard_project
+    When call cat "$DASHBOARD_PROJECT/.heartbeat/backlog.jsonl"
+    The status should be success
+    The output should include '"story_id"'
+    The output should include '"status"'
+  End
+
+  It 'places a valid board.jsonl inside the story directory'
+    setup_dashboard_project
+    check_board() {
+      local story_dir
+      story_dir=$(find "$DASHBOARD_PROJECT/.heartbeat/stories" -mindepth 1 -maxdepth 1 -type d | head -1)
+      cat "$story_dir/board.jsonl"
+    }
+    When call check_board
+    The status should be success
+    The output should include '"from"'
+    The output should include '"action"'
+  End
+
+  It 'creates files that are valid JSON (one object per line)'
+    setup_dashboard_project
+    validate_jsonl() {
+      local backlog="$DASHBOARD_PROJECT/.heartbeat/backlog.jsonl"
+      local story_dir
+      story_dir=$(find "$DASHBOARD_PROJECT/.heartbeat/stories" -mindepth 1 -maxdepth 1 -type d | head -1)
+      local board="$story_dir/board.jsonl"
+      # Each line must be valid JSON - use jq to validate
+      jq -e . "$backlog" >/dev/null 2>&1 && jq -e . "$board" >/dev/null 2>&1 && echo "VALID" || echo "INVALID"
+    }
+    When call validate_jsonl
+    The output should equal "VALID"
+  End
+End
