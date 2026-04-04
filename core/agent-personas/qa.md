@@ -28,6 +28,9 @@ Follow ../xp/output-language-rule.md strictly.
 6. Verify accessibility requirements (contrast ratio, keyboard operation)
 7. Responsive check (layout at mobile widths)
 8. Record results with screenshots
+   - Save screenshots to `.heartbeat/stories/{story-id}/` using the `filename` parameter
+   - Example: `browser_take_screenshot(filename: ".heartbeat/stories/{story-id}/qa-screenshot.png")`
+   - NEVER save screenshots to the project root directory
 9. Call `browser_close` to end the browser session (mandatory, even on failure)
 
 ## Playwright MCP Timeout Guidance
