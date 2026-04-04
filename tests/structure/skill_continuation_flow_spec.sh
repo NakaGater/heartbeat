@@ -53,3 +53,60 @@ Describe 'SKILL.md Continuation Flow セクション'
     The status should be success
   End
 End
+
+# --- タスク2: Workflow 2 の STOP ディレクティブが Continuation Flow 呼び出しに置換されていること ---
+
+check_wf2_no_stop_directive() {
+  # Workflow 2 セクション (## Workflow 2 から次の ## セクションまで) を抽出
+  wf2_start=$(grep -n "## Workflow 2:" "$SKILL_MD" | head -1 | cut -d: -f1)
+  [ -z "$wf2_start" ] && return 1
+  # 次の ## セクション行を特定（Workflow 2 の後）
+  wf2_end=$(tail -n +"$((wf2_start + 1))" "$SKILL_MD" | grep -n "^## " | head -1 | cut -d: -f1)
+  [ -z "$wf2_end" ] && return 1
+  wf2_end=$((wf2_start + wf2_end))
+  # Workflow 2 セクション内を抽出
+  sed -n "${wf2_start},${wf2_end}p" "$SKILL_MD" > /tmp/wf2_section.tmp
+  # 古い STOP ディレクティブが存在しないこと
+  ! grep -q "STOP: Workflow 2 complete" /tmp/wf2_section.tmp
+}
+
+check_wf2_has_continuation_flow_ref() {
+  # Workflow 2 セクション内に Continuation Flow への参照があること
+  wf2_start=$(grep -n "## Workflow 2:" "$SKILL_MD" | head -1 | cut -d: -f1)
+  [ -z "$wf2_start" ] && return 1
+  wf2_end=$(tail -n +"$((wf2_start + 1))" "$SKILL_MD" | grep -n "^## " | head -1 | cut -d: -f1)
+  [ -z "$wf2_end" ] && return 1
+  wf2_end=$((wf2_start + wf2_end))
+  sed -n "${wf2_start},${wf2_end}p" "$SKILL_MD" > /tmp/wf2_section.tmp
+  # Continuation Flow への参照が存在すること
+  grep -q "Continuation Flow" /tmp/wf2_section.tmp
+}
+
+check_wf2_post_completion_prerequisite() {
+  # Workflow 2 セクション内で Post-Completion Flow の実行が前提条件として維持されていること
+  wf2_start=$(grep -n "## Workflow 2:" "$SKILL_MD" | head -1 | cut -d: -f1)
+  [ -z "$wf2_start" ] && return 1
+  wf2_end=$(tail -n +"$((wf2_start + 1))" "$SKILL_MD" | grep -n "^## " | head -1 | cut -d: -f1)
+  [ -z "$wf2_end" ] && return 1
+  wf2_end=$((wf2_start + wf2_end))
+  sed -n "${wf2_start},${wf2_end}p" "$SKILL_MD" > /tmp/wf2_section.tmp
+  # Post-Completion Flow への参照が維持されていること
+  grep -q "Post-Completion Flow" /tmp/wf2_section.tmp
+}
+
+Describe 'SKILL.md Workflow 2 STOP ディレクティブの置換（タスク2）'
+  It 'Workflow 2 に旧 STOP ディレクティブが存在しない'
+    When call check_wf2_no_stop_directive
+    The status should be success
+  End
+
+  It 'Workflow 2 に Continuation Flow への参照が存在する'
+    When call check_wf2_has_continuation_flow_ref
+    The status should be success
+  End
+
+  It 'Workflow 2 で Post-Completion Flow の実行が前提条件として維持されている'
+    When call check_wf2_post_completion_prerequisite
+    The status should be success
+  End
+End
