@@ -251,6 +251,37 @@ Update backlog.jsonl:
 Run: bash core/scripts/generate-dashboard.sh
   (synchronous — wait for completion before proceeding)
 
+## Continuation Flow
+
+Executed after Post-Completion Flow completes (Workflow 2 and 3 only).
+Does NOT apply to Workflow 1.
+
+1. Read backlog.jsonl and check for entries with status: "ready"
+2. If no "ready" stories exist:
+   - Display: "ready ステータスのストーリーがありません。セッションを終了します。"
+   - >>> STOP: No more ready stories. Return control to user. <<<
+3. If "ready" stories exist:
+   - Display completion message and present choices:
+     AskUserQuestion(
+       question: "ストーリー {story-id} の実装が完了しました。次のアクションを選択してください。",
+       options: [
+         {label: "次のストーリーを実装する", description: "backlog から ready ストーリーを選んで実装を開始する"},
+         {label: "終了する", description: "セッションを終了してユーザーに制御を戻す"}
+       ]
+     )
+   - If user selects "終了する":
+     >>> STOP: User chose to stop. Return control to user. <<<
+   - If user selects "次のストーリーを実装する":
+     a. Show backlog.jsonl stories with status: "ready"
+     b. User selects a story
+     c. Update backlog.jsonl entry: status -> "in_progress"
+     d. Run: bash core/scripts/generate-dashboard.sh
+        (synchronous — wait for completion before proceeding)
+     e. Begin Workflow 2 Phase 2 (Design phase) for the selected story
+        NOTE: Skip Workflow 2's "Show backlog / User selects / Update status"
+        block — the story is already selected and status is already
+        "in_progress".
+
 ## Workflow 3: Create and Implement a Story
 
 ```
