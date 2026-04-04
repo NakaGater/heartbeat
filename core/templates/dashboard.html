@@ -170,6 +170,8 @@ header h1 {
   cursor: pointer;
   color: var(--text);
   font-size: var(--text-md);
+  min-height: 44px;
+  min-width: 44px;
   transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .refresh-btn:hover {
@@ -256,6 +258,7 @@ header h1 {
   cursor: pointer;
   width: 100%;
   text-align: center;
+  min-height: 44px;
 }
 .done-toggle-btn {
   transition: all 0.2s ease;
@@ -293,6 +296,7 @@ header h1 {
   background: var(--bg-card);
   color: var(--text);
   font-size: var(--text-md);
+  min-height: 44px;
 }
 .gantt-container {
   width: 100%;
@@ -356,10 +360,22 @@ header h1 {
   .top-row { grid-template-columns: 1fr; }
   .kanban { grid-template-columns: repeat(2, 1fr); }
   .msg-bubble { max-width: 90%; }
+  header h1 {
+    font-size: var(--text-xl);
+  }
+  .panel-title {
+    font-size: var(--text-sm);
+  }
+  #app {
+    padding: var(--space-3);
+  }
 }
 @media (max-width: 480px) {
   .kanban { grid-template-columns: 1fr; }
-  #app { padding: 8px; }
+  #app { padding: var(--space-2); }
+  header h1 {
+    font-size: var(--text-lg);
+  }
 }
 
 /* --- Micro-interactions & Animations (Task 4) --- */
