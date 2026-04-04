@@ -4,45 +4,20 @@
 # Supports concurrent access from multiple worktrees.
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
 MAIN_DIR="${HEARTBEAT_MAIN_DIR:-${CLAUDE_PROJECT_DIR:-.}}"
 BACKLOG="$MAIN_DIR/.heartbeat/backlog.jsonl"
 LOCK_DIR="$MAIN_DIR/.heartbeat/.backlog-lock"
-MAX_RETRIES=10
-RETRY_INTERVAL=1
 
 usage() {
   echo "usage: backlog-update.sh <story-id> <field> <value>" >&2
   exit 1
 }
 
-acquire_lock() {
-  local retries=0
-  while [ "$retries" -lt "$MAX_RETRIES" ]; do
-    if mkdir "$LOCK_DIR" 2>/dev/null; then
-      return 0
-    fi
-    # Stale lock detection (older than 60 seconds)
-    if [ -d "$LOCK_DIR" ]; then
-      local lock_age
-      lock_age=$(( $(date +%s) - $(stat -f %m "$LOCK_DIR" 2>/dev/null || stat -c %Y "$LOCK_DIR" 2>/dev/null || echo 0) ))
-      if [ "$lock_age" -gt 60 ]; then
-        rmdir "$LOCK_DIR" 2>/dev/null || true
-        continue
-      fi
-    fi
-    retries=$((retries + 1))
-    sleep "$RETRY_INTERVAL"
-  done
-  echo "error: failed to acquire backlog lock after $MAX_RETRIES retries" >&2
-  return 1
-}
-
-release_lock() {
-  rmdir "$LOCK_DIR" 2>/dev/null || true
-}
-
 # Ensure lock is released on exit
-trap release_lock EXIT
+trap 'release_lock "$LOCK_DIR"' EXIT
 
 main() {
   [ $# -lt 3 ] && usage
@@ -56,7 +31,7 @@ main() {
     exit 1
   fi
 
-  acquire_lock
+  acquire_lock "$LOCK_DIR"
 
   local tmp
   tmp=$(mktemp)
@@ -72,7 +47,7 @@ main() {
   done < "$BACKLOG" > "$tmp"
   mv "$tmp" "$BACKLOG"
 
-  release_lock
+  release_lock "$LOCK_DIR"
   trap - EXIT
 }
 

@@ -9,50 +9,22 @@ if [ "${HEARTBEAT_IN_WORKTREE:-}" = "1" ]; then
   exit 0
 fi
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
 PROJECT_ROOT="${1:-.}"
 HEARTBEAT_DIR="$PROJECT_ROOT/.heartbeat"
 TEMPLATE="$(dirname "$0")/../templates/dashboard.html"
 OUTPUT="$HEARTBEAT_DIR/dashboard.html"
 
-# --- Lock mechanism (mkdir-based) ---
+# --- Lock mechanism (mkdir-based, via lib/common.sh) ---
 LOCK_DIR="$HEARTBEAT_DIR/.dashboard-lock"
 MAX_RETRIES="${DASHBOARD_LOCK_MAX_RETRIES:-10}"
 RETRY_INTERVAL="${DASHBOARD_LOCK_RETRY_INTERVAL:-1}"
 
-cleanup() {
-  if [ -f "$LOCK_DIR/pid" ] && [ "$(cat "$LOCK_DIR/pid")" = "$$" ]; then
-    rm -rf "$LOCK_DIR"
-  fi
-}
-trap cleanup EXIT
+trap 'release_lock "$LOCK_DIR"' EXIT
 
-is_lock_stale() {
-  # Stale if older than 1 minute (macOS/Linux compatible)
-  stale=$(find "$LOCK_DIR" -maxdepth 0 -mmin +1 2>/dev/null)
-  [ -n "$stale" ] && return 0
-  return 1
-}
-
-acquire_lock() {
-  local retries=0
-  while [ "$retries" -lt "$MAX_RETRIES" ]; do
-    # Stale lock detection and removal
-    if [ -d "$LOCK_DIR" ] && is_lock_stale; then
-      rm -rf "$LOCK_DIR"
-    fi
-
-    if mkdir "$LOCK_DIR" 2>/dev/null; then
-      echo $$ > "$LOCK_DIR/pid"
-      return 0
-    fi
-    retries=$((retries + 1))
-    sleep "$RETRY_INTERVAL"
-  done
-  echo "Error: Could not acquire dashboard lock after ${MAX_RETRIES} retries" >&2
-  return 1
-}
-
-acquire_lock || exit 1
+acquire_lock "$LOCK_DIR" "$MAX_RETRIES" "$RETRY_INTERVAL" || exit 1
 # --- End lock mechanism ---
 
 # Parse a JSONL file safely, skipping invalid lines.

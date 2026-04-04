@@ -37,7 +37,8 @@ Describe 'generate-dashboard.sh 排他制御エッジケース (T5)'
       # generate-dashboard.sh 内部でロック取得後に echo $$ > pid が実行される
       # スクリプトのソースコードレベルで $$ を pid ファイルに書き込むことを検証
       check_pid_write() {
-        grep -q 'echo \$\$ > .*pid' ./core/scripts/generate-dashboard.sh && echo "PID_WRITE_FOUND" || echo "PID_WRITE_NOT_FOUND"
+        # PID 書き込みロジックは lib/common.sh に共通化済み（CC5/CC6）
+        grep -q 'echo \$\$ > .*pid' ./core/scripts/lib/common.sh && echo "PID_WRITE_FOUND" || echo "PID_WRITE_NOT_FOUND"
       }
       When call check_pid_write
       The output should equal 'PID_WRITE_FOUND'
@@ -46,8 +47,8 @@ Describe 'generate-dashboard.sh 排他制御エッジケース (T5)'
     It 'cleanup 関数は PID ファイルで自プロセスのロックのみ解放する'
       # cleanup 関数が PID を確認してから rm -rf することを検証
       check_pid_check_in_cleanup() {
-        # cleanup 関数内で cat pid の結果と $$ を比較するコードがあることを確認
-        grep -A5 'cleanup()' ./core/scripts/generate-dashboard.sh | grep -q '\$\$' && echo "PID_CHECK_FOUND" || echo "PID_CHECK_NOT_FOUND"
+        # PID 照合ロジックは lib/common.sh の release_lock() に共通化済み（CC5/CC6）
+        grep -A5 'release_lock()' ./core/scripts/lib/common.sh | grep -q '\$\$' && echo "PID_CHECK_FOUND" || echo "PID_CHECK_NOT_FOUND"
       }
       When call check_pid_check_in_cleanup
       The output should equal 'PID_CHECK_FOUND'
