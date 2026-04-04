@@ -193,8 +193,7 @@ Phase 4 - Verification:
       Present phase choices: ["From design phase", "From implementation phase",
                               "From verification phase"]
     Pass → execute Post-Completion Flow (see below)
-           >>> STOP: Workflow 2 complete. Return control to user.
-               Do NOT start another workflow. <<<
+           → execute Continuation Flow (see below)
     Return → return to appropriate Phase based on feedback
 ```
 
