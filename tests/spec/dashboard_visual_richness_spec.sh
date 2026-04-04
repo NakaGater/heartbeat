@@ -18,13 +18,13 @@ Describe 'dashboard.html: ビジュアルリッチさと深度表現（タスク
   # --- パネルのシャドウトークン適用 ---
   It '.panel のデフォルト box-shadow に --shadow-sm トークンが使用されている'
     # design.md: パネル共通の shadow は var(--shadow-sm)
-    The contents of file "$TEMPLATE" should match pattern '*\.panel {*box-shadow: var(--shadow-sm)*'
+    The contents of file "$TEMPLATE" should match pattern '*.panel {*box-shadow: var(--shadow-sm)*'
   End
 
   # --- パネルの border-radius 改善 ---
   It '.panel の border-radius に --radius-lg トークンが使用されている'
     # design.md: パネル共通の border-radius は var(--radius-lg) = 14px
-    The contents of file "$TEMPLATE" should match pattern '*\.panel {*border-radius: var(--radius-lg)*'
+    The contents of file "$TEMPLATE" should match pattern '*.panel {*border-radius: var(--radius-lg)*'
   End
 
   # --- ヘッダーのグラスモーフィズム背景（半透明） ---
