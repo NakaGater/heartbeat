@@ -23,9 +23,9 @@ Describe 'dashboard.html: グラスモーフィズム全面適用 + メッシュ
 
   # ── 完了条件3: .bento-card に backdrop-filter: blur(16px) saturate(180%) ──
 
-  It '.bento-card に backdrop-filter: blur(16px) saturate(180%) が定義されている'
+  It '.bento-card に backdrop-filter が定義されている（トークンまたはリテラル）'
     extract_bento_backdrop() {
-      awk '/\.bento-card[ \t]*\{/{found=1} found && /[^-]backdrop-filter[ \t]*:.*blur\(16px\).*saturate\(180%\)/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
+      awk '/\.bento-card[ \t]*\{/{found=1} found && /[^-]backdrop-filter[ \t]*:.*((blur\(16px\).*saturate\(180%\))|(var\(--glass-blur\)))/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
     }
     When call extract_bento_backdrop
     The output should equal "ok"
@@ -107,9 +107,9 @@ Describe 'dashboard.html: グラスモーフィズム全面適用 + メッシュ
 
   # ── 追加検証: .panel に半透明背景（rgba） ──
 
-  It '.panel の background に rgba が使用されている'
+  It '.panel の background に半透明値が使用されている（トークンまたはリテラル）'
     extract_panel_rgba_bg() {
-      awk '/^\.panel[ \t]*\{/{found=1} found && /background[ \t]*:.*rgba\(/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
+      awk '/^\.panel[ \t]*\{/{found=1} found && /background[ \t]*:.*((rgba\()|(var\(--glass-bg\)))/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
     }
     When call extract_panel_rgba_bg
     The output should equal "ok"

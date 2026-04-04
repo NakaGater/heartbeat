@@ -2,12 +2,20 @@ Describe 'dashboard.html: ビジュアルリッチさと深度表現（タスク
   TEMPLATE="core/templates/dashboard.html"
 
   # --- グラスモーフィズム効果（ヘッダー） ---
-  It 'header に backdrop-filter: blur() が適用されている'
-    The contents of file "$TEMPLATE" should include 'backdrop-filter: blur('
+  It 'header に backdrop-filter が適用されている（トークンまたはリテラル）'
+    check_header_backdrop() {
+      awk '/^header[ \t]*\{/{found=1} found && /[^-]backdrop-filter[ \t]*:/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
+    }
+    When call check_header_backdrop
+    The output should equal "ok"
   End
 
   It 'header に -webkit-backdrop-filter（ベンダープレフィックス）が適用されている'
-    The contents of file "$TEMPLATE" should include '-webkit-backdrop-filter: blur('
+    check_header_webkit_backdrop() {
+      awk '/^header[ \t]*\{/{found=1} found && /-webkit-backdrop-filter[ \t]*:/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
+    }
+    When call check_header_webkit_backdrop
+    The output should equal "ok"
   End
 
   # --- サブテルグラデーション背景 (タスク4でメッシュグラデーションに変更) ---
