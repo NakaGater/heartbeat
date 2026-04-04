@@ -63,6 +63,9 @@ When user enters /heartbeat:
 5. **Manage backlog**
    Change story points, priorities, or iteration assignments.
 
+6. **Implement in parallel (worktree)**
+   Implement a story in an isolated git worktree for parallel development.
+
 ### Status Display Example
 
 ```
@@ -284,6 +287,52 @@ Flow:
   explicitly above (before Phase 2). In Workflow 2 standalone, it is
   handled by the "Show backlog / User selects / Update status" block.
 ```
+
+## Workflow 6: Implement in Parallel (worktree)
+
+```
+Show backlog.jsonl stories with status: "ready"
+User selects a story
+
+Step 1: Create worktree
+  - Use Claude Code's EnterWorktree tool: EnterWorktree(name: "<story-id>")
+  - WorktreeCreate hook automatically sets environment variables:
+    HEARTBEAT_ACTIVE_STORY=<story-id>
+    HEARTBEAT_IN_WORKTREE=1
+    HEARTBEAT_MAIN_DIR=<main-worktree-path>
+
+Step 2: Update backlog
+  - Run: bash core/scripts/backlog-update.sh <story-id> status in_progress
+    (uses mkdir lock for concurrent access safety)
+
+Step 3: Implement
+  - Execute the same flow as Workflow 2 (Phase 2-4) inside the worktree
+  - board.jsonl is written to the worktree's .heartbeat/stories/<story-id>/
+  - backlog.jsonl is updated via backlog-update.sh (accesses main's copy
+    through HEARTBEAT_MAIN_DIR)
+  - generate-dashboard.sh is skipped (HEARTBEAT_IN_WORKTREE=1)
+  - retrospective-record.sh writes to main's global log (HEARTBEAT_MAIN_DIR)
+
+Step 4: Exit worktree
+  - ExitWorktree(action: "keep") to return to main worktree
+
+Step 5: Merge
+  - Run: bash core/scripts/worktree-manager.sh merge <story-id>
+    (merges story branch into main, then removes worktree + branch)
+
+Step 6: Post-merge
+  - Run: bash core/scripts/generate-dashboard.sh
+    (regenerate dashboard on main with merged data)
+  - Execute Post-Completion Flow (same as Workflow 2)
+
+>>> STOP: Workflow 6 complete. Return control to user. <<<
+```
+
+Notes:
+- All existing Workflows 1-5 continue to work unchanged when not using worktrees
+- Environment variables are unset when not in a worktree, so all scripts
+  fall back to their original behavior
+- Multiple worktrees can run in parallel, each with a separate Claude Code session
 
 ## Agent Startup Method
 

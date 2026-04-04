@@ -62,6 +62,10 @@ When user enters /heartbeat:
 5. **Manage backlog**
    Change story points, priorities, or iteration assignments.
 
+6. **Implement in parallel (worktree)**
+   Implement a story in an isolated git worktree for parallel development.
+   (Copilot: requires manual `git worktree add` — see Workflow 6)
+
 ### Status Display Example
 
 ```
@@ -309,6 +313,40 @@ Each subagent is responsible for:
      After Phase 4 Pass + Post-Completion, STOP.
 7. Determine next action based on last stories/{story-id}/board.jsonl entry
    (only if not stopped by step 6)
+
+## Workflow 6: Implement in Parallel (worktree) — Copilot
+
+```
+Note: Copilot does not have a built-in EnterWorktree tool.
+The user must manually create worktrees using git commands.
+
+Step 1: Create worktree manually
+  User runs in terminal:
+    git worktree add .claude/worktrees/<story-id> -b story/<story-id>
+    cd .claude/worktrees/<story-id>
+    export HEARTBEAT_ACTIVE_STORY=<story-id>
+    export HEARTBEAT_IN_WORKTREE=1
+    export HEARTBEAT_MAIN_DIR=<path-to-main-worktree>
+
+Step 2: Update backlog
+  Run: bash core/scripts/backlog-update.sh <story-id> status in_progress
+
+Step 3: Implement
+  Start a new Copilot session in the worktree directory.
+  Execute the same flow as Workflow 2 (Phase 2-4).
+  - backlog.jsonl is updated via backlog-update.sh (accesses main's copy)
+  - generate-dashboard.sh is skipped (HEARTBEAT_IN_WORKTREE=1)
+
+Step 4: Return to main
+  User runs: cd <main-worktree-path>
+
+Step 5: Merge
+  Run: bash core/scripts/worktree-manager.sh merge <story-id>
+
+Step 6: Post-merge
+  Run: bash core/scripts/generate-dashboard.sh
+  Execute Post-Completion Flow (same as Workflow 2)
+```
 
 ## State Management
 
