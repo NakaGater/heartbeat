@@ -63,6 +63,22 @@ export STORIES_DATA=$(echo "$STORIES_RAW" | jq -s '.')
 
 export AGENT_COLORS='{"pdm":"#3B82F6","context-manager":"#8B5CF6","designer":"#EC4899","architect":"#F59E0B","tester":"#EF4444","implementer":"#10B981","refactor":"#06B6D4","reviewer":"#6366F1","qa":"#14B8A6","human":"#6B7280","orchestrator":"#9CA3AF"}'
 
+# Build INSIGHTS_DATA from 4 UCD layer JSONL files
+_build_insights_data() {
+  local insights_dir="$HEARTBEAT_DIR/insights"
+  local raw findings insights opportunities
+  raw=$(_parse_jsonl_safe "$insights_dir/raw.jsonl")
+  findings=$(_parse_jsonl_safe "$insights_dir/findings.jsonl")
+  insights=$(_parse_jsonl_safe "$insights_dir/insights.jsonl")
+  opportunities=$(_parse_jsonl_safe "$insights_dir/opportunities.jsonl")
+  jq -n --argjson raw "$raw" \
+        --argjson findings "$findings" \
+        --argjson insights "$insights" \
+        --argjson opportunities "$opportunities" \
+        '{raw: $raw, findings: $findings, insights: $insights, opportunities: $opportunities}'
+}
+export INSIGHTS_DATA=$(_build_insights_data)
+
 # Use awk with index/substr for robust replacement (immune to &, \, | in data)
 awk '
 function replace(str, placeholder, key,    idx, len, result) {
@@ -78,6 +94,7 @@ function replace(str, placeholder, key,    idx, len, result) {
   $0 = replace($0, "{{BACKLOG_DATA}}", "BACKLOG_DATA")
   $0 = replace($0, "{{STORIES_DATA}}", "STORIES_DATA")
   $0 = replace($0, "{{AGENT_COLORS}}", "AGENT_COLORS")
+  $0 = replace($0, "{{INSIGHTS_DATA}}", "INSIGHTS_DATA")
   print
 }' "$TEMPLATE" > "$OUTPUT"
 
