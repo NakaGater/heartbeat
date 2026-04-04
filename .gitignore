@@ -13,6 +13,12 @@
 .DS_Store
 Thumbs.db
 
+# QA screenshots (saved by Playwright MCP)
+*.png
+
+# Playwright MCP session data
+.playwright-mcp/
+
 # Node modules (for Playwright)
 node_modules/
 

@@ -1,5 +1,0 @@
-{"ts":"2026-03-30T00:00:00Z","agent":"implementer","event":"task-done","task":"T4","detail":"Added heartbeat.agent.md to .github/plugin/plugin.json agents array (9->10 entries)"}
-{"timestamp":"","agent":"context-manager","event":"task-done","task":"knowledge-update","detail":"selective-questions ストーリーの知識ベース蓄積更新完了: directory-map.md（テスト5件追加）、conventions.md（質問規約セクション追加）、tech-decisions.jsonl（選択肢方式の決定記録）、changelog.jsonl（ストーリーエントリ追記）"}
-{"from": "tester", "to": "implementer", "action": "make_green", "output": "copilot_vscode_workflow_inline_spec.sh", "status": "red", "note": "全タスクのテスト作成完了（Red）", "timestamp": ""}
-{"from":"refactorer","to":"tester","action":"write_test","status":"done","note":"T3リファクタ完了。now_epochをループ外に巻き上げ。全220テストGreen。T4テスト作成をお願いします","timestamp":"2026-04-03T00:00:00Z"}
-{"from":"refactorer","to":"tester","action":"write_test","status":"done","note":"T5リファクタ完了。<g>ラップ+<title>ツールチップの構造は正確でXSSエスケープも適切。全351テスト（unit 131 + structure 220）Green。T6テスト作成をお願いします","timestamp":"2026-04-03T11:45:00Z"}
