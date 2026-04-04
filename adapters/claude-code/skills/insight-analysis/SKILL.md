@@ -6,7 +6,7 @@ description: >
   Raw -> Findings -> Insights -> Opportunities の4層構造で
   インサイトを体系的に抽出・蓄積する。
   Triggers on: "insight", "analysis", "user research", "interview analysis"
-allowed-tools: Agent, Read, Write, Edit, Bash, Grep, Glob
+allowed-tools: Agent, Read, Bash, Grep, Glob
 ---
 
 ## Your Role
@@ -73,7 +73,7 @@ Both --files and --figma can be specified together:
 ## Agent
 
 This skill delegates analysis to the `insight-analyst` agent
-(`core/agent-personas/insight-analyst.yaml`).
+(`core/agent-personas/insight-analyst.md`).
 
 ## Output
 
@@ -90,6 +90,6 @@ All output is stored under `.heartbeat/insights/`:
 ## Reference
 
 - Story: `.heartbeat/stories/0045-pdm-insight-analysis/story.md`
-- Agent persona: `core/agent-personas/insight-analyst.yaml`
+- Agent persona: `core/agent-personas/insight-analyst.md`
 - Analysis script: `core/scripts/user-insight-analyze.sh`
 - Summary script: `core/scripts/user-insight-summary.sh`
