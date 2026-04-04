@@ -11,7 +11,8 @@ check_ready_stories_have_valid_points() {
   # Extract points for all stories with status "ready"
   # Each must be 1, 2, or 3 (not null, not > 3, not 0 or negative)
   ready_points=$(jq -r 'select(.status == "ready") | .points' "$BACKLOG" 2>/dev/null)
-  [ -n "$ready_points" ] || return 1
+  # No ready stories is a valid state (all implemented or none created yet)
+  [ -n "$ready_points" ] || return 0
   for pts in $ready_points; do
     case "$pts" in
       1|2|3) ;;

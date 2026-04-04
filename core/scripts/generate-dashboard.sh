@@ -4,6 +4,11 @@
 #
 # Usage: ./core/scripts/generate-dashboard.sh [project_root]
 
+# Skip dashboard generation inside worktrees
+if [ "${HEARTBEAT_IN_WORKTREE:-}" = "1" ]; then
+  exit 0
+fi
+
 PROJECT_ROOT="${1:-.}"
 HEARTBEAT_DIR="$PROJECT_ROOT/.heartbeat"
 TEMPLATE="$(dirname "$0")/../templates/dashboard.html"

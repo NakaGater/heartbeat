@@ -12,6 +12,11 @@ _find_board_jsonl() {
   local story_id="${1:-}"
   local project_dir="${CLAUDE_PROJECT_DIR:-.}"
 
+  # Worktree support: use HEARTBEAT_ACTIVE_STORY if set
+  if [ -z "$story_id" ] && [ -n "${HEARTBEAT_ACTIVE_STORY:-}" ]; then
+    story_id="$HEARTBEAT_ACTIVE_STORY"
+  fi
+
   if [ -n "$story_id" ]; then
     local path="$project_dir/.heartbeat/stories/$story_id/board.jsonl"
     [ -f "$path" ] && echo "$path"

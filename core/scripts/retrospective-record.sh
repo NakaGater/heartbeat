@@ -2,7 +2,13 @@
 # Record retrospective to JSONL
 # Dependency: jq
 
-LOG_FILE="${HEARTBEAT_RETRO_LOG:-./.heartbeat/retrospectives/log.jsonl}"
+# Worktree support: use HEARTBEAT_MAIN_DIR for global retro log
+if [ -n "${HEARTBEAT_MAIN_DIR:-}" ]; then
+  _DEFAULT_LOG="$HEARTBEAT_MAIN_DIR/.heartbeat/retrospectives/log.jsonl"
+else
+  _DEFAULT_LOG="./.heartbeat/retrospectives/log.jsonl"
+fi
+LOG_FILE="${HEARTBEAT_RETRO_LOG:-$_DEFAULT_LOG}"
 
 input=$(cat)
 
