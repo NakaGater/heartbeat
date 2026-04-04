@@ -10,9 +10,9 @@ Describe 'dashboard.html: ビジュアルリッチさと深度表現（タスク
     The contents of file "$TEMPLATE" should include '-webkit-backdrop-filter: blur('
   End
 
-  # --- サブテルグラデーション背景 ---
-  It 'body に background-image として gradient-header が適用されている'
-    The contents of file "$TEMPLATE" should include 'background-image: var(--gradient-header)'
+  # --- サブテルグラデーション背景 (タスク4でメッシュグラデーションに変更) ---
+  It 'body に background-image として gradient-mesh が適用されている'
+    The contents of file "$TEMPLATE" should include 'background-image: var(--gradient-mesh)'
   End
 
   # --- パネルのシャドウトークン適用 ---

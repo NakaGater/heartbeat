@@ -144,7 +144,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg);
-  background-image: var(--gradient-header);
+  background-image: var(--gradient-mesh);
   background-attachment: fixed;
   color: var(--text);
   line-height: 1.5;
@@ -206,13 +206,15 @@ header h1 {
   margin-bottom: var(--space-5);
 }
 .panel {
-  background: var(--bg-panel);
+  background: rgba(15, 20, 40, 0.6);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: var(--space-4);
   overflow: visible;
   margin-bottom: var(--space-5);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
 }
 .panel:last-child {
   margin-bottom: 0;
@@ -500,6 +502,7 @@ header h1 {
   margin-left: 48px;
 }
 .bento-card {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -507,10 +510,27 @@ header h1 {
   padding: var(--space-4);
   overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+}
+.bento-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 .bento-card:hover {
   border-color: var(--accent-muted);
   box-shadow: var(--shadow-md), var(--accent-glow);
+  transform: translateY(-2px);
+}
+.bento-card:hover::before {
+  opacity: 1;
 }
 
 /* ── Hero Metrics ── */
