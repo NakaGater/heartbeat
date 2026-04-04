@@ -39,6 +39,26 @@
   --radius-lg: 14px;
   --radius-xl: 20px;
   --radius-full: 9999px;
+  /* Accent colors (indigo) */
+  --accent-hover: #4f46e5;
+  --accent-subtle: #eef2ff;
+  --accent-muted: #a5b4fc;
+  /* Secondary accent (teal) */
+  --secondary: #14b8a6;
+  --secondary-subtle: #f0fdfa;
+  /* Semantic colors */
+  --success: #10b981;
+  --success-subtle: #ecfdf5;
+  --warning: #f59e0b;
+  --warning-subtle: #fffbeb;
+  --error: #ef4444;
+  --error-subtle: #fef2f2;
+  --info: #3b82f6;
+  --info-subtle: #eff6ff;
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+  --gradient-header: linear-gradient(135deg, rgba(99, 102, 241, 0.03) 0%, rgba(139, 92, 246, 0.06) 100%);
+  --gradient-surface: linear-gradient(180deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.4) 100%);
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -57,6 +77,31 @@
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
     --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    /* Dark mode accent */
+    --accent: #818cf8;
+    --accent-hover: #a5b4fc;
+    --accent-subtle: rgba(99, 102, 241, 0.12);
+    --accent-muted: rgba(99, 102, 241, 0.25);
+    /* Dark mode secondary */
+    --secondary: #2dd4bf;
+    --secondary-subtle: rgba(20, 184, 166, 0.1);
+    /* Dark mode semantic colors */
+    --success: #34d399;
+    --success-subtle: rgba(16, 185, 129, 0.1);
+    --warning: #fbbf24;
+    --warning-subtle: rgba(245, 158, 11, 0.1);
+    --error: #f87171;
+    --error-subtle: rgba(239, 68, 68, 0.1);
+    --info: #60a5fa;
+    --info-subtle: rgba(59, 130, 246, 0.1);
+    /* Dark mode gradients */
+    --gradient-primary: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #c4b5fd 100%);
+    --gradient-header: linear-gradient(135deg, rgba(129, 140, 248, 0.05) 0%, rgba(167, 139, 250, 0.08) 100%);
+    --gradient-surface: linear-gradient(180deg, rgba(17, 24, 39, 0.9) 0%, rgba(10, 15, 30, 0.6) 100%);
+    /* Dark mode bubbles */
+    --bubble-human: rgba(99, 102, 241, 0.15);
+    --bubble-agent: #1e293b;
+    --red-border: #f87171;
   }
 }
 * { margin: 0; padding: 0; box-sizing: border-box; }
