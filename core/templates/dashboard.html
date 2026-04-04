@@ -451,43 +451,79 @@ header h1 {
 </style>
 </head>
 <body>
-<div id="app">
-  <header>
-    <h1>Heartbeat Dashboard</h1>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <button class="refresh-btn" onclick="location.reload()">&#x1f504;</button>
+<nav class="sidebar">
+  <div class="sidebar-icon active" data-section="hero-metrics" title="Metrics">&#x1f4ca;</div>
+  <div class="sidebar-icon" data-section="backlog-board" title="Backlog">&#x1f4cb;</div>
+  <div class="sidebar-icon" data-section="velocity-chart" title="Velocity">&#x1f4c8;</div>
+  <div class="sidebar-icon" data-section="gantt-chart" title="Story">&#x1f504;</div>
+  <div class="sidebar-icon" data-section="agent-messages" title="Messages">&#x1f4ac;</div>
+  <div class="sidebar-icon" data-section="insights-panel" title="Insights">&#x1f4a1;</div>
+</nav>
+
+<div id="app" class="bento-grid">
+  <header class="hero-metrics">
+    <div class="metric-card">
+      <div id="metric-progress">
+        <svg class="metric-ring" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border)" stroke-width="2"/>
+          <circle cx="18" cy="18" r="16" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="0 100" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="metric-value" id="metric-stories">0</div>
+      <div class="metric-label">Stories</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" id="metric-velocity">0</div>
+      <div class="metric-label">Velocity</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" id="metric-done-rate">0%</div>
+      <div class="metric-label">Done Rate</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value" id="metric-agents">0</div>
+      <div class="metric-label">Active Agents</div>
     </div>
   </header>
 
-  <div class="top-row">
+  <div class="bento-card card-backlog">
     <div class="panel">
       <div class="panel-title">&#x1f4cb; Backlog Board</div>
       <div id="backlog-board" class="kanban"></div>
     </div>
+  </div>
+
+  <div class="bento-card card-velocity">
     <div class="panel">
       <div class="panel-title">&#x1f4ca; Velocity Chart</div>
       <div id="velocity-chart" class="chart-container"></div>
     </div>
   </div>
 
-  <div class="panel">
-    <div class="story-header">
-      <div class="panel-title" style="margin-bottom:0;">&#x1f504; Current Story</div>
-      <select id="story-select" class="story-select" onchange="renderStoryDetail()"></select>
+  <div class="bento-card card-story">
+    <div class="panel">
+      <div class="story-header">
+        <div class="panel-title" style="margin-bottom:0;">&#x1f504; Current Story</div>
+        <select id="story-select" class="story-select" onchange="renderStoryDetail()"></select>
+      </div>
+      <div id="gantt-chart" class="gantt-container"></div>
+      <div class="panel-title" style="font-size:0.75rem;">Tasks</div>
+      <div id="task-list" class="tasks-list"></div>
     </div>
-    <div id="gantt-chart" class="gantt-container"></div>
-    <div class="panel-title" style="font-size:0.75rem;">Tasks</div>
-    <div id="task-list" class="tasks-list"></div>
   </div>
 
-  <div class="panel" role="region" aria-label="User Insights">
-    <div class="panel-title">&#x1f4a1; User Insights</div>
-    <div id="insights-panel"></div>
+  <div class="bento-card card-messages">
+    <div class="panel">
+      <div class="panel-title">&#x1f4ac; Agent Messages</div>
+      <div id="agent-messages" class="messages"></div>
+    </div>
   </div>
 
-  <div class="panel">
-    <div class="panel-title">&#x1f4ac; Agent Messages</div>
-    <div id="agent-messages" class="messages"></div>
+  <div class="bento-card card-insights">
+    <div class="panel" role="region" aria-label="User Insights">
+      <div class="panel-title">&#x1f4a1; User Insights</div>
+      <div id="insights-panel"></div>
+    </div>
   </div>
 </div>
 
