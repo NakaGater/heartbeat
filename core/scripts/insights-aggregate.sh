@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 # Aggregate patterns from retrospective log
 # Dependency: jq
 
