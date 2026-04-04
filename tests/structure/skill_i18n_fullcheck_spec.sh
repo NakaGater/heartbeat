@@ -44,14 +44,21 @@ show_japanese_lines() {
 # output-language-rule.md に従った正当な日本語テキスト。検査対象から除外する。
 # 除外範囲: "Example:" 行から次の閉じ ``` 行まで (AskUserQuestion コードブロック)
 check_core_no_japanese_excluding_examples() {
-  # "Example:" 行とその後に続くコードブロック全体 (``` ... ```) を除外する
-  # sed の2段階処理: まず "Example:" 行を削除し、次にコードブロックを削除
-  # AskUserQuestion 例文はこの形式: Example:\n```\n...\n```
+  # ユーザー向け出力例 (output-language-rule.md 準拠) を除外して日本語検出する。
+  # 除外対象:
+  #   1. "Example:" 行とその後に続くコードブロック全体 (``` ... ```)
+  #   2. AskUserQuestion( ... ) ブロック (Continuation Flow 等)
+  #   3. Display: 行 (ユーザー向け表示テキスト)
+  #   4. "selects \"...\"" 行 (選択肢参照テキスト)
   filtered=$(awk '
     /^Example:$/ { skip_example=1; next }
     skip_example && /^```$/ && !in_block { in_block=1; next }
     skip_example && in_block && /^```$/ { skip_example=0; in_block=0; next }
     skip_example && in_block { next }
+    /AskUserQuestion\(/ { skip_ask=1; next }
+    skip_ask { if (/\)/) skip_ask=0; next }
+    /Display:/ { next }
+    /selects "/ { next }
     { skip_example=0; print }
   ' "$CORE_SKILL")
   if echo "$filtered" | has_japanese; then

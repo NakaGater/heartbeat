@@ -9,16 +9,16 @@ check_workflow1_end() {
   grep -A 50 "## Workflow 1" "$SKILL_MD" | grep -q "END OF WORKFLOW 1"
 }
 
-check_workflow2_stop() {
-  grep -A 50 "## Workflow 2" "$SKILL_MD" | grep -q "STOP"
+check_workflow2_continuation_flow() {
+  grep -A 50 "## Workflow 2" "$SKILL_MD" | grep -q "Continuation Flow"
 }
 
 check_workflow3_stop_override() {
   grep -A 30 "## Workflow 3" "$SKILL_MD" | grep -q "IGNORE"
 }
 
-check_workflow3_own_stop() {
-  grep -A 30 "## Workflow 3" "$SKILL_MD" | grep -q "Workflow 3 complete"
+check_workflow3_continuation_flow() {
+  grep -A 30 "## Workflow 3" "$SKILL_MD" | grep -q "Continuation Flow"
 }
 
 check_agent_startup_workflow_branch() {
@@ -40,8 +40,8 @@ Describe 'Workflow boundary enforcement in SKILL.md'
     The status should be success
   End
 
-  It 'Workflow 2 has STOP directive'
-    When call check_workflow2_stop
+  It 'Workflow 2 references Continuation Flow'
+    When call check_workflow2_continuation_flow
     The status should be success
   End
 
@@ -50,8 +50,8 @@ Describe 'Workflow boundary enforcement in SKILL.md'
     The status should be success
   End
 
-  It 'Workflow 3 has its own STOP directive'
-    When call check_workflow3_own_stop
+  It 'Workflow 3 references Continuation Flow'
+    When call check_workflow3_continuation_flow
     The status should be success
   End
 
