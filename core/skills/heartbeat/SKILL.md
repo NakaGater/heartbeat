@@ -420,9 +420,8 @@ Each subagent is responsible for:
      (synchronous — wait for completion before proceeding)
 7. Check current workflow context:
    - If executing Workflow 1: After Phase 1 completes, STOP. Do not proceed.
-   - If executing Workflow 2: After Phase 4 Pass + Post-Completion, STOP.
-   - If executing Workflow 3: After Phase 1 completes, transition to Phase 2.
-     After Phase 4 Pass + Post-Completion, STOP.
+   - If executing Workflow 2: After Phase 4 Pass + Post-Completion, execute Continuation Flow.
+   - If executing Workflow 3: After Phase 1 completes, transition to Phase 2; after Phase 4 Pass + Post-Completion, execute Continuation Flow.
 8. Determine next action based on last stories/{story-id}/board.jsonl entry
    (only if not stopped by step 7)
 
