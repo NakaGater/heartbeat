@@ -3,9 +3,13 @@
 # Called by PostToolUse, SubagentStart, and SubagentStop hooks.
 # - PostToolUse: uses tool_input.file_path from stdin to locate the file.
 # - SubagentStart/SubagentStop: no file_path; finds the most recently
-#   modified .heartbeat/stories/*/board.jsonl via ls -t.
+#   modified .heartbeat/stories/*/board.jsonl via find_board_jsonl().
 # Must exit 0 on all paths.  Dependency: jq
 set +e
+
+# --- Load shared libraries ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
 
 input=$(cat)
 
@@ -16,10 +20,9 @@ input=$(cat)
 file_path=$(echo "$input" | jq -r '.tool_input.file_path // .tool_input.filePath // .file_path // .filePath // empty' 2>/dev/null)
 
 # No file_path → SubagentStart/SubagentStop context
-# Find the most recently modified board.jsonl under .heartbeat/stories/
+# Use shared find_board_jsonl() from lib/common.sh
 if [ -z "$file_path" ]; then
-  search_root="${HEARTBEAT_ROOT:-.}"
-  target=$(ls -t "$search_root"/.heartbeat/stories/*/board.jsonl 2>/dev/null | head -1)
+  target=$(find_board_jsonl)
   [ -z "$target" ] && exit 0
   file_path="$target"
 fi

@@ -3,29 +3,11 @@
 # Reads SubagentStop hook stdin JSON to extract agent info.
 # Dependency: jq
 
+# --- Load shared libraries ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/common.sh"
+
 # --- Function definitions ---
-
-# Internal helper: locate a board.jsonl under .heartbeat/stories.
-# Args: $1 (optional) -- story-id for deterministic lookup
-# Output: full path to board.jsonl, or empty string if not found
-_find_board_jsonl() {
-  local story_id="${1:-}"
-  local project_dir="${CLAUDE_PROJECT_DIR:-.}"
-
-  # Worktree support: use HEARTBEAT_ACTIVE_STORY if set
-  if [ -z "$story_id" ] && [ -n "${HEARTBEAT_ACTIVE_STORY:-}" ]; then
-    story_id="$HEARTBEAT_ACTIVE_STORY"
-  fi
-
-  if [ -n "$story_id" ]; then
-    local path="$project_dir/.heartbeat/stories/$story_id/board.jsonl"
-    [ -f "$path" ] && echo "$path"
-    return 0
-  fi
-
-  # Fallback: most recently modified board.jsonl
-  ls -t "$project_dir"/.heartbeat/stories/*/board.jsonl 2>/dev/null | head -1
-}
 
 # Extract agent name from stdin JSON, with fallback to board.jsonl,
 # then to "unknown".
@@ -44,7 +26,7 @@ get_agent_name() {
 
   # 2. board.jsonl 最新エントリの .from
   local board
-  board=$(_find_board_jsonl)
+  board=$(find_board_jsonl)
   if [ -n "$board" ]; then
     agent=$(tail -1 "$board" | jq -r '.from // empty' 2>/dev/null)
     if [ -n "$agent" ]; then
@@ -74,7 +56,7 @@ map_agent_to_type() {
 # Output: story ID on stdout, or empty string if not found
 get_story_scope() {
   local board
-  board=$(_find_board_jsonl)
+  board=$(find_board_jsonl)
   if [ -n "$board" ]; then
     basename "$(dirname "$board")"
     return 0
@@ -303,7 +285,7 @@ get_description() {
 
   # 1. board.jsonl 最新エントリの .note
   local board
-  board=$(_find_board_jsonl)
+  board=$(find_board_jsonl)
   if [ -n "$board" ]; then
     desc=$(tail -1 "$board" | jq -r '.note // empty' 2>/dev/null)
     if [ -n "$desc" ]; then

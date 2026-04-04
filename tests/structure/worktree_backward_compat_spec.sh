@@ -5,7 +5,10 @@ Describe 'Worktree backward compatibility'
   }
 
   check_autocommit_has_active_story() {
-    grep -q 'HEARTBEAT_ACTIVE_STORY' core/scripts/auto-commit.sh
+    # After refactoring, HEARTBEAT_ACTIVE_STORY logic lives in lib/common.sh
+    # which auto-commit.sh sources. Verify the capability exists in the lib.
+    grep -q 'HEARTBEAT_ACTIVE_STORY' core/scripts/lib/common.sh &&
+      grep -q 'source.*lib/common.sh' core/scripts/auto-commit.sh
   }
 
   check_retro_has_main_dir() {

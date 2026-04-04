@@ -97,7 +97,9 @@ Describe 'auto-commit.sh'
     End
   End
 
-  Describe '_find_board_jsonl()'
+  Describe 'find_board_jsonl() via lib/common.sh'
+    # After refactoring, _find_board_jsonl is removed from auto-commit.sh.
+    # find_board_jsonl is provided by lib/common.sh (sourced by auto-commit.sh).
     Describe 'with explicit story-id'
       setup() {
         TMPDIR_FIND=$(mktemp -d)
@@ -114,7 +116,7 @@ Describe 'auto-commit.sh'
       AfterEach 'cleanup'
 
       It 'resolves to the correct per-story board.jsonl'
-        When call _find_board_jsonl "target-story"
+        When call find_board_jsonl "target-story"
         The output should end with ".heartbeat/stories/target-story/board.jsonl"
         The status should be success
       End
@@ -133,7 +135,7 @@ Describe 'auto-commit.sh'
       AfterEach 'cleanup'
 
       It 'returns empty string for nonexistent story'
-        When call _find_board_jsonl "nonexistent"
+        When call find_board_jsonl "nonexistent"
         The output should equal ""
         The status should be success
       End
