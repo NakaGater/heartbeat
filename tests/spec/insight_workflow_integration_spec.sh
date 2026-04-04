@@ -133,7 +133,10 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
     It 'Insights の source_findings が実在する FND-NNN を参照していること'
       run_and_verify_ins_refs() {
         run_full_pipeline
-        jq -r '.source_findings[]' "${TEST_INSIGHTS_DIR}/insights.jsonl" | sort -u | while read -r ref; do
+        # パイプ経由の while read はサブシェルで実行されるため return 1 が伝播しない。
+        # for ループで回避する。
+        refs=$(jq -r '.source_findings[]' "${TEST_INSIGHTS_DIR}/insights.jsonl" | sort -u)
+        for ref in $refs; do
           if ! jq -e --arg id "$ref" 'select(.id == $id)' "${TEST_INSIGHTS_DIR}/findings.jsonl" > /dev/null 2>&1; then
             echo "参照先が見つからない: $ref" >&2
             return 1
@@ -147,7 +150,10 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
     It 'Findings の source_raw が実在する RAW-NNN を参照していること'
       run_and_verify_fnd_refs() {
         run_full_pipeline
-        jq -r '.source_raw' "${TEST_INSIGHTS_DIR}/findings.jsonl" | sort -u | while read -r ref; do
+        # パイプ経由の while read はサブシェルで実行されるため return 1 が伝播しない。
+        # for ループで回避する。
+        refs=$(jq -r '.source_raw' "${TEST_INSIGHTS_DIR}/findings.jsonl" | sort -u)
+        for ref in $refs; do
           if ! jq -e --arg id "$ref" 'select(.id == $id)' "${TEST_INSIGHTS_DIR}/raw.jsonl" > /dev/null 2>&1; then
             echo "参照先が見つからない: $ref" >&2
             return 1
