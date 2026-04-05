@@ -7,8 +7,20 @@ check_subagent_stop_has_generate_dashboard() {
     "$CLAUDE_SETTINGS" >/dev/null 2>&1
 }
 
-check_generate_dashboard_is_async() {
-  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh") | select(.async == true)' \
+check_generate_dashboard_is_sync() {
+  # generate-dashboard.sh が存在し、async プロパティを持たないことを検証
+  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh")' \
+    "$CLAUDE_SETTINGS" >/dev/null 2>&1 || return 1
+  # async キーが存在する場合は失敗（同期実行 = async キーなし）
+  if jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh") | select(.async)' \
+    "$CLAUDE_SETTINGS" >/dev/null 2>&1; then
+    return 1
+  fi
+  return 0
+}
+
+check_subagent_stop_has_retrospective_record() {
+  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/retrospective-record.sh")' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1
 }
 
@@ -30,8 +42,13 @@ Describe 'SubagentStop hook wiring for generate-dashboard.sh'
     The status should be success
   End
 
-  It 'generate-dashboard.sh is configured with async: true'
-    When call check_generate_dashboard_is_async
+  It 'generate-dashboard.sh is configured for synchronous execution (no async key)'
+    When call check_generate_dashboard_is_sync
+    The status should be success
+  End
+
+  It 'SubagentStop hooks contain retrospective-record.sh entry'
+    When call check_subagent_stop_has_retrospective_record
     The status should be success
   End
 
