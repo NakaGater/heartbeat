@@ -87,29 +87,33 @@ Describe 'dashboard.html: HTML構造のBentoグリッド化（タスク2）'
     The output should equal "ok"
   End
 
-  # ── 完了条件8: #gantt-chart が bento-card card-gantt 内、#task-list が bento-card card-tasks 内にある ──
+  # ── 完了条件8: #gantt-chart と #task-list が統合 bento-card card-story 内にある ──
 
-  It 'bento-card card-gantt が存在する'
-    The contents of file "$TEMPLATE" should include 'class="bento-card card-gantt"'
+  It 'bento-card card-story が存在する'
+    The contents of file "$TEMPLATE" should include 'class="bento-card card-story"'
   End
 
-  It '#gantt-chart が bento-card card-gantt の中に存在する'
+  It '#gantt-chart が bento-card card-story の中に存在する'
     check_gantt_in_bento() {
-      awk '/class="bento-card card-gantt"/{found=1} found && /id="gantt-chart"/{print "ok"; exit}' "$TEMPLATE"
+      awk '/class="bento-card card-story"/{found=1} found && /id="gantt-chart"/{print "ok"; exit}' "$TEMPLATE"
     }
     When call check_gantt_in_bento
     The output should equal "ok"
   End
 
-  It 'bento-card card-tasks が存在する'
-    The contents of file "$TEMPLATE" should include 'class="bento-card card-tasks"'
-  End
-
-  It '#task-list が bento-card card-tasks の中に存在する'
+  It '#task-list が bento-card card-story の中に存在する'
     check_tasklist_in_bento() {
-      awk '/class="bento-card card-tasks"/{found=1} found && /id="task-list"/{print "ok"; exit}' "$TEMPLATE"
+      awk '/class="bento-card card-story"/{found=1} found && /id="task-list"/{print "ok"; exit}' "$TEMPLATE"
     }
     When call check_tasklist_in_bento
+    The output should equal "ok"
+  End
+
+  It 'card-story 内に story-divider セパレータがある'
+    check_story_divider() {
+      awk '/class="bento-card card-story"/{found=1} found && /class="story-divider"/{print "ok"; exit}' "$TEMPLATE"
+    }
+    When call check_story_divider
     The output should equal "ok"
   End
 

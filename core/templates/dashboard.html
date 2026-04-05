@@ -416,10 +416,7 @@ header h1 {
     border-top: 1px solid var(--border);
     padding-top: var(--space-3);
   }
-  .bento-card.card-gantt {
-    grid-column: 1 / -1;
-  }
-  .bento-card.card-tasks {
+  .bento-card.card-story {
     grid-column: 1 / -1;
   }
   .bento-card.card-insights {
@@ -782,6 +779,11 @@ header h1 {
   overflow: hidden;
   min-height: 0;
 }
+.bento-card .panel {
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+}
 .bento-card.card-backlog-velocity .card-split-section + .card-split-section {
   border-left: 1px solid var(--border);
   padding-left: var(--space-3);
@@ -793,13 +795,15 @@ header h1 {
   scrollbar-width: thin;
   scrollbar-color: var(--text-subtle) transparent;
 }
-.bento-card.card-gantt {
+.bento-card.card-story {
   grid-column: 1 / -1;
 }
-.bento-card.card-tasks {
-  grid-column: 1 / -1;
+.bento-card.card-story .story-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-3) 0;
 }
-.bento-card.card-tasks .tasks-list {
+.bento-card.card-story .tasks-list {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--text-subtle) transparent;
@@ -831,15 +835,15 @@ header h1 {
 
 /* Scrollbar styling (WebKit) */
 .bento-card.card-backlog-velocity .kanban::-webkit-scrollbar,
-.bento-card.card-tasks .tasks-list::-webkit-scrollbar {
+.bento-card.card-story .tasks-list::-webkit-scrollbar {
   width: 6px;
 }
 .bento-card.card-backlog-velocity .kanban::-webkit-scrollbar-track,
-.bento-card.card-tasks .tasks-list::-webkit-scrollbar-track {
+.bento-card.card-story .tasks-list::-webkit-scrollbar-track {
   background: transparent;
 }
 .bento-card.card-backlog-velocity .kanban::-webkit-scrollbar-thumb,
-.bento-card.card-tasks .tasks-list::-webkit-scrollbar-thumb {
+.bento-card.card-story .tasks-list::-webkit-scrollbar-thumb {
   background: var(--text-subtle);
   border-radius: var(--radius-full);
 }
@@ -908,18 +912,14 @@ header h1 {
     </div>
   </div>
 
-  <div class="bento-card card-gantt">
+  <div class="bento-card card-story">
     <div class="panel">
       <div class="story-header">
         <div class="panel-title panel-title--inline">&#x1f504; Current Story</div>
         <select id="story-select" class="story-select" onchange="renderStoryDetail()"></select>
       </div>
       <div id="gantt-chart" class="gantt-container"></div>
-    </div>
-  </div>
-
-  <div class="bento-card card-tasks">
-    <div class="panel">
+      <hr class="story-divider">
       <div class="panel-title panel-title--sm">Tasks</div>
       <div id="task-list" class="tasks-list"></div>
     </div>
