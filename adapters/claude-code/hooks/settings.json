@@ -34,8 +34,11 @@
           },
           {
             "type": "command",
-            "command": "./core/scripts/generate-dashboard.sh",
-            "async": true
+            "command": "./core/scripts/retrospective-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "./core/scripts/generate-dashboard.sh"
           },
           {
             "type": "command",
