@@ -244,7 +244,7 @@ header h1 {
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-2);
 }
-.kanban-col { display: flex; flex-direction: column; gap: var(--space-2); }
+.kanban-col { display: flex; flex-direction: column; gap: var(--space-2); min-height: 0; }
 .kanban-col-header {
   font-size: var(--text-caption);
   font-weight: 600;
@@ -253,7 +253,20 @@ header h1 {
   padding-bottom: 6px;
   border-bottom: 2px solid var(--border);
   text-align: center;
+  flex-shrink: 0;
 }
+.kanban-col-cards {
+  flex: 1;
+  min-height: 0;
+  max-height: 360px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.kanban-col-cards::-webkit-scrollbar { display: none; }
 .kanban-card {
   background: var(--bg-card);
   border-radius: var(--radius-sm);
@@ -370,7 +383,10 @@ header h1 {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.messages::-webkit-scrollbar { display: none; }
 .msg-row { display: flex; gap: var(--space-2); }
 .msg-row.human { flex-direction: row-reverse; }
 .msg-bubble {
@@ -762,7 +778,7 @@ header h1 {
 /* ── Bento Card Sizes ── */
 .bento-card.card-backlog-velocity {
   grid-column: 1 / -1;
-  max-height: 420px;
+  height: 480px;
   display: flex;
   flex-direction: column;
 }
@@ -778,6 +794,7 @@ header h1 {
   flex-direction: column;
   overflow: hidden;
   min-height: 0;
+  padding-bottom: var(--space-3);
 }
 .bento-card .panel {
   border-radius: 0;
@@ -791,7 +808,6 @@ header h1 {
 .bento-card.card-backlog-velocity .kanban {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--text-subtle) transparent;
 }
@@ -999,7 +1015,7 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
     var html = '';
     var DONE_VISIBLE = 3;
     ['draft','ready','in_progress','done'].forEach(function(key) {
-      html += '<div class="kanban-col"><div class="kanban-col-header">' + labels[key] + '</div>';
+      html += '<div class="kanban-col"><div class="kanban-col-header">' + labels[key] + '</div><div class="kanban-col-cards">';
       var items = cols[key];
       if (key === 'done' && items.length > DONE_VISIBLE) {
         // Show latest N items (end of array = newest)
@@ -1018,7 +1034,7 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
         });
       }
       if (cols[key].length === 0) html += '<div style="font-size:0.7rem;color:var(--text-muted);text-align:center;padding:8px;">—</div>';
-      html += '</div>';
+      html += '</div></div>';
     });
     el.innerHTML = html;
   }
@@ -1210,7 +1226,7 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
     if (tMax <= tMin) tMax = tMin + 3600000; // at least 1hr span
 
     var padL = 110, padR = 16, padT = 24, padB = 32;
-    var rowH = 20, barH = 12;
+    var rowH = 20, barH = 18;
     var chartW = 600;
     var w = padL + chartW + padR;
     var h = padT + agents.length * rowH + padB;
