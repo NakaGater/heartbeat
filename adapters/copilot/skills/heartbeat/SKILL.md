@@ -98,6 +98,19 @@ User question (2-step hybrid):
     (Use vscode_askQuestions without choices parameter)
     Example: "Bug fix" selected → "What is the issue? Describe in one sentence."
     "Other" selected → "What problem do you want to solve? Describe in one sentence."
+Phase 0 - Draft registration:
+  Register in backlog.jsonl with status: "draft", points: null,
+    title: "{user's one-sentence description}", created: current ISO 8601
+  Run: bash core/scripts/generate-dashboard.sh
+    (synchronous — wait for completion before proceeding)
+
+Draft-stop choice (Use vscode_askQuestions):
+  Present choices: ["Continue to planning", "Stop at draft"]
+  If "Continue to planning" → proceed to Phase 1
+  If "Stop at draft":
+    Message to user: "Draft registered. Story saved to backlog with draft status."
+    >>> STOP: Draft registered. Return control to user. Do NOT proceed to Phase 1. <<<
+
 Phase 1 - Planning:
   pdm (hearing) → brief.md
   context-manager (investigation) → context.md
@@ -116,7 +129,7 @@ Phase 1 - Planning:
     If "Send back" → Present reason choices: ["Scope too broad", "Acceptance criteria unclear", "Want to change priority", "Other (free text)"] (Use vscode_askQuestions)
 
 Result:
-  Register in backlog.jsonl with status: "ready", points: {estimate}
+  Update backlog.jsonl entry: status -> "ready", points: {estimate}
 
   Continuation prompt (Use vscode_askQuestions):
     Present choices: ["Implement this story", "Create another story", "Exit"]
@@ -247,7 +260,7 @@ User question (2-step hybrid):
 Flow:
   Execute Workflow 1 (story creation)
     NOTE: When executing as part of Workflow 3, IGNORE the
-    "STOP/END OF WORKFLOW 1" directive. Instead:
+    "STOP/END OF WORKFLOW 1" directive and skip the draft-stop choice. Instead:
     → After story approval, automatically transition to Workflow 2 (implementation)
     → Execute all phases to completion
 
