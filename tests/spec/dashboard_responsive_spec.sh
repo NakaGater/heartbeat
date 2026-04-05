@@ -2,17 +2,17 @@ Describe 'dashboard.html: レスポンシブ改善（タスク6）'
   TEMPLATE="core/templates/dashboard.html"
 
   # --- タッチターゲット 44px 確保 ---
-  It '.refresh-btn に min-height: 44px が設定されている'
-    The contents of file "$TEMPLATE" should include 'min-height: 44px'
+  It '.refresh-btn に min-height: 48px が設定されている'
+    The contents of file "$TEMPLATE" should include 'min-height: 48px'
   End
 
-  It '.done-toggle-btn に min-height: 44px が設定されている'
+  It '.done-toggle-btn に min-height: 48px が設定されている'
     # design.md: 全インタラクティブ要素のタッチターゲットは 44px 以上
-    The contents of file "$TEMPLATE" should match pattern '*.done-toggle-btn*min-height: 44px*'
+    The contents of file "$TEMPLATE" should match pattern '*.done-toggle-btn*min-height: 48px*'
   End
 
-  It '.story-select に min-height: 44px が設定されている'
-    The contents of file "$TEMPLATE" should match pattern '*.story-select*min-height: 44px*'
+  It '.story-select に min-height: 48px が設定されている'
+    The contents of file "$TEMPLATE" should match pattern '*.story-select*min-height: 48px*'
   End
 
   # --- 768px ブレークポイントのフォントサイズ調整 ---

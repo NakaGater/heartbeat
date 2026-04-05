@@ -192,8 +192,8 @@ header h1 {
   cursor: pointer;
   color: var(--text);
   font-size: var(--text-md);
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 48px;
+  min-width: 48px;
   transition: background 0.2s cubic-bezier(0.22, 1, 0.36, 1),
               border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
               transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
@@ -292,7 +292,7 @@ header h1 {
   cursor: pointer;
   width: 100%;
   text-align: center;
-  min-height: 44px;
+  min-height: 48px;
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 .done-toggle-btn:hover {
@@ -328,7 +328,7 @@ header h1 {
   background: var(--bg-card);
   color: var(--text);
   font-size: var(--text-md);
-  min-height: 44px;
+  min-height: 48px;
 }
 .gantt-container {
   width: 100%;
@@ -400,7 +400,22 @@ header h1 {
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
 @media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+  .bento-grid {
+    margin-left: 0;
+    grid-template-columns: 1fr;
+  }
+  .metric-value {
+    font-size: 2rem;
+  }
   .top-row { grid-template-columns: 1fr; }
   .kanban { grid-template-columns: repeat(2, 1fr); }
   .msg-bubble { max-width: 90%; }
@@ -555,6 +570,7 @@ header h1 {
 .sidebar-icon {
   width: 32px;
   height: 32px;
+  min-height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
