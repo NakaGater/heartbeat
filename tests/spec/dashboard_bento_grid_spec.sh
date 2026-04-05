@@ -24,7 +24,7 @@ Describe 'dashboard.html: HTML構造のBentoグリッド化（タスク2）'
   # ── 完了条件3: hero-metrics ヘッダーが存在し metric-card を4つ含む ──
 
   It 'header class="hero-metrics" が存在する'
-    The contents of file "$TEMPLATE" should include '<header class="hero-metrics"'
+    The contents of file "$TEMPLATE" should include 'class="hero-metrics"'
   End
 
   It 'metric-card が4つ存在する'

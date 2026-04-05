@@ -139,6 +139,7 @@
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
     --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.06);
     --shadow-glow: 0 0 30px rgba(99, 102, 241, 0.1);
+    --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.12);
     /* ライトモード バブル */
     --bubble-human: rgba(99, 102, 241, 0.1);
     --bubble-agent: rgba(241, 245, 249, 0.8);
@@ -738,6 +739,12 @@ header h1 {
 .bento-card.card-velocity {
   grid-column: span 5;
 }
+.bento-card.card-story {
+  grid-column: span 5;
+}
+.bento-card.card-insights {
+  grid-column: span 6;
+}
 .bento-card.card-messages {
   grid-column: 1 / -1;
 }
@@ -764,12 +771,12 @@ header h1 {
 </nav>
 
 <div id="app" class="bento-grid">
-  <header class="hero-metrics">
+  <header id="hero-metrics" class="hero-metrics">
     <div class="metric-card">
       <div id="metric-progress">
         <svg class="metric-ring" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border)" stroke-width="2"/>
-          <circle cx="18" cy="18" r="16" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="0 100" stroke-linecap="round"/>
+          <circle class="progress" cx="18" cy="18" r="16" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="0 100" stroke-linecap="round"/>
         </svg>
       </div>
       <div class="metric-value" id="metric-stories">0</div>
@@ -1264,10 +1271,10 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
     var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var duration = reducedMotion ? 0 : 1200;
 
-    var totalEl = document.querySelector('#metric-total .metric-value');
-    var pctEl = document.querySelector('#metric-progress .metric-value');
-    var velEl = document.querySelector('#metric-velocity .metric-value');
-    var activeEl = document.querySelector('#metric-active .metric-value');
+    var totalEl = document.getElementById('metric-stories');
+    var pctEl = document.getElementById('metric-done-rate');
+    var velEl = document.getElementById('metric-velocity');
+    var activeEl = document.getElementById('metric-agents');
 
     if (totalEl) animateCounter(totalEl, total, duration, '');
     if (pctEl) animateCounter(pctEl, pct, duration, '%');
@@ -1298,7 +1305,7 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       (function(icon) {
         icon.addEventListener('click', function() {
           var section = icon.getAttribute('data-section');
-          var target = document.getElementById('section-' + section);
+          var target = document.getElementById(section);
           if (target) {
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             for (var j = 0; j < icons.length; j++) {
