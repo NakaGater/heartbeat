@@ -404,18 +404,35 @@ header h1 {
   .bento-grid {
     grid-template-columns: repeat(6, 1fr);
   }
-  .bento-card.card-backlog {
+  .bento-card.card-backlog-velocity {
     grid-column: 1 / -1;
-    grid-row: span 1;
   }
-  .bento-card.card-velocity {
-    grid-column: span 3;
+  .bento-card.card-backlog-velocity .card-split {
+    grid-template-columns: 1fr;
   }
-  .bento-card.card-story {
-    grid-column: span 3;
+  .bento-card.card-backlog-velocity .card-split-section + .card-split-section {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-3);
+  }
+  .bento-card.card-gantt {
+    grid-column: 1 / -1;
+  }
+  .bento-card.card-tasks {
+    grid-column: 1 / -1;
   }
   .bento-card.card-insights {
     grid-column: 1 / -1;
+  }
+  .bento-card.card-messages .card-split {
+    grid-template-columns: 1fr;
+  }
+  .bento-card.card-messages .card-split-section + .card-split-section {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-3);
   }
 }
 @media (max-width: 768px) {
@@ -746,38 +763,43 @@ header h1 {
 }
 
 /* ── Bento Card Sizes ── */
-.bento-card.card-backlog {
-  grid-column: span 7;
+.bento-card.card-backlog-velocity {
+  grid-column: 1 / -1;
   max-height: 420px;
   display: flex;
   flex-direction: column;
 }
-.bento-card.card-backlog .panel {
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+.bento-card.card-backlog-velocity .card-split {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: var(--space-3);
   flex: 1;
   min-height: 0;
 }
-.bento-card.card-backlog .kanban {
+.bento-card.card-backlog-velocity .card-split-section {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+.bento-card.card-backlog-velocity .card-split-section + .card-split-section {
+  border-left: 1px solid var(--border);
+  padding-left: var(--space-3);
+}
+.bento-card.card-backlog-velocity .kanban {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--text-subtle) transparent;
 }
-.bento-card.card-velocity {
-  grid-column: span 5;
-  max-height: 420px;
-}
-.bento-card.card-story {
+.bento-card.card-gantt {
   grid-column: 1 / -1;
 }
-.bento-card.card-story .panel {
-  display: flex;
-  flex-direction: column;
+.bento-card.card-tasks {
+  grid-column: 1 / -1;
 }
-.bento-card.card-story .tasks-list {
+.bento-card.card-tasks .tasks-list {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--text-subtle) transparent;
@@ -788,18 +810,36 @@ header h1 {
 .bento-card.card-messages {
   grid-column: 1 / -1;
 }
+.bento-card.card-messages .card-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+.bento-card.card-messages .card-split-section + .card-split-section {
+  border-left: 1px solid var(--border);
+  padding-left: var(--space-3);
+}
+.card-split-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: var(--text-sm);
+  min-height: 120px;
+}
 
 /* Scrollbar styling (WebKit) */
-.bento-card.card-backlog .kanban::-webkit-scrollbar,
-.bento-card.card-story .tasks-list::-webkit-scrollbar {
+.bento-card.card-backlog-velocity .kanban::-webkit-scrollbar,
+.bento-card.card-tasks .tasks-list::-webkit-scrollbar {
   width: 6px;
 }
-.bento-card.card-backlog .kanban::-webkit-scrollbar-track,
-.bento-card.card-story .tasks-list::-webkit-scrollbar-track {
+.bento-card.card-backlog-velocity .kanban::-webkit-scrollbar-track,
+.bento-card.card-tasks .tasks-list::-webkit-scrollbar-track {
   background: transparent;
 }
-.bento-card.card-backlog .kanban::-webkit-scrollbar-thumb,
-.bento-card.card-story .tasks-list::-webkit-scrollbar-thumb {
+.bento-card.card-backlog-velocity .kanban::-webkit-scrollbar-thumb,
+.bento-card.card-tasks .tasks-list::-webkit-scrollbar-thumb {
   background: var(--text-subtle);
   border-radius: var(--radius-full);
 }
@@ -853,27 +893,33 @@ header h1 {
     </div>
   </header>
 
-  <div class="bento-card card-backlog">
+  <div class="bento-card card-backlog-velocity">
     <div class="panel">
-      <div class="panel-title">&#x1f4cb; Backlog Board</div>
-      <div id="backlog-board" class="kanban"></div>
+      <div class="card-split">
+        <div class="card-split-section">
+          <div class="panel-title">&#x1f4cb; Backlog Board</div>
+          <div id="backlog-board" class="kanban"></div>
+        </div>
+        <div class="card-split-section">
+          <div class="panel-title">&#x1f4ca; Velocity Chart</div>
+          <div id="velocity-chart" class="chart-container"></div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div class="bento-card card-velocity">
-    <div class="panel">
-      <div class="panel-title">&#x1f4ca; Velocity Chart</div>
-      <div id="velocity-chart" class="chart-container"></div>
-    </div>
-  </div>
-
-  <div class="bento-card card-story">
+  <div class="bento-card card-gantt">
     <div class="panel">
       <div class="story-header">
         <div class="panel-title panel-title--inline">&#x1f504; Current Story</div>
         <select id="story-select" class="story-select" onchange="renderStoryDetail()"></select>
       </div>
       <div id="gantt-chart" class="gantt-container"></div>
+    </div>
+  </div>
+
+  <div class="bento-card card-tasks">
+    <div class="panel">
       <div class="panel-title panel-title--sm">Tasks</div>
       <div id="task-list" class="tasks-list"></div>
     </div>
@@ -881,8 +927,16 @@ header h1 {
 
   <div class="bento-card card-messages">
     <div class="panel">
-      <div class="panel-title">&#x1f4ac; Agent Messages</div>
-      <div id="agent-messages" class="messages"></div>
+      <div class="card-split">
+        <div class="card-split-section">
+          <div class="panel-title">&#x1f4ac; Agent Messages</div>
+          <div id="agent-messages" class="messages"></div>
+        </div>
+        <div class="card-split-section">
+          <div class="panel-title">&#x1f512; Reserved</div>
+          <div class="card-split-placeholder">Coming soon...</div>
+        </div>
+      </div>
     </div>
   </div>
 

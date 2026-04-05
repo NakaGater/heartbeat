@@ -55,51 +55,59 @@ Describe 'dashboard.html: HTML構造のBentoグリッド化（タスク2）'
     The contents of file "$TEMPLATE" should include 'class="metric-ring"'
   End
 
-  # ── 完了条件6: #backlog-board が bento-card card-backlog 内にある ──
+  # ── 完了条件6: #backlog-board と #velocity-chart が統合 bento-card card-backlog-velocity 内にある ──
 
-  It 'bento-card card-backlog が存在する'
-    The contents of file "$TEMPLATE" should include 'class="bento-card card-backlog"'
+  It 'bento-card card-backlog-velocity が存在する'
+    The contents of file "$TEMPLATE" should include 'class="bento-card card-backlog-velocity"'
   End
 
-  It '#backlog-board が bento-card card-backlog の中に存在する'
+  It '#backlog-board が bento-card card-backlog-velocity の中に存在する'
     check_backlog_in_bento() {
-      awk '/class="bento-card card-backlog"/{found=1} found && /id="backlog-board"/{print "ok"; exit}' "$TEMPLATE"
+      awk '/class="bento-card card-backlog-velocity"/{found=1} found && /id="backlog-board"/{print "ok"; exit}' "$TEMPLATE"
     }
     When call check_backlog_in_bento
     The output should equal "ok"
   End
 
-  # ── 完了条件7: #velocity-chart が bento-card card-velocity 内にある ──
-
-  It 'bento-card card-velocity が存在する'
-    The contents of file "$TEMPLATE" should include 'class="bento-card card-velocity"'
-  End
-
-  It '#velocity-chart が bento-card card-velocity の中に存在する'
+  It '#velocity-chart が bento-card card-backlog-velocity の中に存在する'
     check_velocity_in_bento() {
-      awk '/class="bento-card card-velocity"/{found=1} found && /id="velocity-chart"/{print "ok"; exit}' "$TEMPLATE"
+      awk '/class="bento-card card-backlog-velocity"/{found=1} found && /id="velocity-chart"/{print "ok"; exit}' "$TEMPLATE"
     }
     When call check_velocity_in_bento
     The output should equal "ok"
   End
 
-  # ── 完了条件8: #gantt-chart と #task-list が bento-card card-story 内にある ──
+  # ── 完了条件7: card-split で2カラムレイアウト ──
 
-  It 'bento-card card-story が存在する'
-    The contents of file "$TEMPLATE" should include 'class="bento-card card-story"'
+  It 'card-backlog-velocity 内に card-split がある'
+    check_card_split() {
+      awk '/class="bento-card card-backlog-velocity"/{found=1} found && /class="card-split"/{print "ok"; exit}' "$TEMPLATE"
+    }
+    When call check_card_split
+    The output should equal "ok"
   End
 
-  It '#gantt-chart が bento-card card-story の中に存在する'
+  # ── 完了条件8: #gantt-chart が bento-card card-gantt 内、#task-list が bento-card card-tasks 内にある ──
+
+  It 'bento-card card-gantt が存在する'
+    The contents of file "$TEMPLATE" should include 'class="bento-card card-gantt"'
+  End
+
+  It '#gantt-chart が bento-card card-gantt の中に存在する'
     check_gantt_in_bento() {
-      awk '/class="bento-card card-story"/{found=1} found && /id="gantt-chart"/{print "ok"; exit}' "$TEMPLATE"
+      awk '/class="bento-card card-gantt"/{found=1} found && /id="gantt-chart"/{print "ok"; exit}' "$TEMPLATE"
     }
     When call check_gantt_in_bento
     The output should equal "ok"
   End
 
-  It '#task-list が bento-card card-story の中に存在する'
+  It 'bento-card card-tasks が存在する'
+    The contents of file "$TEMPLATE" should include 'class="bento-card card-tasks"'
+  End
+
+  It '#task-list が bento-card card-tasks の中に存在する'
     check_tasklist_in_bento() {
-      awk '/class="bento-card card-story"/{found=1} found && /id="task-list"/{print "ok"; exit}' "$TEMPLATE"
+      awk '/class="bento-card card-tasks"/{found=1} found && /id="task-list"/{print "ok"; exit}' "$TEMPLATE"
     }
     When call check_tasklist_in_bento
     The output should equal "ok"
