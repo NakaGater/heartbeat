@@ -29,7 +29,7 @@ Describe 'dashboard.html: HTML構造のBentoグリッド化（タスク2）'
 
   It 'metric-card が4つ存在する'
     count_metric_cards() {
-      grep -o 'class="metric-card"' "$TEMPLATE" | wc -l | tr -d ' '
+      grep -o 'class="metric-card[^"]*"' "$TEMPLATE" | wc -l | tr -d ' '
     }
     When call count_metric_cards
     The output should equal "4"

@@ -681,9 +681,20 @@ header h1 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 100px;
   transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Stories metric: ring beside number */
+.metric-card--with-ring {
+  flex-direction: row;
+  gap: var(--space-3);
+  text-align: left;
+}
+.metric-card--with-ring .metric-ring-value {
+  display: flex;
+  flex-direction: column;
 }
 
 .metric-card:hover {
@@ -713,9 +724,9 @@ header h1 {
 }
 
 .metric-ring {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto var(--space-2);
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
 }
 
 .metric-ring circle.track {
@@ -738,19 +749,52 @@ header h1 {
 .bento-card.card-backlog {
   grid-column: span 7;
 }
+.bento-card.card-backlog .kanban {
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-subtle) transparent;
+}
 .bento-card.card-velocity {
   grid-column: span 5;
 }
 .bento-card.card-story {
   grid-column: span 5;
+}
+.bento-card.card-story .panel {
+  display: flex;
+  flex-direction: column;
   max-height: 500px;
+}
+.bento-card.card-story .gantt-container,
+.bento-card.card-story .tasks-list {
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-subtle) transparent;
 }
 .bento-card.card-insights {
   grid-column: 1 / -1;
 }
 .bento-card.card-messages {
   grid-column: 1 / -1;
+}
+
+/* Scrollbar styling (WebKit) */
+.bento-card.card-backlog .kanban::-webkit-scrollbar,
+.bento-card.card-story .gantt-container::-webkit-scrollbar,
+.bento-card.card-story .tasks-list::-webkit-scrollbar {
+  width: 6px;
+}
+.bento-card.card-backlog .kanban::-webkit-scrollbar-track,
+.bento-card.card-story .gantt-container::-webkit-scrollbar-track,
+.bento-card.card-story .tasks-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.bento-card.card-backlog .kanban::-webkit-scrollbar-thumb,
+.bento-card.card-story .gantt-container::-webkit-scrollbar-thumb,
+.bento-card.card-story .tasks-list::-webkit-scrollbar-thumb {
+  background: var(--text-subtle);
+  border-radius: var(--radius-full);
 }
 
 /* Accessibility: prefers-reduced-motion */
@@ -776,15 +820,17 @@ header h1 {
 
 <div id="app" class="bento-grid">
   <header id="hero-metrics" class="hero-metrics">
-    <div class="metric-card">
+    <div class="metric-card metric-card--with-ring">
       <div id="metric-progress">
         <svg class="metric-ring" viewBox="0 0 36 36">
           <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border)" stroke-width="2"/>
           <circle class="progress" cx="18" cy="18" r="16" fill="none" stroke="var(--accent)" stroke-width="2" stroke-dasharray="0 100" stroke-linecap="round"/>
         </svg>
       </div>
-      <div class="metric-value" id="metric-stories">0</div>
-      <div class="metric-label">Stories</div>
+      <div class="metric-ring-value">
+        <div class="metric-value" id="metric-stories">0</div>
+        <div class="metric-label">Stories</div>
+      </div>
     </div>
     <div class="metric-card">
       <div class="metric-value" id="metric-velocity">0</div>
