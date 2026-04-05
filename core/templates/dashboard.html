@@ -404,6 +404,19 @@ header h1 {
   .bento-grid {
     grid-template-columns: repeat(6, 1fr);
   }
+  .bento-card.card-backlog {
+    grid-column: 1 / -1;
+    grid-row: span 1;
+  }
+  .bento-card.card-velocity {
+    grid-column: span 3;
+  }
+  .bento-card.card-story {
+    grid-column: span 3;
+  }
+  .bento-card.card-insights {
+    grid-column: 1 / -1;
+  }
 }
 @media (max-width: 768px) {
   .sidebar {
