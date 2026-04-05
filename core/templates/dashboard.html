@@ -977,14 +977,24 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       values = weeks.map(function(w){ return weekMap[w]; });
     }
 
-    // Pad to at least 5 entries with zero-value placeholders
+    // Pad to at least 5 entries with zero-value placeholders using YYYY-Wnn format
     var MIN_ENTRIES = 5;
     if (labels.length < MIN_ENTRIES) {
       var padCount = MIN_ENTRIES - labels.length;
       var padLabels = [];
       var padValues = [];
-      for (var pi = 0; pi < padCount; pi++) {
-        padLabels.push('—');
+      // Generate week labels before the earliest real label
+      var firstLabel = labels.length > 0 ? labels[0] : null;
+      for (var pi = padCount; pi >= 1; pi--) {
+        if (firstLabel && /^\d{4}-W\d{2}$/.test(firstLabel)) {
+          var parts = firstLabel.match(/^(\d{4})-W(\d{2})$/);
+          var yr = parseInt(parts[1], 10);
+          var wk = parseInt(parts[2], 10) - pi;
+          while (wk < 1) { yr--; wk += 52; }
+          padLabels.push(yr + '-W' + String(wk).padStart(2, '0'));
+        } else {
+          padLabels.push('W' + String(pi).padStart(2, '0'));
+        }
         padValues.push(0);
       }
       labels = padLabels.concat(labels);
@@ -993,7 +1003,8 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
 
     // Unified SVG rendering for both iteration and week fallback paths
     var maxVal = Math.max.apply(null, values);
-    var avg = values.reduce(function(a,b){return a+b;}, 0) / values.length;
+    var nonZeroValues = values.filter(function(v){ return v > 0; });
+    var avg = nonZeroValues.length > 0 ? nonZeroValues.reduce(function(a,b){return a+b;}, 0) / nonZeroValues.length : 0;
     var barW = 40, gap = 16, padL = 40, padR = 16, padT = 16, padB = 32;
     var w = padL + labels.length * (barW + gap) + padR;
     var h = 160;
