@@ -58,8 +58,8 @@ Describe 'dashboard.html: タイポグラフィの洗練（タスク3 - AC5）'
     The contents of file "$TEMPLATE" should include 'letter-spacing: -0.025em'
   End
 
-  It 'ラベル用のワイドな letter-spacing（正値 0.05em）が定義されている'
-    The contents of file "$TEMPLATE" should include 'letter-spacing: 0.05em'
+  It 'ラベル用のワイドな letter-spacing（正値 0.08em）が定義されている'
+    The contents of file "$TEMPLATE" should include 'letter-spacing: 0.08em'
   End
 
   It '本文用の letter-spacing（0.01em）が定義されている'
