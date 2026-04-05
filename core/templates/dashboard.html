@@ -243,7 +243,6 @@ header h1 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--space-2);
-  min-height: 120px;
 }
 .kanban-col { display: flex; flex-direction: column; gap: var(--space-2); }
 .kanban-col-header {
@@ -633,6 +632,7 @@ header h1 {
   box-shadow: var(--shadow-sm);
   padding: var(--space-4);
   overflow: hidden;
+  align-self: start;
   transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -678,6 +678,11 @@ header h1 {
   text-align: center;
   position: relative;
   overflow: hidden;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -743,7 +748,7 @@ header h1 {
   grid-column: span 5;
 }
 .bento-card.card-insights {
-  grid-column: span 6;
+  grid-column: 1 / -1;
 }
 .bento-card.card-messages {
   grid-column: 1 / -1;
@@ -970,6 +975,20 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       }
       labels = weeks;
       values = weeks.map(function(w){ return weekMap[w]; });
+    }
+
+    // Pad to at least 5 entries with zero-value placeholders
+    var MIN_ENTRIES = 5;
+    if (labels.length < MIN_ENTRIES) {
+      var padCount = MIN_ENTRIES - labels.length;
+      var padLabels = [];
+      var padValues = [];
+      for (var pi = 0; pi < padCount; pi++) {
+        padLabels.push('—');
+        padValues.push(0);
+      }
+      labels = padLabels.concat(labels);
+      values = padValues.concat(values);
     }
 
     // Unified SVG rendering for both iteration and week fallback paths
