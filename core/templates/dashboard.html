@@ -398,15 +398,15 @@ header h1 {
   }
 }
 
-/* --- Micro-interactions & Animations (Task 4) --- */
-@keyframes fadeSlideIn {
+/* --- Micro-interactions & Animations (Task 6 v2) --- */
+@keyframes fadeScaleIn {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
@@ -420,17 +420,39 @@ header h1 {
   50% { opacity: 0.7; }
 }
 
-.panel, .hero-metrics, .bento-card {
-  animation: fadeSlideIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(124, 106, 239, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(124, 106, 239, 0.4); }
 }
 
-/* Stagger animation-delay using #app > :nth-child for Bento grid DOM ordering */
-#app > :nth-child(1)                { animation-delay: 0ms; }    /* .hero-metrics */
-#app > :nth-child(2)                { animation-delay: 80ms; }   /* .bento-card.card-backlog */
-#app > :nth-child(3)                { animation-delay: 160ms; }  /* .bento-card.card-velocity */
-#app > :nth-child(4)                { animation-delay: 240ms; }  /* .bento-card.card-story */
-#app > :nth-child(5)                { animation-delay: 320ms; }  /* .bento-card.card-messages */
-#app > :nth-child(6)                { animation-delay: 400ms; }  /* .bento-card.card-insights */
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.panel, .hero-metrics, .bento-card {
+  animation: fadeScaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Bento card stagger: 60ms intervals */
+.hero-metrics                       { animation-delay: 0ms; }
+.bento-card:nth-child(1)            { animation-delay: 60ms; }
+.bento-card:nth-child(2)            { animation-delay: 120ms; }
+.bento-card:nth-child(3)            { animation-delay: 180ms; }
+.bento-card:nth-child(4)            { animation-delay: 240ms; }
+.bento-card:nth-child(5)            { animation-delay: 300ms; }
+.bento-card:nth-child(6)            { animation-delay: 360ms; }
+
+/* Status dot animations */
+.status-dot.active {
+  animation: glowPulse 2s ease-in-out infinite;
+}
 
 /* Hover depth transition */
 .panel {
@@ -459,6 +481,7 @@ header h1 {
   padding: var(--space-4) 0;
   gap: var(--space-3);
   z-index: 100;
+  animation: slideInFromLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .sidebar-icon {
   width: 32px;

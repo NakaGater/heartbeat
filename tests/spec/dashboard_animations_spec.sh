@@ -1,14 +1,14 @@
 Describe 'dashboard.html: マイクロインタラクションとアニメーション（タスク4）'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- @keyframes 定義 ---
-  It '@keyframes fadeSlideIn が定義されている'
-    The contents of file "$TEMPLATE" should include '@keyframes fadeSlideIn'
+  # --- @keyframes 定義 (v2: fadeScaleIn に更新) ---
+  It '@keyframes fadeScaleIn が定義されている'
+    The contents of file "$TEMPLATE" should include '@keyframes fadeScaleIn'
   End
 
-  # --- パネル入場アニメーション ---
-  It '.panel に animation: fadeSlideIn が適用されている'
-    The contents of file "$TEMPLATE" should include 'animation: fadeSlideIn'
+  # --- パネル入場アニメーション (v2: fadeScaleIn に更新) ---
+  It '.panel に animation: fadeScaleIn が適用されている'
+    The contents of file "$TEMPLATE" should include 'animation: fadeScaleIn'
   End
 
   # --- stagger animation-delay ---
