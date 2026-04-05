@@ -190,7 +190,9 @@ header h1 {
   font-size: var(--text-md);
   min-height: 44px;
   min-width: 44px;
-  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: background 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 0.2s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .refresh-btn:hover {
   background: var(--accent-subtle);
@@ -281,7 +283,7 @@ header h1 {
   width: 100%;
   text-align: center;
   min-height: 44px;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 .done-toggle-btn:hover {
   background: var(--accent-subtle);
@@ -436,6 +438,11 @@ header h1 {
   }
 }
 
+@keyframes progressFill {
+  from { stroke-dashoffset: var(--progress-circumference, 283); }
+  to   { stroke-dashoffset: var(--progress-offset, 0); }
+}
+
 .panel, .hero-metrics, .bento-card {
   animation: fadeScaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -452,6 +459,23 @@ header h1 {
 /* Status dot animations */
 .status-dot.active {
   animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* Shimmer loading skeleton */
+.shimmer-loading {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* Subtle pulse on live metric values */
+.metric-value[data-live] {
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+/* Progress ring fill animation */
+.progress-ring-circle {
+  animation: progressFill 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Hover depth transition */
@@ -493,7 +517,8 @@ header h1 {
   color: var(--text-subtle);
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: color 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
 }
 .sidebar-icon:hover {
@@ -533,7 +558,9 @@ header h1 {
   box-shadow: var(--shadow-sm);
   padding: var(--space-4);
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -576,7 +603,9 @@ header h1 {
   text-align: center;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .metric-card:hover {
