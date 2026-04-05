@@ -29,9 +29,11 @@ check_subagent_stop_has_board_stamp() {
     "$SETTINGS_LOCAL" >/dev/null 2>&1
 }
 
-# SubagentStop に generate-dashboard.sh が async で登録されているか確認
-check_subagent_stop_has_generate_dashboard_async() {
-  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh") | select(.async == true)' \
+# SubagentStop に generate-dashboard.sh が同期実行で登録されているか確認
+check_subagent_stop_has_generate_dashboard_sync() {
+  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh")' \
+    "$SETTINGS_LOCAL" >/dev/null 2>&1 \
+  && ! jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh") | select(.async)' \
     "$SETTINGS_LOCAL" >/dev/null 2>&1
 }
 
@@ -78,8 +80,8 @@ Describe 'settings.local.json フック登録 (AC-1)'
       The status should be success
     End
 
-    It 'SubagentStop に generate-dashboard.sh が async: true で登録されている'
-      When call check_subagent_stop_has_generate_dashboard_async
+    It 'SubagentStop に generate-dashboard.sh が同期実行で登録されている'
+      When call check_subagent_stop_has_generate_dashboard_sync
       The status should be success
     End
 
