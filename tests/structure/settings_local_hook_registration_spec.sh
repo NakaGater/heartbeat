@@ -35,6 +35,12 @@ check_subagent_stop_has_generate_dashboard_async() {
     "$SETTINGS_LOCAL" >/dev/null 2>&1
 }
 
+# SubagentStop に retrospective-record.sh が登録されているか確認
+check_subagent_stop_has_retrospective_record() {
+  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/retrospective-record.sh")' \
+    "$SETTINGS_LOCAL" >/dev/null 2>&1
+}
+
 # settings.local.json のフック構成が settings.json テンプレートと一致するか確認
 check_hooks_match_template() {
   template="adapters/claude-code/hooks/settings.json"
@@ -74,6 +80,11 @@ Describe 'settings.local.json フック登録 (AC-1)'
 
     It 'SubagentStop に generate-dashboard.sh が async: true で登録されている'
       When call check_subagent_stop_has_generate_dashboard_async
+      The status should be success
+    End
+
+    It 'SubagentStop に retrospective-record.sh が登録されている'
+      When call check_subagent_stop_has_retrospective_record
       The status should be success
     End
   End
