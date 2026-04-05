@@ -4,9 +4,8 @@ Describe 'dashboard.html: タイポグラフィ + アクセントカラー + デ
   # --- AC2: header h1 にグラデーションテキスト ---
   It 'header h1 ルールブロック内に -webkit-background-clip: text が定義されている'
     # header h1 の CSS ルール内で gradient text が適用されていることを検証
-    result=$(awk '/header h1 \{/,/\}/' "$TEMPLATE" | grep -c '\-webkit-background-clip: text')
-    [ "$result" -ge 1 ]
-    The status should be success
+    When run command awk '/header h1 \{/,/\}/' "$TEMPLATE"
+    The output should include '-webkit-background-clip: text'
   End
 
   # --- AC4: .kanban-card に border-left が定義されている ---
@@ -41,14 +40,12 @@ Describe 'dashboard.html: タイポグラフィ + アクセントカラー + デ
 
   # --- AC: .status-dot 基本スタイル (width/height/border-radius) ---
   It '.status-dot に width と height が定義されている'
-    result=$(awk '/\.status-dot[^.]* \{/,/\}/' "$TEMPLATE" | grep -c 'width')
-    [ "$result" -ge 1 ]
-    The status should be success
+    When run command awk '/\.status-dot[^.]* \{/,/\}/' "$TEMPLATE"
+    The output should include 'width'
   End
 
   It '.status-dot に border-radius が定義されている (アニメーションドット)'
-    result=$(awk '/\.status-dot[^.]* \{/,/\}/' "$TEMPLATE" | grep -c 'border-radius')
-    [ "$result" -ge 1 ]
-    The status should be success
+    When run command awk '/\.status-dot[^.]* \{/,/\}/' "$TEMPLATE"
+    The output should include 'border-radius'
   End
 End
