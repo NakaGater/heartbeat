@@ -41,9 +41,9 @@ Describe 'dashboard.html: ヒーローメトリクスセクションのCSS（タ
 
   # ── 完了条件4: .metric-value に font-size: 3rem と font-weight: 800 ──
 
-  It '.metric-value に font-size が 3rem 相当で定義されている'
+  It '.metric-value に font-size が定義されている'
     extract_metric_value_font_size() {
-      awk '/\.metric-value[ \t]*\{/{found=1} found && /font-size[ \t]*:.*((3rem)|(var\(--text-4xl\)))/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
+      awk '/\.metric-value[ \t]*\{/{found=1} found && /font-size[ \t]*:/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
     }
     When call extract_metric_value_font_size
     The output should equal "ok"

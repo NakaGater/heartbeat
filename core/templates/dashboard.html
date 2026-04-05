@@ -210,17 +210,17 @@ header h1 {
 .top-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-5);
-  margin-bottom: var(--space-5);
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
 }
 .panel {
   background: var(--glass-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  padding: var(--space-4);
+  padding: var(--space-3);
   overflow: visible;
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-3);
   -webkit-backdrop-filter: var(--glass-blur);
   backdrop-filter: var(--glass-blur);
 }
@@ -619,9 +619,9 @@ header h1 {
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  grid-auto-rows: minmax(80px, auto);
-  gap: var(--space-4);
-  padding: var(--space-4);
+  grid-auto-rows: minmax(60px, auto);
+  gap: var(--space-3);
+  padding: var(--space-3);
   margin-left: 48px;
 }
 .bento-card {
@@ -630,9 +630,8 @@ header h1 {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  padding: var(--space-4);
+  padding: var(--space-3);
   overflow: hidden;
-  align-self: start;
   transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -663,9 +662,9 @@ header h1 {
 .hero-metrics {
   grid-column: 1 / -1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-4);
-  padding: var(--space-5);
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
   background: var(--gradient-hero);
   border-radius: var(--radius-lg);
 }
@@ -674,11 +673,10 @@ header h1 {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg);
-  padding: var(--space-5) var(--space-4);
+  padding: var(--space-3) var(--space-3);
   text-align: center;
   position: relative;
   overflow: hidden;
-  min-height: 140px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -695,7 +693,7 @@ header h1 {
 }
 
 .metric-value {
-  font-size: 3rem;
+  font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -715,9 +713,9 @@ header h1 {
 }
 
 .metric-ring {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto var(--space-3);
+  width: 48px;
+  height: 48px;
+  margin: 0 auto var(--space-2);
 }
 
 .metric-ring circle.track {
@@ -739,13 +737,14 @@ header h1 {
 /* ── Bento Card Sizes ── */
 .bento-card.card-backlog {
   grid-column: span 7;
-  grid-row: span 2;
 }
 .bento-card.card-velocity {
   grid-column: span 5;
 }
 .bento-card.card-story {
   grid-column: span 5;
+  max-height: 500px;
+  overflow-y: auto;
 }
 .bento-card.card-insights {
   grid-column: 1 / -1;
