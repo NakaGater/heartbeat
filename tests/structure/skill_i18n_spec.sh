@@ -71,6 +71,7 @@ check_core_no_japanese_excluding_examples() {
     /AskUserQuestion\(/ { skip_ask=1; next }
     skip_ask { if (/\)/) skip_ask=0; next }
     /Display:/ { next }
+    /Message to user:/ { next }
     /selects "/ { next }
     { skip_example=0; print }
   ' "$CORE_SKILL")
