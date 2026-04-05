@@ -30,6 +30,18 @@ check_generate_dashboard_after_board_stamp() {
   [ -n "$stamp_idx" ] && [ -n "$dash_idx" ] && [ "$stamp_idx" -lt "$dash_idx" ]
 }
 
+check_retrospective_record_after_board_stamp() {
+  stamp_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/board-stamp.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  retro_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/retrospective-record.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  [ -n "$stamp_idx" ] && [ -n "$retro_idx" ] && [ "$stamp_idx" -lt "$retro_idx" ]
+}
+
+check_retrospective_record_before_generate_dashboard() {
+  retro_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/retrospective-record.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/generate-dashboard.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  [ -n "$retro_idx" ] && [ -n "$dash_idx" ] && [ "$retro_idx" -lt "$dash_idx" ]
+}
+
 check_generate_dashboard_before_auto_commit() {
   dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/generate-dashboard.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   commit_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/auto-commit.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
@@ -49,6 +61,16 @@ Describe 'SubagentStop hook wiring for generate-dashboard.sh'
 
   It 'SubagentStop hooks contain retrospective-record.sh entry'
     When call check_subagent_stop_has_retrospective_record
+    The status should be success
+  End
+
+  It 'retrospective-record.sh appears after board-stamp.sh'
+    When call check_retrospective_record_after_board_stamp
+    The status should be success
+  End
+
+  It 'retrospective-record.sh appears before generate-dashboard.sh'
+    When call check_retrospective_record_before_generate_dashboard
     The status should be success
   End
 
