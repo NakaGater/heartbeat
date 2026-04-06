@@ -115,15 +115,16 @@ Phase 0 - Draft registration:
   Run: bash core/scripts/generate-dashboard.sh
     (synchronous — wait for completion before proceeding)
 
-Draft-stop choice:
-  Present choices: ["Continue to planning", "Stop at draft"]
-  If "Continue to planning" → proceed to Phase 1
-  If "Stop at draft":
-    Message to user: "ドラフト登録が完了しました。ストーリーは backlog に draft ステータスで保存されています。"
-    >>> STOP: Draft registered. Return control to user. Do NOT proceed to Phase 1. <<<
-
 Phase 1 - Planning:
   pdm (hearing) → brief.md
+
+  Draft-stop choice:
+    Present choices: ["Continue to planning", "Stop at draft"]
+    If "Continue to planning" → proceed to remaining Phase 1 steps
+    If "Stop at draft":
+      Message to user: "ドラフト登録とヒアリングが完了しました。brief.md が生成され、ストーリーは backlog に draft ステータスで保存されています。"
+      >>> STOP: Draft registered with brief. Return control to user. Do NOT proceed to context-manager. <<<
+
   context-manager (investigation) → context.md
   pdm (story definition) → story.md
   architect (task decomposition + point estimate) → tasks.md + tasks.jsonl
@@ -303,7 +304,7 @@ Flow:
   Execute Workflow 1 (story creation)
     NOTE: When executing as part of Workflow 3, IGNORE the
     "STOP/END OF WORKFLOW 1" directive and skip the draft-stop choice
-    (always continue to planning). Instead:
+    (always continue through all planning steps). Instead:
     → After story approval:
       1. Update backlog.jsonl entry: status -> "in_progress"
       2. Run: bash core/scripts/generate-dashboard.sh
