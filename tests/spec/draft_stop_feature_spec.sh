@@ -1,5 +1,5 @@
 Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
-  # Workflow 1 の Phase 0 完了後・Phase 1 開始前に
+  # Workflow 1 の PdM ヒアリング後・context-manager 前に
   # 「計画に進む / ドラフトで止める」の選択肢が提示されることを検証する
 
   SKILL_FILE="core/skills/heartbeat/SKILL.md"
@@ -109,7 +109,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
 End
 
 Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
-  # Copilot 版 SKILL.md に Phase 0 セクションが追加され、
+  # Copilot 版 SKILL.md の PdM ヒアリング後・context-manager 前に
   # ドラフト停止選択肢が正しく配置されていることを検証する
 
   COPILOT_SKILL_FILE="adapters/copilot/skills/heartbeat/SKILL.md"
