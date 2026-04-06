@@ -104,15 +104,16 @@ Phase 0 - Draft registration:
   Run: bash core/scripts/generate-dashboard.sh
     (synchronous — wait for completion before proceeding)
 
-Draft-stop choice (Use vscode_askQuestions):
-  Present choices: ["Continue to planning", "Stop at draft"]
-  If "Continue to planning" → proceed to Phase 1
-  If "Stop at draft":
-    Message to user: "Draft registered. Story saved to backlog with draft status."
-    >>> STOP: Draft registered. Return control to user. Do NOT proceed to Phase 1. <<<
-
 Phase 1 - Planning:
   pdm (hearing) → brief.md
+
+  Draft-stop choice (Use vscode_askQuestions):
+    Present choices: ["Continue to planning", "Stop at draft"]
+    If "Continue to planning" → proceed to remaining Phase 1 steps
+    If "Stop at draft":
+      Message to user: "Draft registration and hearing complete. brief.md has been generated and the story is saved to backlog with draft status."
+      >>> STOP: Draft registered with brief. Return control to user. Do NOT proceed to context-manager. <<<
+
   context-manager (investigation) → context.md
   pdm (story definition) → story.md
   architect (task decomposition + point estimate) → tasks.md + tasks.jsonl
@@ -260,7 +261,8 @@ User question (2-step hybrid):
 Flow:
   Execute Workflow 1 (story creation)
     NOTE: When executing as part of Workflow 3, IGNORE the
-    "STOP/END OF WORKFLOW 1" directive and skip the draft-stop choice. Instead:
+    "STOP/END OF WORKFLOW 1" directive and skip the draft-stop choice
+    (always continue through all planning steps). Instead:
     → After story approval, automatically transition to Workflow 2 (implementation)
     → Execute all phases to completion
 

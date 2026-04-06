@@ -12,44 +12,44 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
     sed -n "${wf1_start},${wf1_stop}p" "$SKILL_FILE"
   }
 
-  It 'Phase 0 完了後に "Stop at draft" テキストを含む選択肢が存在する'
-    # Phase 0 の generate-dashboard.sh 行と Phase 1 開始行の間に
+  It 'PdM ヒアリング後に "Stop at draft" テキストを含む選択肢が存在する'
+    # pdm (hearing) 行と context-manager 行の間に
     # "Stop at draft" が含まれること
     check_stop_at_draft_text() {
       local wf1_section
       wf1_section=$(extract_wf1)
 
-      local dashboard_line phase1_line
-      dashboard_line=$(echo "$wf1_section" | grep -n 'generate-dashboard.sh' | head -1 | cut -d: -f1)
-      [ -n "$dashboard_line" ] || return 1
+      local hearing_line context_line
+      hearing_line=$(echo "$wf1_section" | grep -n 'pdm.*hearing\|hearing.*brief' | head -1 | cut -d: -f1)
+      [ -n "$hearing_line" ] || return 1
 
-      phase1_line=$(echo "$wf1_section" | grep -n 'Phase 1 - Planning' | head -1 | cut -d: -f1)
-      [ -n "$phase1_line" ] || return 1
+      context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
+      [ -n "$context_line" ] || return 1
 
-      # Phase 0 の dashboard 行と Phase 1 の間に "Stop at draft" があること
+      # pdm (hearing) 行と context-manager 行の間に "Stop at draft" があること
       echo "$wf1_section" \
-        | sed -n "${dashboard_line},${phase1_line}p" \
+        | sed -n "${hearing_line},${context_line}p" \
         | grep -qi 'stop at draft'
     }
     When call check_stop_at_draft_text
     The status should be success
   End
 
-  It 'Phase 0 完了後・Phase 1 開始前にドラフト停止の選択肢ブロックが存在する'
-    # Phase 0 と Phase 1 の間に選択肢提示パターン（Present choices または choices）と
+  It 'PdM ヒアリング後・context-manager 前にドラフト停止の選択肢ブロックが存在する'
+    # pdm (hearing) と context-manager の間に選択肢提示パターンと
     # "Continue to planning" と "Stop at draft" の両方が含まれること
     check_draft_stop_choice_block() {
       local wf1_section
       wf1_section=$(extract_wf1)
 
-      local dashboard_line phase1_line between
-      dashboard_line=$(echo "$wf1_section" | grep -n 'generate-dashboard.sh' | head -1 | cut -d: -f1)
-      [ -n "$dashboard_line" ] || return 1
+      local hearing_line context_line between
+      hearing_line=$(echo "$wf1_section" | grep -n 'pdm.*hearing\|hearing.*brief' | head -1 | cut -d: -f1)
+      [ -n "$hearing_line" ] || return 1
 
-      phase1_line=$(echo "$wf1_section" | grep -n 'Phase 1 - Planning' | head -1 | cut -d: -f1)
-      [ -n "$phase1_line" ] || return 1
+      context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
+      [ -n "$context_line" ] || return 1
 
-      between=$(echo "$wf1_section" | sed -n "${dashboard_line},${phase1_line}p")
+      between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
       # "Continue to planning" と "Stop at draft" の両方が存在すること
       echo "$between" | grep -qi 'continue to planning' || return 1
@@ -90,14 +90,14 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
       local wf1_section
       wf1_section=$(extract_wf1)
 
-      local dashboard_line phase1_line between
-      dashboard_line=$(echo "$wf1_section" | grep -n 'generate-dashboard.sh' | head -1 | cut -d: -f1)
-      [ -n "$dashboard_line" ] || return 1
+      local hearing_line context_line between
+      hearing_line=$(echo "$wf1_section" | grep -n 'pdm.*hearing\|hearing.*brief' | head -1 | cut -d: -f1)
+      [ -n "$hearing_line" ] || return 1
 
-      phase1_line=$(echo "$wf1_section" | grep -n 'Phase 1 - Planning' | head -1 | cut -d: -f1)
-      [ -n "$phase1_line" ] || return 1
+      context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
+      [ -n "$context_line" ] || return 1
 
-      between=$(echo "$wf1_section" | sed -n "${dashboard_line},${phase1_line}p")
+      between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
       # STOP または "Return control" や "end" のようなワークフロー終了指示が
       # ドラフト停止パスに含まれること
@@ -138,20 +138,20 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
     The status should be success
   End
 
-  It 'Phase 0 完了後に "Stop at draft" を含む選択肢が提示される'
-    # Phase 0 と Phase 1 の間に "Stop at draft" が含まれること
+  It 'PdM ヒアリング後に "Stop at draft" を含む選択肢が提示される'
+    # pdm (hearing) と context-manager の間に "Stop at draft" が含まれること
     check_copilot_stop_at_draft() {
       local wf1_section
       wf1_section=$(extract_copilot_wf1)
 
-      local phase0_line phase1_line between
-      phase0_line=$(echo "$wf1_section" | grep -ni 'Phase 0' | head -1 | cut -d: -f1)
-      [ -n "$phase0_line" ] || return 1
+      local hearing_line context_line between
+      hearing_line=$(echo "$wf1_section" | grep -n 'pdm.*hearing\|hearing.*brief' | head -1 | cut -d: -f1)
+      [ -n "$hearing_line" ] || return 1
 
-      phase1_line=$(echo "$wf1_section" | grep -ni 'Phase 1 - Planning' | head -1 | cut -d: -f1)
-      [ -n "$phase1_line" ] || return 1
+      context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
+      [ -n "$context_line" ] || return 1
 
-      between=$(echo "$wf1_section" | sed -n "${phase0_line},${phase1_line}p")
+      between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
       # "Continue to planning" と "Stop at draft" の両方が存在すること
       echo "$between" | grep -qi 'continue to planning' || return 1
@@ -191,14 +191,14 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
       local wf1_section
       wf1_section=$(extract_copilot_wf1)
 
-      local phase0_line phase1_line between
-      phase0_line=$(echo "$wf1_section" | grep -ni 'Phase 0' | head -1 | cut -d: -f1)
-      [ -n "$phase0_line" ] || return 1
+      local hearing_line context_line between
+      hearing_line=$(echo "$wf1_section" | grep -n 'pdm.*hearing\|hearing.*brief' | head -1 | cut -d: -f1)
+      [ -n "$hearing_line" ] || return 1
 
-      phase1_line=$(echo "$wf1_section" | grep -ni 'Phase 1 - Planning' | head -1 | cut -d: -f1)
-      [ -n "$phase1_line" ] || return 1
+      context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
+      [ -n "$context_line" ] || return 1
 
-      between=$(echo "$wf1_section" | sed -n "${phase0_line},${phase1_line}p")
+      between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
       # STOP または "Return control" のようなワークフロー終了指示が
       # ドラフト停止パスに含まれること
