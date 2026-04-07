@@ -35,6 +35,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "./core/scripts/timeline-record.sh"
+          },
+          {
+            "type": "command",
             "command": "./core/scripts/board-stamp.sh"
           },
           {
