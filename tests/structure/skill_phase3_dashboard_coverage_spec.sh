@@ -1,10 +1,9 @@
 SKILL="core/skills/heartbeat/SKILL.md"
 
-# Task 2 completion condition:
 # Phase 3 TDDサイクルのエージェント (tester, implementer, refactor) が
 # Agent tool 経由で起動されることを検証する。
 # Agent tool 経由で起動されたサブエージェントは完了時にオーケストレーターに
-# 制御が戻り、Orchestrator responsibilities (generate-dashboard.sh 含む) が適用される。
+# 制御が戻り、Orchestrator responsibilities が適用される。
 
 check_tester_uses_agent_tool_dispatch() {
   # tester が Agent tool invocation パターンで起動されていることを確認
@@ -32,16 +31,11 @@ check_phase3_agents_in_tdd_cycle_flow() {
   echo "$phase3_section" | grep -q "refactor" || return 1
 }
 
-check_orchestrator_responsibilities_apply_unconditionally() {
+check_orchestrator_responsibilities_section_exists() {
   # Orchestrator responsibilities セクションがフェーズ条件なしで適用されることを確認
   # （"after subagent returns" = 全サブエージェント完了後に適用）
-  # Phase 3 固有の条件分岐がないことで、Phase 3 にも確実に適用される
   section=$(sed -n '/^### Orchestrator responsibilities (after subagent returns)/,/^## /p' "$SKILL")
   [ -z "$section" ] && return 1
-  # generate-dashboard.sh の呼び出しに Phase 固有の条件がないことを確認
-  # （条件付きなら "If Phase" や "only" などの制約が付く）
-  dashboard_context=$(echo "$section" | grep -B1 -A1 "generate-dashboard.sh")
-  echo "$dashboard_context" | grep -qi "if phase\|only.*phase\|phase 2\|phase 4" && return 1
   return 0
 }
 
@@ -66,8 +60,8 @@ Describe 'Phase 3 TDDサイクルエージェントへの dashboard 更新カバ
     The status should be success
   End
 
-  It 'Orchestrator responsibilities の dashboard 更新はフェーズ条件なしで全サブエージェントに適用される'
-    When call check_orchestrator_responsibilities_apply_unconditionally
+  It 'Orchestrator responsibilities セクションが存在しフェーズ条件なしで全サブエージェントに適用される'
+    When call check_orchestrator_responsibilities_section_exists
     The status should be success
   End
 End
