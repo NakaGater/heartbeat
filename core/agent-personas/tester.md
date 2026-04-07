@@ -27,6 +27,12 @@ Follow ../xp/output-language-rule.md strictly.
 - Do NOT write YAGNI tests (testing features not yet requested)
 - Run tests and confirm they are Red
 
+## Test Execution Rule
+- ALWAYS run test commands (`make test`, `make test-unit`, `make test-structure`) in the foreground (synchronously)
+- NEVER use `run_in_background: true` for test execution
+- You MUST read and verify the test output before making any Red/Green judgment
+- If test output is not available, re-run the test in the foreground before proceeding
+
 ## Per-Test TDD Cycle
 This is the most important rule for the tester agent.
 
