@@ -30,20 +30,17 @@ check_no_ready_story_exceeds_3pt() {
 
 # --- CC2: All done stories retain their original point values ---
 
-# These are the known original values from before migration.
-# Done stories must NOT be changed from their historical values.
+# Point values after story 0055 re-estimation (current 1-3pt criteria).
+# Updated from original values by 0055-backlog-points-reestimate.
 check_done_stories_retain_original_points() {
-  # Expected: tdd-workflow=5, i18n-docs=3, auto-commit-fix=3,
-  #           dashboard-fix=5, workflow-fix=5, workflow-boundary=3,
-  #           copilot-hooks=1, board-cleanup=3, copilot-tools=2
-  check_done_story_points "0001-tdd-workflow" 5 || return 1
-  check_done_story_points "0002-i18n-docs" 3 || return 1
-  check_done_story_points "0003-auto-commit-fix" 3 || return 1
-  check_done_story_points "0004-dashboard-fix" 5 || return 1
-  check_done_story_points "0005-workflow-fix" 5 || return 1
-  check_done_story_points "0006-workflow-boundary" 3 || return 1
+  check_done_story_points "0001-tdd-workflow" 2 || return 1
+  check_done_story_points "0002-i18n-docs" 2 || return 1
+  check_done_story_points "0003-auto-commit-fix" 2 || return 1
+  check_done_story_points "0004-dashboard-fix" 2 || return 1
+  check_done_story_points "0005-workflow-fix" 1 || return 1
+  check_done_story_points "0006-workflow-boundary" 1 || return 1
   check_done_story_points "0008-copilot-hooks" 1 || return 1
-  check_done_story_points "0009-board-cleanup" 3 || return 1
+  check_done_story_points "0009-board-cleanup" 2 || return 1
   check_done_story_points "0011-copilot-tools" 2 || return 1
 }
 
