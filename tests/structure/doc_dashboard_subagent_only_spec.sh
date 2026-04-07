@@ -29,9 +29,9 @@ check_spec_copilot_no_dashboard_in_posttooluse() {
 
 check_spec_claude_no_dashboard_in_posttooluse() {
   # Extract PostToolUse block from Claude Code settings.json section and check no generate-dashboard.sh
-  # We look between "PostToolUse" and the next hook section (WorktreeCreate or SubagentStop)
-  sed -n '/### 7.2 Claude Code/,/### 7.3\|### 8\|^## 8/p' "$SPEC" \
-    | sed -n '/"PostToolUse"/,/"SubagentStop"\|"WorktreeCreate"/p' \
+  # Use awk instead of sed to avoid GNU-only \| alternation (not available on macOS BSD sed)
+  awk '/### 7.2 Claude Code/,/### 7.3|### 8|^## 8/' "$SPEC" \
+    | awk '/"PostToolUse"/,/"SubagentStop"|"WorktreeCreate"/' \
     | grep -q 'generate-dashboard\.sh' && return 1
   return 0
 }
