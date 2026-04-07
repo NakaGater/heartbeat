@@ -5,5 +5,5 @@
   "author": {
     "name": "NakaG"
   },
-  "hooks": "adapters/claude-code/hooks/settings.json"
+  "hooks": "./adapters/claude-code/hooks/settings.json"
 }
