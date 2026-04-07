@@ -18,7 +18,7 @@ check_subagent_start_hook_count() {
   [ "$count" = "1" ]
 }
 
-# PostToolUse (Write|Edit) に board-stamp.sh, retrospective-record.sh, generate-dashboard.sh が順序通り定義
+# PostToolUse (Write|Edit) に board-stamp.sh, retrospective-record.sh が順序通り定義
 check_post_tool_use_matcher() {
   jq -e '.hooks.PostToolUse[0].matcher == "Write|Edit"' "$SETTINGS_TEMPLATE" >/dev/null 2>&1
 }
@@ -26,18 +26,13 @@ check_post_tool_use_matcher() {
 check_post_tool_use_order() {
   stamp_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("board-stamp.sh")) | .key' "$SETTINGS_TEMPLATE" 2>/dev/null)
   retro_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("retrospective-record.sh")) | .key' "$SETTINGS_TEMPLATE" 2>/dev/null)
-  dash_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("generate-dashboard.sh")) | .key' "$SETTINGS_TEMPLATE" 2>/dev/null)
-  [ -n "$stamp_idx" ] && [ -n "$retro_idx" ] && [ -n "$dash_idx" ] \
-    && [ "$stamp_idx" -lt "$retro_idx" ] && [ "$retro_idx" -lt "$dash_idx" ]
-}
-
-check_post_tool_use_dashboard_async() {
-  jq -e '.hooks.PostToolUse[0].hooks[] | select(.command | contains("generate-dashboard.sh")) | .async == true' "$SETTINGS_TEMPLATE" >/dev/null 2>&1
+  [ -n "$stamp_idx" ] && [ -n "$retro_idx" ] \
+    && [ "$stamp_idx" -lt "$retro_idx" ]
 }
 
 check_post_tool_use_hook_count() {
   count=$(jq '[.hooks.PostToolUse[0].hooks[]] | length' "$SETTINGS_TEMPLATE" 2>/dev/null)
-  [ "$count" = "3" ]
+  [ "$count" = "2" ]
 }
 
 # WorktreeCreate に worktree-env-setup.sh が1件定義されていること
@@ -98,17 +93,12 @@ Describe 'SSoTテンプレート hooks定義 (AC-1)'
       The status should be success
     End
 
-    It 'board-stamp.sh -> retrospective-record.sh -> generate-dashboard.sh の順序で定義されている'
+    It 'board-stamp.sh -> retrospective-record.sh の順序で定義されている'
       When call check_post_tool_use_order
       The status should be success
     End
 
-    It 'generate-dashboard.sh が async で定義されている'
-      When call check_post_tool_use_dashboard_async
-      The status should be success
-    End
-
-    It 'フックが3件定義されている'
+    It 'フックが2件定義されている'
       When call check_post_tool_use_hook_count
       The status should be success
     End

@@ -14,13 +14,12 @@ check_post_tool_use_has_board_stamp() {
 }
 
 # PostToolUse の実行順序が正しいか確認
-# board-stamp.sh -> retrospective-record.sh -> generate-dashboard.sh (async)
+# board-stamp.sh -> retrospective-record.sh
 check_post_tool_use_order() {
   stamp_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("board-stamp.sh")) | .key' "$SETTINGS_TEMPLATE" 2>/dev/null)
   retro_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("retrospective-record.sh")) | .key' "$SETTINGS_TEMPLATE" 2>/dev/null)
-  dash_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("generate-dashboard.sh")) | .key' "$SETTINGS_TEMPLATE" 2>/dev/null)
-  [ -n "$stamp_idx" ] && [ -n "$retro_idx" ] && [ -n "$dash_idx" ] \
-    && [ "$stamp_idx" -lt "$retro_idx" ] && [ "$retro_idx" -lt "$dash_idx" ]
+  [ -n "$stamp_idx" ] && [ -n "$retro_idx" ] \
+    && [ "$stamp_idx" -lt "$retro_idx" ]
 }
 
 # SubagentStop に board-stamp.sh が登録されているか確認
@@ -57,7 +56,7 @@ Describe 'SSoTテンプレート フック登録 (AC-1)'
       The status should be success
     End
 
-    It 'PostToolUse の実行順序が board-stamp.sh -> retrospective-record.sh -> generate-dashboard.sh である'
+    It 'PostToolUse の実行順序が board-stamp.sh -> retrospective-record.sh である'
       When call check_post_tool_use_order
       The status should be success
     End

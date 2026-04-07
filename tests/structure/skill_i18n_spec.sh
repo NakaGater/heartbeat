@@ -206,8 +206,7 @@ check_claude_code_skill_steps_are_sequential_1_to_7() {
 4
 5
 6
-7
-8"
+7"
   [ "$step_numbers" = "$expected" ] || return 1
 }
 
@@ -296,7 +295,7 @@ Describe 'SKILL.md language detection step'
     The status should be success
   End
 
-  It 'when checking step numbers in claude-code SKILL.md Agent Startup Method, should be sequential 1 through 8'
+  It 'when checking step numbers in claude-code SKILL.md Agent Startup Method, should be sequential 1 through 7'
     When call check_claude_code_skill_steps_are_sequential_1_to_7
     The status should be success
   End

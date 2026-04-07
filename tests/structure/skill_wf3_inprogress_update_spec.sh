@@ -41,30 +41,11 @@ Describe 'SKILL.md Workflow 3 に明示的な in_progress 更新指示が存在�
       The status should be success
     End
 
-    It 'Workflow 3 セクションに generate-dashboard.sh 呼び出し指示が含まれる'
-      When call check_wf3_has_generate_dashboard "$CORE_SKILL"
-      The status should be success
-    End
-
-    It 'generate-dashboard.sh が in_progress 更新より後に記述されている'
-      When call check_dashboard_after_inprogress "$CORE_SKILL"
-      The status should be success
-    End
   End
 
   Describe 'adapters/claude-code/skills/heartbeat/SKILL.md'
     It 'Workflow 3 セクションに status in_progress 更新指示が含まれる'
       When call check_wf3_has_inprogress_update "$ADAPTER_SKILL"
-      The status should be success
-    End
-
-    It 'Workflow 3 セクションに generate-dashboard.sh 呼び出し指示が含まれる'
-      When call check_wf3_has_generate_dashboard "$ADAPTER_SKILL"
-      The status should be success
-    End
-
-    It 'generate-dashboard.sh が in_progress 更新より後に記述されている'
-      When call check_dashboard_after_inprogress "$ADAPTER_SKILL"
       The status should be success
     End
   End

@@ -37,7 +37,7 @@ Key rules:
   "description": "...",
   "agents": ["adapters/claude-code/agents/*.md"],
   "skills": ["adapters/claude-code/skills/*/"],
-  "hooks": "adapters/claude-code/hooks/settings.json",
+  "hooks": "./adapters/claude-code/hooks/settings.json",
   "mcpServers": { "playwright": { ... } }
 }
 ```

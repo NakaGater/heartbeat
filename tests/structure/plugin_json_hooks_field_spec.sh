@@ -4,7 +4,7 @@ PLUGIN_JSON=".claude-plugin/plugin.json"
 
 # hooksフィールドがSSoTテンプレートを参照していること
 check_hooks_references_ssot_template() {
-  jq -e '.hooks == "adapters/claude-code/hooks/settings.json"' "$PLUGIN_JSON" >/dev/null 2>&1
+  jq -e '.hooks == "./adapters/claude-code/hooks/settings.json"' "$PLUGIN_JSON" >/dev/null 2>&1
 }
 
 # 既存フィールドが変更されていないこと

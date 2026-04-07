@@ -35,20 +35,11 @@ Describe 'Hook wiring for board-stamp.sh'
       The status should be success
     End
 
-    It 'board-stamp.sh appears before generate-dashboard.sh'
-      When call check_claude_board_stamp_before_dashboard
-      The status should be success
-    End
   End
 
   Describe 'Copilot hooks.json (Task 3)'
     It 'postToolUse hooks contain board-stamp.sh entry'
       When call check_copilot_has_board_stamp
-      The status should be success
-    End
-
-    It 'board-stamp.sh appears before generate-dashboard.sh'
-      When call check_copilot_board_stamp_before_dashboard
       The status should be success
     End
   End
