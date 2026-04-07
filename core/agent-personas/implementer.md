@@ -27,6 +27,12 @@ Follow ../xp/output-language-rule.md strictly.
 - Do NOT implement anything beyond what the single new test requires
 - Confirm ALL tests are Green after implementation (new + existing)
 
+## Test Execution Rule
+- ALWAYS run test commands (`make test`, `make test-unit`, `make test-structure`) in the foreground (synchronously)
+- NEVER use `run_in_background: true` for test execution
+- You MUST read and verify the test output before making any Red/Green judgment
+- If test output is not available, re-run the test in the foreground before proceeding
+
 ## Handling Architect's Design Decisions
 - Follow architect's "File Operations" for creating new files or editing existing ones
 - Use the "Existing Patterns to Follow" specified by architect
