@@ -51,4 +51,31 @@ Describe 'backlog.jsonl ポイント再見積もり (0055)'
       The output should equal "2"
     End
   End
+
+  Describe '更新後の検証: 不正なポイント値が残存していないこと'
+    It 'points=5 のエントリが 0件であること'
+      When call jq -r 'select(.points == 5) | .story_id' "$backlog_file"
+      The output should equal ""
+    End
+
+    It 'points=10 のエントリが 0件であること'
+      When call jq -r 'select(.points == 10) | .story_id' "$backlog_file"
+      The output should equal ""
+    End
+
+    It '全 done ストーリーの points が 1, 2, 3 のいずれかであること'
+      count_invalid() {
+        local result
+        result=$(jq -r 'select(.status == "done") | select(.points != 1 and .points != 2 and .points != 3) | .story_id' "$backlog_file" | wc -l | tr -d ' ')
+        echo "$result"
+      }
+      When call count_invalid
+      The output should equal "0"
+    End
+
+    It '0019-copilot-hooks-fix の points が 3 のまま変更されていないこと'
+      When call get_points "0019-copilot-hooks-fix"
+      The output should equal "3"
+    End
+  End
 End
