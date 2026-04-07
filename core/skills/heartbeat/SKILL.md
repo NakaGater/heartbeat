@@ -112,8 +112,6 @@ User question (2-step hybrid):
 Phase 0 - Draft registration:
   Register in backlog.jsonl with status: "draft", points: null,
     title: "{user's one-sentence description}", created: current ISO 8601
-  Run: bash core/scripts/generate-dashboard.sh
-    (synchronous — wait for completion before proceeding)
 
 Phase 1 - Planning:
   pdm (hearing) → brief.md
@@ -141,8 +139,6 @@ Phase 1 - Planning:
 Result:
   Update backlog.jsonl entry: status -> "ready", points: {estimate},
     title: story.md title (if changed from draft)
-  Run: bash core/scripts/generate-dashboard.sh
-    (synchronous — wait for completion before proceeding)
 
 >>> STOP: Workflow 1 complete. Return control to user.
     Do NOT proceed to Workflow 2 or any other workflow. <<<
@@ -160,8 +156,6 @@ END OF WORKFLOW 1 -- Do not execute any further agents.
 Show backlog.jsonl stories with status: "ready"
 User selects a story
 Update backlog.jsonl entry: status -> "in_progress"
-Run: bash core/scripts/generate-dashboard.sh
-  (synchronous — wait for completion before proceeding)
 
 Phase 2 - Design:
   designer
@@ -256,8 +250,6 @@ the missing step first.
 Update backlog.jsonl:
   - status → "done"
   - completed → current ISO 8601 timestamp
-Run: bash core/scripts/generate-dashboard.sh
-  (synchronous — wait for completion before proceeding)
 
 ## Continuation Flow
 
@@ -283,9 +275,7 @@ Does NOT apply to Workflow 1.
      a. Show backlog.jsonl stories with status: "ready"
      b. User selects a story
      c. Update backlog.jsonl entry: status -> "in_progress"
-     d. Run: bash core/scripts/generate-dashboard.sh
-        (synchronous — wait for completion before proceeding)
-     e. Begin Workflow 2 Phase 2 (Design phase) for the selected story
+     d. Begin Workflow 2 Phase 2 (Design phase) for the selected story
         NOTE: Skip Workflow 2's "Show backlog / User selects / Update status"
         block — the story is already selected and status is already
         "in_progress".
@@ -307,9 +297,7 @@ Flow:
     (always continue through all planning steps). Instead:
     → After story approval:
       1. Update backlog.jsonl entry: status -> "in_progress"
-      2. Run: bash core/scripts/generate-dashboard.sh
-           (synchronous — wait for completion before proceeding)
-      3. Automatically transition to Workflow 2 (implementation)
+      2. Automatically transition to Workflow 2 (implementation)
          NOTE: Skip Workflow 2's "Show backlog / User selects / Update status"
          block (lines 148-152) — the story is already selected and status
          is already "in_progress". Begin directly at Phase 2.
@@ -351,7 +339,6 @@ Step 3: Implement
   - board.jsonl is written to the worktree's .heartbeat/stories/<story-id>/
   - backlog.jsonl is updated via backlog-update.sh (accesses main's copy
     through HEARTBEAT_MAIN_DIR)
-  - generate-dashboard.sh is skipped (HEARTBEAT_IN_WORKTREE=1)
   - retrospective-record.sh writes to main's global log (HEARTBEAT_MAIN_DIR)
 
 Step 4: Exit worktree
@@ -362,8 +349,6 @@ Step 5: Merge
     (merges story branch into main, then removes worktree + branch)
 
 Step 6: Post-merge
-  - Run: bash core/scripts/generate-dashboard.sh
-    (regenerate dashboard on main with merged data)
   - Execute Post-Completion Flow (same as Workflow 2)
 
 >>> STOP: Workflow 6 complete. Return control to user. <<<
@@ -425,15 +410,12 @@ Each subagent is responsible for:
 
 5. Verify retro.jsonl contains a new entry with the subagent's name.
    If missing, re-invoke the subagent to complete retrospective.
-6. Update dashboard to reflect latest agent transition:
-   Run: bash core/scripts/generate-dashboard.sh
-     (synchronous — wait for completion before proceeding)
-7. Check current workflow context:
+6. Check current workflow context:
    - If executing Workflow 1: After Phase 1 completes, STOP. Do not proceed.
    - If executing Workflow 2: After Phase 4 Pass + Post-Completion, execute Continuation Flow.
    - If executing Workflow 3: After Phase 1 completes, transition to Phase 2; after Phase 4 Pass + Post-Completion, execute Continuation Flow.
-8. Determine next action based on last stories/{story-id}/board.jsonl entry
-   (only if not stopped by step 7)
+7. Determine next action based on last stories/{story-id}/board.jsonl entry
+   (only if not stopped by step 6)
 
 ## State Management
 

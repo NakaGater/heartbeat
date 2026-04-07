@@ -101,8 +101,6 @@ User question (2-step hybrid):
 Phase 0 - Draft registration:
   Register in backlog.jsonl with status: "draft", points: null,
     title: "{user's one-sentence description}", created: current ISO 8601
-  Run: bash core/scripts/generate-dashboard.sh
-    (synchronous — wait for completion before proceeding)
 
 Phase 1 - Planning:
   pdm (hearing) → brief.md
@@ -354,7 +352,6 @@ Step 3: Implement
   Start a new Copilot session in the worktree directory.
   Execute the same flow as Workflow 2 (Phase 2-4).
   - backlog.jsonl is updated via backlog-update.sh (accesses main's copy)
-  - generate-dashboard.sh is skipped (HEARTBEAT_IN_WORKTREE=1)
 
 Step 4: Return to main
   User runs: cd <main-worktree-path>
@@ -363,7 +360,6 @@ Step 5: Merge
   Run: bash core/scripts/worktree-manager.sh merge <story-id>
 
 Step 6: Post-merge
-  Run: bash core/scripts/generate-dashboard.sh
   Execute Post-Completion Flow (same as Workflow 2)
 ```
 
