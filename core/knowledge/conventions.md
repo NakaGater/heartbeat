@@ -30,9 +30,8 @@ Both platforms (Claude Code, Copilot) fire PostToolUse hooks on Write/Edit in th
 
 1. `board-stamp.sh` -- Overwrites `timestamp` on last line of board.jsonl with real UTC time
 2. `retrospective-record.sh` -- Records retrospective entries
-3. `generate-dashboard.sh` (async) -- Regenerates dashboard HTML
 
-**Rationale:** board-stamp.sh must run before generate-dashboard.sh so the dashboard reads corrected timestamps. New hooks that modify board.jsonl data should be inserted before generate-dashboard.sh.
+Dashboard generation is handled exclusively via the SubagentStop hook, not PostToolUse. This avoids excessive regeneration on every file write.
 
 **Key pattern (hook-based auto-stamping):** When LLM agents cannot reliably produce accurate data (e.g., system time), use a PostToolUse hook to mechanically inject the correct value rather than relying on agent instructions alone.
 

@@ -1295,11 +1295,6 @@ Read and follow the instructions in ../../core/agent-personas/qa.md
       {
         "type": "command",
         "bash": "./core/scripts/retrospective-record.sh"
-      },
-      {
-        "type": "command",
-        "bash": "./core/scripts/generate-dashboard.sh",
-        "comment": "Dashboard auto-update (async)"
       }
     ]
   }
@@ -1349,11 +1344,6 @@ Read and follow the instructions in ../../core/agent-personas/qa.md
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/retrospective-record.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/generate-dashboard.sh",
-            "async": true
           }
         ]
       }
