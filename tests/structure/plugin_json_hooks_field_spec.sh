@@ -9,14 +9,12 @@ check_hooks_references_ssot_template() {
 
 # 既存フィールドが変更されていないこと
 check_existing_fields_unchanged() {
-  name=$(jq -r '.name' "$PLUGIN_JSON" 2>/dev/null)
-  desc=$(jq -r '.description' "$PLUGIN_JSON" 2>/dev/null)
-  version=$(jq -r '.version' "$PLUGIN_JSON" 2>/dev/null)
-  author=$(jq -r '.author.name' "$PLUGIN_JSON" 2>/dev/null)
-  [ "$name" = "heartbeat" ] \
-    && [ "$desc" = "XP-driven AI agent team for TDD-based development" ] \
-    && [ "$version" = "2.0.0" ] \
-    && [ "$author" = "NakaG" ]
+  jq -e '
+    .name == "heartbeat"
+    and .description == "XP-driven AI agent team for TDD-based development"
+    and .version == "2.0.0"
+    and .author.name == "NakaG"
+  ' "$PLUGIN_JSON" >/dev/null 2>&1
 }
 
 # JSONとして有効であること
