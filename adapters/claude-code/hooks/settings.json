@@ -21,11 +21,6 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/retrospective-record.sh"
-          },
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/generate-dashboard.sh",
-            "async": true
           }
         ]
       }
