@@ -2,16 +2,6 @@
 # These tests validated behaviors that no longer exist after
 # restricting dashboard generation to SubagentStop only.
 
-OBSOLETE_FILES="
-tests/structure/skill_acceptance_dashboard_invocations_spec.sh
-tests/structure/skill_orchestrator_dashboard_update_spec.sh
-tests/spec/skill_backlog_dashboard_sync_spec.sh
-tests/spec/skill_workflow1_dashboard_sync_spec.sh
-tests/spec/skill_workflow2_dashboard_sync_spec.sh
-tests/spec/skill_workflow2_inprogress_status_spec.sh
-tests/spec/skill_workflow1_draft_status_spec.sh
-"
-
 check_file_does_not_exist() {
   local file="$1"
   if [ -f "$file" ]; then
