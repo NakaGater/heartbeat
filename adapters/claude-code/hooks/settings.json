@@ -2,7 +2,12 @@
   "hooks": {
     "SubagentStart": [
       {
-        "hooks": []
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./core/scripts/timeline-record.sh"
+          }
+        ]
       }
     ],
     "PostToolUse": [
