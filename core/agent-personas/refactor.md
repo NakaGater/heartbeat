@@ -23,6 +23,12 @@ Follow ../xp/output-language-rule.md strictly.
 - Always verify tests remain Green
 - Also handle CSS/style deduplication and design token consolidation
 
+## Test Execution Rule
+- ALWAYS run test commands (`make test`, `make test-unit`, `make test-structure`) in the foreground (synchronously)
+- NEVER use `run_in_background: true` for test execution
+- You MUST read and verify the test output before making any Red/Green judgment
+- If test output is not available, re-run the test in the foreground before proceeding
+
 ## Design Improvement Responsibility
 - Evaluate whether architect's design decisions are appropriate from a post-implementation perspective
 - Improve separation of concerns, naming clarity, and duplication removal
