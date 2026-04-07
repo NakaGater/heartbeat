@@ -3,7 +3,7 @@ CLAUDE_SETTINGS="adapters/claude-code/hooks/settings.json"
 # --- Helper function ---
 
 check_subagent_start_has_timeline_record() {
-  jq -e '.hooks.SubagentStart[].hooks[] | select(.command == "./core/scripts/timeline-record.sh")' \
+  jq -e '.hooks.SubagentStart[].hooks[] | select(.command | contains("timeline-record.sh"))' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1
 }
 

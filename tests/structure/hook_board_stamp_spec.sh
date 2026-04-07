@@ -4,14 +4,14 @@ COPILOT_HOOKS="adapters/copilot/hooks/hooks.json"
 # --- Task 2: Claude Code hooks ---
 
 check_claude_has_board_stamp() {
-  jq -e '.hooks.PostToolUse[].hooks[] | select(.command == "./core/scripts/board-stamp.sh")' \
+  jq -e '.hooks.PostToolUse[].hooks[] | select(.command | contains("board-stamp.sh"))' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1
 }
 
 check_claude_board_stamp_before_dashboard() {
   # board-stamp.sh index must be less than generate-dashboard.sh index
-  stamp_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/board-stamp.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
-  dash_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/generate-dashboard.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  stamp_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("board-stamp.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  dash_idx=$(jq '[.hooks.PostToolUse[0].hooks[] | .command] | to_entries[] | select(.value | contains("generate-dashboard.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   [ -n "$stamp_idx" ] && [ -n "$dash_idx" ] && [ "$stamp_idx" -lt "$dash_idx" ]
 }
 

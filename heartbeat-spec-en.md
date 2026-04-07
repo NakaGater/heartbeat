@@ -1328,18 +1328,68 @@ Read and follow the instructions in ../../core/agent-personas/qa.md
 ```json
 {
   "hooks": {
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/timeline-record.sh"
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "./core/scripts/retrospective-record.sh"
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/board-stamp.sh"
           },
           {
             "type": "command",
-            "command": "./core/scripts/generate-dashboard.sh",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/retrospective-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/generate-dashboard.sh",
             "async": true
+          }
+        ]
+      }
+    ],
+    "WorktreeCreate": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/worktree-env-setup.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/timeline-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/board-stamp.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/retrospective-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/generate-dashboard.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/auto-commit.sh"
           }
         ]
       }

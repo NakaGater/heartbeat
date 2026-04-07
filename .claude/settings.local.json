@@ -25,43 +25,5 @@
   "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "playwright"
-  ],
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./core/scripts/retrospective-record.sh"
-          },
-          {
-            "type": "command",
-            "command": "./core/scripts/generate-dashboard.sh",
-            "async": true
-          }
-        ]
-      }
-    ],
-    "WorktreeCreate": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./core/scripts/worktree-env-setup.sh"
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "./core/scripts/auto-commit.sh"
-          }
-        ]
-      }
-    ]
-  }
+  ]
 }

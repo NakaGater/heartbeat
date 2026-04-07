@@ -3,16 +3,16 @@ CLAUDE_SETTINGS="adapters/claude-code/hooks/settings.json"
 # --- Helper functions ---
 
 check_subagent_stop_has_generate_dashboard() {
-  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh")' \
+  jq -e '.hooks.SubagentStop[].hooks[] | select(.command | contains("generate-dashboard.sh"))' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1
 }
 
 check_generate_dashboard_is_sync() {
   # generate-dashboard.sh が存在し、async プロパティを持たないことを検証
-  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh")' \
+  jq -e '.hooks.SubagentStop[].hooks[] | select(.command | contains("generate-dashboard.sh"))' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1 || return 1
   # async キーが存在する場合は失敗（同期実行 = async キーなし）
-  if jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/generate-dashboard.sh") | select(.async)' \
+  if jq -e '.hooks.SubagentStop[].hooks[] | select(.command | contains("generate-dashboard.sh")) | select(.async)' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1; then
     return 1
   fi
@@ -20,31 +20,31 @@ check_generate_dashboard_is_sync() {
 }
 
 check_subagent_stop_has_retrospective_record() {
-  jq -e '.hooks.SubagentStop[].hooks[] | select(.command == "./core/scripts/retrospective-record.sh")' \
+  jq -e '.hooks.SubagentStop[].hooks[] | select(.command | contains("retrospective-record.sh"))' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1
 }
 
 check_generate_dashboard_after_board_stamp() {
-  stamp_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/board-stamp.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
-  dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/generate-dashboard.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  stamp_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("board-stamp.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("generate-dashboard.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   [ -n "$stamp_idx" ] && [ -n "$dash_idx" ] && [ "$stamp_idx" -lt "$dash_idx" ]
 }
 
 check_retrospective_record_after_board_stamp() {
-  stamp_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/board-stamp.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
-  retro_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/retrospective-record.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  stamp_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("board-stamp.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  retro_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("retrospective-record.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   [ -n "$stamp_idx" ] && [ -n "$retro_idx" ] && [ "$stamp_idx" -lt "$retro_idx" ]
 }
 
 check_retrospective_record_before_generate_dashboard() {
-  retro_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/retrospective-record.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
-  dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/generate-dashboard.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  retro_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("retrospective-record.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("generate-dashboard.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   [ -n "$retro_idx" ] && [ -n "$dash_idx" ] && [ "$retro_idx" -lt "$dash_idx" ]
 }
 
 check_generate_dashboard_before_auto_commit() {
-  dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/generate-dashboard.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
-  commit_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value == "./core/scripts/auto-commit.sh") | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("generate-dashboard.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
+  commit_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("auto-commit.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   [ -n "$dash_idx" ] && [ -n "$commit_idx" ] && [ "$dash_idx" -lt "$commit_idx" ]
 }
 

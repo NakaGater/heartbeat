@@ -29,7 +29,7 @@ Describe 'Worktree backward compatibility'
   }
 
   check_worktree_hook_exists() {
-    jq -e '.hooks.WorktreeCreate' .claude/settings.local.json >/dev/null 2>&1
+    jq -e '.hooks.WorktreeCreate' adapters/claude-code/hooks/settings.json >/dev/null 2>&1
   }
 
   It 'generate-dashboard.sh has HEARTBEAT_IN_WORKTREE early exit guard'
@@ -62,7 +62,7 @@ Describe 'Worktree backward compatibility'
     The status should be success
   End
 
-  It 'settings.local.json has WorktreeCreate hook'
+  It 'settings.json has WorktreeCreate hook'
     When call check_worktree_hook_exists
     The status should be success
   End
