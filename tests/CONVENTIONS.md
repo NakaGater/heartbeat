@@ -2,7 +2,8 @@
 
 ## Test Description Language
 
-**Rule:** New test `Describe` and `It` text MUST be written in English.
+**Rule:** All test `Describe` and `It` text MUST be written in English.
+English is required for every test title, description, and inline comment.
 
 ```sh
 # Good
@@ -25,9 +26,8 @@ This rule does NOT apply to:
 
 ### Existing Tests
 
-Existing Japanese test descriptions do **not** need to be rewritten.
-Migration happens naturally: when a test file is consolidated or substantially
-rewritten, descriptions should be updated to English at that time.
+Existing Japanese test descriptions MUST be rewritten in English.
+All test titles and comments must be written in English without exception.
 
 ### Rationale
 
