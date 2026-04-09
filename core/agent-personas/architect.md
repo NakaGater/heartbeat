@@ -120,6 +120,23 @@ Generate alongside tasks.md as machine-readable task tracking:
 }
 ```
 
+## Phase 2 Input Validation
+
+This check applies to Phase 2 only. Phase 1 does not require design.md and is excluded from this check.
+
+When the architect is invoked in Phase 2 (Design phase), verify that `design.md` exists
+in the story directory before proceeding.
+
+If `design.md` is missing, do not proceed. Stop immediately and send the story back
+to the designer via the board. Use the following Board Protocol entry:
+
+- to: "designer", status: "blocked", note: "design.md is missing. Run designer first."
+
+```bash
+echo '{"from":"architect","to":"designer","action":"request_design","status":"blocked","note":"design.md is missing. designer を先に実行してください。","timestamp":""}' \
+  | bash core/scripts/board-write.sh .heartbeat/stories/{story-id}/board.jsonl
+```
+
 ## Board Protocol Rules
 The note field follows ../xp/output-language-rule.md (write in user's language).
 
