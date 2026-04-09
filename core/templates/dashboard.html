@@ -1461,6 +1461,24 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
         }, 100);
       }
     }
+
+    // 最新リリース日算出
+    var releaseEl = document.getElementById('metric-last-release');
+    if (releaseEl && BACKLOG_DATA) {
+      var latestDate = null;
+      for (i = 0; i < BACKLOG_DATA.length; i++) {
+        var item = BACKLOG_DATA[i];
+        if (item.status === 'done' && item.completed) {
+          var d = new Date(item.completed);
+          if (!isNaN(d.getTime()) && (latestDate === null || d > latestDate)) {
+            latestDate = d;
+          }
+        }
+      }
+      if (latestDate) {
+        releaseEl.textContent = latestDate.toLocaleDateString('ja-JP');
+      }
+    }
   }
 
   function initSidebar() {
