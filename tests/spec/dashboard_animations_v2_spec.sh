@@ -1,7 +1,7 @@
 Describe 'dashboard.html: v2 Micro-interactions + Animations (Task 6)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- 新規 @keyframes 定義 ---
+  # --- New @keyframes definitions ---
 
   It 'defines @keyframes fadeScaleIn'
     The contents of file "$TEMPLATE" should include '@keyframes fadeScaleIn'
@@ -15,13 +15,13 @@ Describe 'dashboard.html: v2 Micro-interactions + Animations (Task 6)'
     The contents of file "$TEMPLATE" should include '@keyframes slideInFromLeft'
   End
 
-  # --- カード入場アニメーション (v2: fadeScaleIn + spring curve) ---
+  # --- Card entrance animation (v2: fadeScaleIn + spring curve) ---
 
   It 'applies animation: fadeScaleIn to .bento-card'
     The contents of file "$TEMPLATE" should include 'animation: fadeScaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both'
   End
 
-  # --- stagger 60ms 間隔 (v2 仕様) ---
+  # --- Stagger at 60ms intervals (v2 spec) ---
 
   It 'sets animation-delay: 60ms on .bento-card:nth-child(1)'
     The contents of file "$TEMPLATE" should include '.bento-card:nth-child(1)'
@@ -35,19 +35,19 @@ Describe 'dashboard.html: v2 Micro-interactions + Animations (Task 6)'
     The contents of file "$TEMPLATE" should include 'animation-delay: 360ms'
   End
 
-  # --- サイドバー slideInFromLeft ---
+  # --- Sidebar slideInFromLeft ---
 
   It 'applies animation: slideInFromLeft to .sidebar'
     The contents of file "$TEMPLATE" should include 'animation: slideInFromLeft'
   End
 
-  # --- ステータスドット glowPulse ---
+  # --- Status dot glowPulse ---
 
   It 'applies animation: glowPulse to .status-dot.active'
     The contents of file "$TEMPLATE" should include 'animation: glowPulse 2s ease-in-out infinite'
   End
 
-  # --- prefers-reduced-motion (v2 でも維持されていること) ---
+  # --- prefers-reduced-motion (must be preserved in v2) ---
 
   It 'defines prefers-reduced-motion: reduce'
     The contents of file "$TEMPLATE" should include 'prefers-reduced-motion: reduce'

@@ -4,7 +4,7 @@ Describe 'generate-dashboard.sh Defensive Parsing of Invalid JSON Lines'
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
     mkdir -p "$TEST_HEARTBEAT/stories/valid-story"
 
-    # backlog.jsonl: 有効行2行 + 不正行1行（先頭に余分な " がある行）
+    # backlog.jsonl: 2 valid lines + 1 invalid line (line with extra leading ")
     cat > "$TEST_HEARTBEAT/backlog.jsonl" <<'JSONL'
 {"story_id":"story-alpha","title":"Alpha Story","status":"draft","priority":1,"points":1}
 "{"story_id":"story-broken","title":"Broken Story","status":"draft","priority":2,"points":1}
@@ -25,11 +25,11 @@ JSONL
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The output should include 'Dashboard generated'
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist
-      # 有効行のstory-alphaが含まれること
+      # Valid line story-alpha should be included
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'story-alpha'
-      # 有効行のstory-betaが含まれること
+      # Valid line story-beta should be included
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'story-beta'
-      # 不正行のstory-brokenは含まれないこと
+      # Invalid line story-broken should not be included
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should not include 'story-broken'
     End
   End

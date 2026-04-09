@@ -1,7 +1,7 @@
 Describe 'auto-commit.sh'
-  # Task 1, CC1: テストファイルが存在し ShellSpec で実行可能
-  # Task 1, CC2: source 時に副作用なし (main ガード必須)
-  # Task 1, CC3: Include で auto-commit.sh を読み込める
+  # Task 1, CC1: Test file exists and is executable with ShellSpec
+  # Task 1, CC2: No side effects when sourced (main guard required)
+  # Task 1, CC3: Can load auto-commit.sh via Include
 
   Include ./core/scripts/auto-commit.sh
 
@@ -166,7 +166,7 @@ Describe 'auto-commit.sh'
       End
     End
 
-    # Task 4, CC2: board.jsonl 不在時、scope は空文字列を返す
+    # Task 4, CC2: Returns empty string when board.jsonl is absent
     Describe 'returns empty string when board.jsonl does not exist'
       setup() {
         TMPDIR_T4CC2=$(mktemp -d)
@@ -211,7 +211,7 @@ Describe 'auto-commit.sh'
       End
     End
 
-    # Task 4, CC4: .note 不在時、last_assistant_message の先頭行にフォールバック
+    # Task 4, CC4: Falls back to first line of last_assistant_message when .note is absent
     Describe 'falls back to first line of last_assistant_message when note is absent'
       setup() {
         TMPDIR_T4CC4=$(mktemp -d)
@@ -234,7 +234,7 @@ Describe 'auto-commit.sh'
       End
     End
 
-    # Task 4, CC5: すべて不在時、git diff --stat サマリーにフォールバック
+    # Task 4, CC5: Falls back to git diff --stat summary when all sources are absent
     Describe 'falls back to git diff --stat when note and last_assistant_message are both absent'
       setup() {
         TMPDIR_T4CC5=$(mktemp -d)
@@ -273,8 +273,8 @@ Describe 'auto-commit.sh'
       The status should be success
     End
 
-    # Task 2, CC2: agent_type が空/不在の場合、board.jsonl の .from にフォールバック
-    # Task 2, CC3: board.jsonl も不在の場合、"unknown" にフォールバックする
+    # Task 2, CC2: Falls back to board.jsonl .from when agent_type is empty/absent
+    # Task 2, CC3: Falls back to "unknown" when board.jsonl is also absent
     Describe 'fallback to board.jsonl'
       setup() {
         TMPDIR_CC2=$(mktemp -d)
@@ -297,7 +297,7 @@ Describe 'auto-commit.sh'
       End
     End
 
-    # Task 2, CC3: board.jsonl も不在の場合、"unknown" にフォールバックする
+    # Task 2, CC3: Falls back to "unknown" when board.jsonl is absent
     Describe 'fallback to unknown when no board.jsonl'
       setup() {
         TMPDIR_CC3=$(mktemp -d)
@@ -326,7 +326,7 @@ Describe 'auto-commit.sh'
       The status should be success
     End
 
-    # Task 5, CC2: scope が空の場合、括弧なしの "<type>: <description>" にフォールバック
+    # Task 5, CC2: Falls back to "<type>: <description>" without parentheses when scope is empty
     It 'falls back to type-colon-description without parentheses when scope is empty'
       When call format_commit_message "chore" "" "update config"
       The output should equal "chore: update config"
@@ -334,7 +334,7 @@ Describe 'auto-commit.sh'
     End
   End
 
-  # Reviewer feedback: _truncate_description() — truncation and trailing period removal
+  # Reviewer feedback: _truncate_description() - truncation and trailing period removal
   Describe '_truncate_description()'
     It 'truncates a string longer than 72 chars to 69 chars plus ellipsis'
       # 80-char input: "aaaaa..." (80 x 'a')
@@ -876,7 +876,7 @@ Describe 'auto-commit.sh'
     End
   End
 
-  # Task 5, CC3: main() が全関数を組み合わせて Conventional Commits 形式の git commit を実行する
+  # Task 5, CC3: main() combines all functions to execute a Conventional Commits formatted git commit
   Describe 'main() integration'
     setup() {
       TMPDIR_T5CC3=$(mktemp -d)
@@ -1325,10 +1325,10 @@ Describe 'auto-commit.sh'
     End
   End
 
-  # Story: commit-scope-storyid, Task 1: main() は get_story_scope() を優先し、空の場合 get_scope_from_diff() にフォールバックする
+  # Story: commit-scope-storyid, Task 1: main() prioritizes get_story_scope(), falling back to get_scope_from_diff() when empty
   Describe 'main() story scope priority (commit-scope-storyid)'
 
-    # Task 1, CC1: board.jsonl が存在する場合、スコープがストーリーIDになる
+    # Task 1, CC1: Scope becomes story-id when board.jsonl exists
     Describe 'CC1: scope is story-id when board.jsonl exists'
       setup() {
         TMPDIR_SS1=$(mktemp -d)
@@ -1372,7 +1372,7 @@ Describe 'auto-commit.sh'
       End
     End
 
-    # Task 2, CC1: board.jsonl が存在しない場合、get_scope_from_diff() のフォールバックが使われる
+    # Task 2, CC1: Falls back to get_scope_from_diff() when board.jsonl does not exist
     Describe 'CC1: scope falls back to get_scope_from_diff() when no board.jsonl exists'
       setup() {
         TMPDIR_SS2=$(mktemp -d)

@@ -13,9 +13,9 @@ Describe 'renderVelocity(): Points Type Safety and Null Guard (Task 2)'
     return 0
   }
 
-  # AC-1, AC-11, AC-12: pointsが文字列・null・0混在時に正しく数値加算されること
-  # 期待: "3"(文字列) + 2(数値) = 5(数値), null除外, 0は0として加算
-  # 現状のバグ: (0 + "3") => "03" (文字列結合), そこに + 2 => "032" となる
+  # AC-1, AC-11, AC-12: Correct numeric addition when points are mixed string/null/0
+  # Expected: "3"(string) + 2(number) = 5(number), null excluded, 0 added as 0
+  # Current bug: (0 + "3") => "03" (string concat), then + 2 => "032"
   check_velocity_points_type_coercion() {
     command -v node >/dev/null 2>&1 || return 1
     extract_dashboard_functions || return 1

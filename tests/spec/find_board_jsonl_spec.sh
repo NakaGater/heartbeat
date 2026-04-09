@@ -1,8 +1,8 @@
 Describe 'find_board_jsonl() in lib/common.sh'
-  # Task 2, CC1: core/scripts/lib/common.sh に find_board_jsonl 関数が定義されており、
-  #              source で読み込み可能で構文エラーがない
-  # Task 2, CC2-CC4: 環境変数フォールバックチェーン
-  # Design spec 8-9: story-id 引数と HEARTBEAT_ACTIVE_STORY
+  # Task 2, CC1: find_board_jsonl function is defined in core/scripts/lib/common.sh,
+  #              can be sourced without syntax errors
+  # Task 2, CC2-CC4: Environment variable fallback chain
+  # Design spec 8-9: story-id argument and HEARTBEAT_ACTIVE_STORY
 
   setup() {
     TEST_DIR=$(mktemp -d)
@@ -23,7 +23,7 @@ Describe 'find_board_jsonl() in lib/common.sh'
     End
 
     It 'makes find_board_jsonl function available'
-      # common.sh が存在しないので type チェックで失敗する
+      # Verify find_board_jsonl function is available via type check
       When run bash -c 'source ./core/scripts/lib/common.sh && type find_board_jsonl >/dev/null 2>&1 && echo "available"'
       The output should equal "available"
       The status should be success

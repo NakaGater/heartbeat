@@ -1,7 +1,7 @@
 Describe 'dashboard.html: Typography Refinement (Task 3 - AC5)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- システムフォントスタック ---
+  # --- System font stack ---
   It 'defines a system font stack including SF Pro on body'
     The contents of file "$TEMPLATE" should include "SF Pro"
   End
@@ -10,7 +10,7 @@ Describe 'dashboard.html: Typography Refinement (Task 3 - AC5)'
     The contents of file "$TEMPLATE" should include '-webkit-font-smoothing: antialiased'
   End
 
-  # --- タイプスケールトークン ---
+  # --- Type scale tokens ---
   It 'defines type scale token --text-xs on :root'
     The contents of file "$TEMPLATE" should include '--text-xs:'
   End
@@ -35,12 +35,12 @@ Describe 'dashboard.html: Typography Refinement (Task 3 - AC5)'
     The contents of file "$TEMPLATE" should include '--text-2xl:'
   End
 
-  # --- Fluid Typography（h1 に clamp() 使用） ---
+  # --- Fluid Typography (h1 uses clamp()) ---
   It 'defines fluid font-size using clamp() on h1'
     The contents of file "$TEMPLATE" should include 'clamp('
   End
 
-  # --- フォントウェイト階層（4段階の使い分け） ---
+  # --- Font weight hierarchy (4 levels) ---
   It 'uses font-weight 700 (Bold)'
     The contents of file "$TEMPLATE" should include 'font-weight: 700'
   End
@@ -53,7 +53,7 @@ Describe 'dashboard.html: Typography Refinement (Task 3 - AC5)'
     The contents of file "$TEMPLATE" should include 'font-weight: 500'
   End
 
-  # --- Letter-spacing の差別化 ---
+  # --- Letter-spacing differentiation ---
   It 'defines tight letter-spacing (negative value) for headings'
     The contents of file "$TEMPLATE" should include 'letter-spacing: -0.025em'
   End

@@ -1,12 +1,12 @@
 Describe 'dashboard.html: Micro-interactions and Animations (Task 4)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- @keyframes 定義 (v2: fadeScaleIn に更新) ---
+  # --- @keyframes definition (v2: updated to fadeScaleIn) ---
   It 'defines @keyframes fadeScaleIn'
     The contents of file "$TEMPLATE" should include '@keyframes fadeScaleIn'
   End
 
-  # --- パネル入場アニメーション (v2: fadeScaleIn に更新) ---
+  # --- Panel entrance animation (v2: updated to fadeScaleIn) ---
   It 'applies animation: fadeScaleIn to .panel'
     The contents of file "$TEMPLATE" should include 'animation: fadeScaleIn'
   End
@@ -16,7 +16,7 @@ Describe 'dashboard.html: Micro-interactions and Animations (Task 4)'
     The contents of file "$TEMPLATE" should include 'animation-delay:'
   End
 
-  # --- ホバー状態トランジション ---
+  # --- Hover state transitions ---
   It 'defines transition properties (box-shadow, transform) on .panel'
     The contents of file "$TEMPLATE" should include 'transition: box-shadow'
   End
@@ -25,7 +25,7 @@ Describe 'dashboard.html: Micro-interactions and Animations (Task 4)'
     The contents of file "$TEMPLATE" should include 'translateY(-2px)'
   End
 
-  # --- prefers-reduced-motion サポート ---
+  # --- prefers-reduced-motion support ---
   It 'defines prefers-reduced-motion: reduce media query'
     The contents of file "$TEMPLATE" should include 'prefers-reduced-motion: reduce'
   End

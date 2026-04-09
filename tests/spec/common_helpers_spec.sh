@@ -1,6 +1,6 @@
 # Test: has_japanese() helper function in tests/helpers/common.sh
 # Story: 0042-test-cleanup / Task 1 (AC-5)
-# Completion condition: has_japanese() が tests/helpers/common.sh に存在し正しく動作する
+# Completion condition: has_japanese() exists in tests/helpers/common.sh and works correctly
 
 Include "$SHELLSPEC_PROJECT_ROOT/tests/helpers/common.sh"
 
@@ -33,7 +33,7 @@ End
 
 # --- extract_skill_section() tests ---
 # Story: 0042-test-cleanup / Task 1 (AC-5)
-# Completion condition: extract_skill_section() が SKILL.md からセクションを抽出できる
+# Completion condition: extract_skill_section() can extract sections from SKILL.md
 
 Describe 'extract_skill_section() helper'
   setup() {
@@ -106,7 +106,7 @@ End
 
 # --- setup_dashboard_project() tests ---
 # Story: 0042-test-cleanup / Task 1 (AC-5)
-# Completion condition: setup_dashboard_project() がダッシュボードテスト用の共通環境を構築する
+# Completion condition: setup_dashboard_project() builds a shared environment for dashboard tests
 
 Describe 'setup_dashboard_project() helper'
   After 'cleanup_dashboard_project'

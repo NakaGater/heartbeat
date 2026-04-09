@@ -90,21 +90,21 @@ Describe 'board-stamp.sh'
   End
 
   Describe 'SubagentStop hook context (no file_path in stdin)'
-    # SubagentStop の stdin には file_path が含まれない。
-    # board-stamp.sh は .heartbeat/stories/*/board.jsonl を走査し、
-    # 最も最近変更されたファイルの最終行 timestamp を上書きすべき。
+    # SubagentStop stdin does not contain file_path.
+    # board-stamp.sh should scan .heartbeat/stories/*/board.jsonl and
+    # overwrite the timestamp of the last line in the most recently modified file.
 
     setup_subagent_stop() {
-      # テスト用のストーリーディレクトリ構造を作成
+      # Create story directory structure for testing
       STORIES_DIR=$(mktemp -d)
       mkdir -p "${STORIES_DIR}/.heartbeat/stories/story-alpha"
       mkdir -p "${STORIES_DIR}/.heartbeat/stories/story-beta"
 
-      # story-alpha の board.jsonl（古い）
+      # story-alpha board.jsonl (older)
       echo '{"from":"tester","to":"impl","action":"test","status":"ok","note":"alpha","timestamp":"2026-01-01T00:00:00Z"}' \
         > "${STORIES_DIR}/.heartbeat/stories/story-alpha/board.jsonl"
 
-      # 少し待って story-beta を作成（こちらが最新）
+      # Wait briefly then create story-beta (this one is newer)
       sleep 1
       echo '{"from":"architect","to":"impl","action":"design","status":"ok","note":"beta","timestamp":"2026-02-01T00:00:00Z"}' \
         > "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
@@ -119,32 +119,32 @@ Describe 'board-stamp.sh'
     BeforeEach 'setup_subagent_stop'
     AfterEach 'cleanup_subagent_stop'
 
-    # SubagentStop の stdin は file_path を含まない JSON
-    # （例: {"event":"SubagentStop","subagent_id":"..."}）
+    # SubagentStop stdin is JSON without file_path
+    # (e.g., {"event":"SubagentStop","subagent_id":"..."})
 
     It 'preserves valid timestamps in most recently modified board.jsonl (no-op)'
       When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
       The status should be success
-      # 有効なタイムスタンプは上書きされない（設計原則: タイムスタンプ不変性）
+      # Valid timestamps are not overwritten (design principle: timestamp immutability)
       The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should include '2026-02-01T00:00:00Z'
     End
 
     It 'fills empty timestamp in most recently modified board.jsonl'
       setup_empty_ts_beta() {
-        # story-beta に空タイムスタンプのエントリを追加
+        # Append an entry with empty timestamp to story-beta
         echo '{"from":"implementer","to":"tester","action":"test","status":"ok","note":"empty","timestamp":""}' \
           >> "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
       }
       BeforeCall 'setup_empty_ts_beta'
       timestamp_is_recent_for() {
-        # 最終行（追加した空TS行）が補完されているか
+        # Check whether the last line (the appended empty-TS line) was filled
         assert_timestamp_recent "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl"
       }
       When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
       The status should be success
-      # 空タイムスタンプが補完される
+      # Empty timestamp is filled
       The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should not include '"timestamp":""'
-      # 元の有効タイムスタンプは保持される
+      # Original valid timestamp is preserved
       The contents of file "${STORIES_DIR}/.heartbeat/stories/story-beta/board.jsonl" should include '2026-02-01T00:00:00Z'
       Assert timestamp_is_recent_for
     End
@@ -152,13 +152,13 @@ Describe 'board-stamp.sh'
     It 'does not modify older board.jsonl files'
       When call run_board_stamp '{"event":"SubagentStop","subagent_id":"sub-123"}'
       The status should be success
-      # story-alpha は古いので変更されないべき
+      # story-alpha is older and should not be modified
       The contents of file "${STORIES_DIR}/.heartbeat/stories/story-alpha/board.jsonl" should include '2026-01-01T00:00:00Z'
     End
   End
 
   Describe 'No board.jsonl exists (SubagentStop context)'
-    # board.jsonl が1つも存在しない場合、exit 0 で正常終了すべき
+    # Should exit 0 gracefully when no board.jsonl files exist
 
     setup_no_board() {
       STORIES_DIR=$(mktemp -d)
@@ -180,8 +180,8 @@ Describe 'board-stamp.sh'
   End
 
   Describe 'SubagentStart hook context'
-    # SubagentStart でも board-stamp.sh が呼び出され、
-    # 最新の board.jsonl の最終行 timestamp を上書きすべき。
+    # board-stamp.sh is also invoked on SubagentStart and should
+    # overwrite the timestamp of the last line in the most recent board.jsonl.
 
     setup_subagent_start() {
       STORIES_DIR=$(mktemp -d)
@@ -201,7 +201,7 @@ Describe 'board-stamp.sh'
     It 'preserves valid timestamp in SubagentStart context (no-op)'
       When call run_board_stamp '{"event":"SubagentStart","subagent_id":"sub-789"}'
       The status should be success
-      # 有効なタイムスタンプは SubagentStart でも上書きされない
+      # Valid timestamps are not overwritten even in SubagentStart context
       The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should include '2026-03-01T00:00:00Z'
     End
 
@@ -216,20 +216,20 @@ Describe 'board-stamp.sh'
       }
       When call run_board_stamp '{"event":"SubagentStart","subagent_id":"sub-789"}'
       The status should be success
-      # 空タイムスタンプが補完される
+      # Empty timestamp is filled
       The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should not include '"timestamp":""'
-      # 元の有効タイムスタンプは保持される
+      # Original valid timestamp is preserved
       The contents of file "${STORIES_DIR}/.heartbeat/stories/active-story/board.jsonl" should include '2026-03-01T00:00:00Z'
       Assert timestamp_is_recent_start
     End
   End
 
   Describe 'Full Row Scan: Fill Only Empty Timestamps'
-    # 複数行の board.jsonl で、空タイムスタンプの行のみ補完し、
-    # 既存の有効なタイムスタンプは上書きしないことを検証する。
+    # Verify that in a multi-line board.jsonl, only empty timestamps are filled
+    # while existing valid timestamps are not overwritten.
 
     setup_multi_line() {
-      # 3行: 有効TS → 空TS → 有効TS
+      # 3 lines: valid TS -> empty TS -> valid TS
       {
         echo '{"from":"pdm","to":"architect","action":"define_story","status":"ok","note":"line1","timestamp":"2026-03-15T10:00:00Z"}'
         echo '{"from":"architect","to":"designer","action":"estimate","status":"ok","note":"line2","timestamp":""}'
@@ -242,18 +242,18 @@ Describe 'board-stamp.sh'
     It 'fills empty timestamps and preserves existing ones across all lines'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
-      # line1 の有効なタイムスタンプは変更されない
+      # line1 valid timestamp should not be changed
       The contents of file "$TEST_BOARD_FILE" should include '2026-03-15T10:00:00Z'
-      # line3 の有効なタイムスタンプも変更されない
+      # line3 valid timestamp should also not be changed
       The contents of file "$TEST_BOARD_FILE" should include '2026-03-15T12:00:00Z'
-      # line2 の空タイムスタンプが補完されている（空文字が残っていない）
+      # line2 empty timestamp has been filled (no empty string remaining)
       The contents of file "$TEST_BOARD_FILE" should not include '"timestamp":""'
     End
   End
 
   Describe 'Invalid Timestamp Value Correction'
-    # ISO 8601 形式に合致しない不正な値（例: "invalid"）は
-    # 空文字と同様に補完対象とし、正確な UTC 時刻で上書きすべき。
+    # Invalid values that do not match ISO 8601 format (e.g., "invalid")
+    # should be treated as empty and overwritten with the correct UTC time.
 
     It 'overwrites invalid non-ISO-8601 timestamp with current UTC time'
       setup_invalid_ts() {
@@ -265,20 +265,20 @@ Describe 'board-stamp.sh'
       BeforeCall 'setup_invalid_ts'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
-      # 有効なタイムスタンプは保持される
+      # Valid timestamp is preserved
       The contents of file "$TEST_BOARD_FILE" should include '2026-03-15T10:00:00Z'
-      # 不正値 "invalid" は正確な UTC 時刻で置換されるべき
+      # Invalid value "invalid" should be replaced with correct UTC time
       The contents of file "$TEST_BOARD_FILE" should not include '"invalid"'
     End
   End
 
   Describe 'PostToolUse safety net'
-    # PostToolUse パス（file_path あり）で安全網として正常動作することを確認
+    # Verify normal operation as a safety net via the PostToolUse path (with file_path)
 
     It 'preserves valid timestamp via file_path path (no-op)'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
-      # 有効なタイムスタンプは保持される
+      # Valid timestamp is preserved
       The contents of file "$TEST_BOARD_FILE" should include '2026-01-01T00:00:00Z'
     End
 
@@ -290,7 +290,7 @@ Describe 'board-stamp.sh'
       When call run_board_stamp "{\"tool_input\":{\"file_path\":\"$TEST_BOARD_FILE\"}}"
       The status should be success
       The contents of file "$TEST_BOARD_FILE" should not include '"timestamp":""'
-      # 既存行の有効タイムスタンプも保持される
+      # Existing valid timestamp in other lines is also preserved
       The contents of file "$TEST_BOARD_FILE" should include '2026-01-01T00:00:00Z'
     End
   End

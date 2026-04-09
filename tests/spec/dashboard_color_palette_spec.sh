@@ -1,7 +1,7 @@
 Describe 'dashboard.html: Premium Color Palette (Task 2 - AC2)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- アクセントカラースケール（インディゴ系） ---
+  # --- Accent color scale (indigo) ---
   It 'defines accent color --accent-hover'
     The contents of file "$TEMPLATE" should include '--accent-hover:'
   End
@@ -14,7 +14,7 @@ Describe 'dashboard.html: Premium Color Palette (Task 2 - AC2)'
     The contents of file "$TEMPLATE" should include '--accent-muted:'
   End
 
-  # --- セカンダリアクセント ---
+  # --- Secondary accent ---
   It 'defines secondary color --secondary'
     The contents of file "$TEMPLATE" should include '--secondary:'
   End
@@ -23,7 +23,7 @@ Describe 'dashboard.html: Premium Color Palette (Task 2 - AC2)'
     The contents of file "$TEMPLATE" should include '--secondary-subtle:'
   End
 
-  # --- セマンティックカラー ---
+  # --- Semantic colors ---
   It 'defines semantic color --success'
     The contents of file "$TEMPLATE" should include '--success:'
   End
@@ -56,7 +56,7 @@ Describe 'dashboard.html: Premium Color Palette (Task 2 - AC2)'
     The contents of file "$TEMPLATE" should include '--info-subtle:'
   End
 
-  # --- グラデーション定義 ---
+  # --- Gradient definitions ---
   It 'defines gradient variable --gradient-primary'
     The contents of file "$TEMPLATE" should include '--gradient-primary:'
   End
@@ -69,7 +69,7 @@ Describe 'dashboard.html: Premium Color Palette (Task 2 - AC2)'
     The contents of file "$TEMPLATE" should include '--gradient-surface:'
   End
 
-  # --- ダークモード独立カラー定義 (v2: ダークファースト = :root が既定ダーク) ---
+  # --- Dark mode independent color definitions (v2: dark-first = :root is default dark) ---
   It 'defines accent colors independently in dark mode (:root)'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"

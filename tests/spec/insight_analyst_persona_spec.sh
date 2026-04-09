@@ -1,5 +1,5 @@
 Describe 'insight-analyst Agent Persona Definition'
-  # ペルソナファイルのパス（.yaml または .md）
+  # Persona file path (.yaml or .md)
   PERSONA_YAML="core/agent-personas/insight-analyst.yaml"
   PERSONA_MD="core/agent-personas/insight-analyst.md"
 
@@ -61,7 +61,7 @@ Describe 'insight-analyst Agent Persona Definition'
   End
 
   It 'has no name collision with existing agents'
-    # insight-analyst という名前が既存ペルソナに使われていないことを確認
+    # Verify that the name insight-analyst is not used by existing personas
     check_no_collision() {
       for agent in core/agent-personas/*.md core/agent-personas/*.yaml; do
         [ -f "$agent" ] || continue

@@ -1,7 +1,7 @@
 Describe 'acquire_lock() / release_lock() in lib/common.sh'
-  # Task 3, CC1: acquire_lock <dir> 呼び出しで <dir> ディレクトリが作成され、
-  #              <dir>/pid に現在の PID が記録される
-  # Design spec 12: acquire_lock が mkdir ベースでロックを取得し PID を記録する
+  # Task 3, CC1: acquire_lock <dir> creates the <dir> directory and
+  #              records the current PID in <dir>/pid
+  # Design spec 12: acquire_lock acquires lock via mkdir and records PID
 
   setup() {
     TEST_DIR=$(mktemp -d)
@@ -46,8 +46,8 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
     End
   End
 
-  # Task 3, CC2: release_lock は PID が一致する場合のみロックを削除する
-  # 他プロセスの PID が記録されている場合、削除しない
+  # Task 3, CC2: release_lock deletes the lock only when PID matches
+  # Does not delete if another process PID is recorded
   # Design spec 13
   Describe 'PID Matching in release_lock (CC2)'
     It 'removes lock directory when current process PID is recorded'
@@ -85,16 +85,16 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
     End
   End
 
-  # Task 3, CC3: acquire_lock はリトライ後に失敗する (return 1)
+  # Task 3, CC3: acquire_lock fails after retries (return 1)
   # Design spec 14
   Describe 'acquire_lock Retry and Failure (CC3)'
     It 'exits non-zero after retries when lock is already held'
       acquire_with_existing_lock() {
         source ./core/scripts/lib/common.sh
-        # 他プロセスのロックをシミュレート
+        # Simulate another process holding the lock
         mkdir -p "$LOCK_DIR"
         echo "99999" > "$LOCK_DIR/pid"
-        # リトライ回数を最小にして高速化
+        # Minimize retry count for faster execution
         acquire_lock "$LOCK_DIR" 2 0
         return $?
       }
@@ -104,16 +104,16 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
     End
   End
 
-  # Task 3, CC4: stale ロック検出 (find -mmin による古いロックの除去)
+  # Task 3, CC4: Stale lock detection (removal of old locks via find -mmin)
   # Design spec 15
   Describe 'Stale Lock Detection (CC4)'
     It 'removes stale lock older than 1 minute and acquires successfully'
       acquire_with_stale_lock() {
         source ./core/scripts/lib/common.sh
-        # stale ロックを作成
+        # Create a stale lock
         mkdir -p "$LOCK_DIR"
         echo "99999" > "$LOCK_DIR/pid"
-        # タイムスタンプを2分前に設定して stale にする
+        # Set timestamp to 2 minutes ago to make it stale
         touch -t "$(date -v-2M '+%Y%m%d%H%M.%S' 2>/dev/null || date -d '2 minutes ago' '+%Y%m%d%H%M.%S' 2>/dev/null)" "$LOCK_DIR"
         acquire_lock "$LOCK_DIR" 1 0
         local result=$?

@@ -1,7 +1,7 @@
 Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # ── 完了条件1: サイドバーナビゲーション ──
+  # -- AC1: Sidebar navigation --
 
   It 'contains nav class="sidebar" with sidebar-icon'
     The contents of file "$TEMPLATE" should include '<nav class="sidebar">'
@@ -15,13 +15,13 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The output should equal "6"
   End
 
-  # ── 完了条件2: div#app に bento-grid クラスが付与されている ──
+  # -- AC2: div#app has bento-grid class --
 
   It 'assigns class="bento-grid" to div id="app"'
     The contents of file "$TEMPLATE" should include 'id="app" class="bento-grid"'
   End
 
-  # ── 完了条件3: hero-metrics ヘッダーが存在し metric-card を4つ含む ──
+  # -- AC3: hero-metrics header exists and contains 4 metric-cards --
 
   It 'contains header class="hero-metrics"'
     The contents of file "$TEMPLATE" should include 'class="hero-metrics"'
@@ -35,7 +35,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The output should equal "4"
   End
 
-  # ── 完了条件4: 各 metric-card に metric-value と metric-label が含まれる ──
+  # -- AC4: Each metric-card contains metric-value and metric-label --
 
   It 'contains metric-value elements'
     The contents of file "$TEMPLATE" should include 'class="metric-value"'
@@ -45,7 +45,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The contents of file "$TEMPLATE" should include 'class="metric-label"'
   End
 
-  # ── 完了条件5: metric-progress 内に SVG metric-ring がある ──
+  # -- AC5: SVG metric-ring exists inside metric-progress --
 
   It 'contains svg class="metric-ring" inside metric-progress'
     The contents of file "$TEMPLATE" should include 'id="metric-progress"'
@@ -55,7 +55,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The contents of file "$TEMPLATE" should include 'class="metric-ring"'
   End
 
-  # ── 完了条件6: #backlog-board と #velocity-chart が統合 bento-card card-backlog-velocity 内にある ──
+  # -- AC6: #backlog-board and #velocity-chart are inside unified bento-card card-backlog-velocity --
 
   It 'contains bento-card card-backlog-velocity'
     The contents of file "$TEMPLATE" should include 'class="bento-card card-backlog-velocity"'
@@ -77,7 +77,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The output should equal "ok"
   End
 
-  # ── 完了条件7: card-split で2カラムレイアウト ──
+  # -- AC7: 2-column layout via card-split --
 
   It 'contains card-split inside card-backlog-velocity'
     check_card_split() {
@@ -87,7 +87,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The output should equal "ok"
   End
 
-  # ── 完了条件8: #gantt-chart と #task-list が統合 bento-card card-story 内にある ──
+  # -- AC8: #gantt-chart and #task-list are inside unified bento-card card-story --
 
   It 'contains bento-card card-story'
     The contents of file "$TEMPLATE" should include 'class="bento-card card-story"'
@@ -117,7 +117,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The output should equal "ok"
   End
 
-  # ── 完了条件9: #agent-messages が bento-card card-messages 内にある ──
+  # -- AC9: #agent-messages is inside bento-card card-messages --
 
   It 'contains bento-card card-messages'
     The contents of file "$TEMPLATE" should include 'class="bento-card card-messages"'
@@ -131,7 +131,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The output should equal "ok"
   End
 
-  # ── 完了条件10: #insights-panel が bento-card card-insights 内にある ──
+  # -- AC10: #insights-panel is inside bento-card card-insights --
 
   It 'contains bento-card card-insights'
     The contents of file "$TEMPLATE" should include 'class="bento-card card-insights"'
@@ -145,7 +145,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The output should equal "ok"
   End
 
-  # ── 完了条件11: 既存IDが全て維持されている ──
+  # -- AC11: All existing IDs are preserved --
 
   It 'preserves existing ID #backlog-board'
     The contents of file "$TEMPLATE" should include 'id="backlog-board"'
@@ -179,7 +179,7 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The contents of file "$TEMPLATE" should include 'id="app"'
   End
 
-  # ── 完了条件12: テンプレートプレースホルダーが維持されている ──
+  # -- AC12: Template placeholders are preserved --
 
   It 'preserves placeholder {{BACKLOG_DATA}}'
     The contents of file "$TEMPLATE" should include '{{BACKLOG_DATA}}'

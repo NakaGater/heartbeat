@@ -1,7 +1,7 @@
 Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- AC1: :root に背景トークンが定義されている ---
+  # --- AC1: Background tokens are defined on :root ---
   Describe 'AC1: :root Dark Default Background Tokens'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -28,7 +28,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC2: :root にアクセントカラースケールが定義されている ---
+  # --- AC2: Accent color scale is defined on :root ---
   Describe 'AC2: :root Accent Color Scale'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -60,7 +60,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC3: :root にセマンティックカラーと -subtle バリアントが定義されている ---
+  # --- AC3: Semantic colors and -subtle variants are defined on :root ---
   Describe 'AC3: :root Semantic Colors + Subtle Variants'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -103,7 +103,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC4: :root にグラデーショントークンが定義されている ---
+  # --- AC4: Gradient tokens are defined on :root ---
   Describe 'AC4: :root Gradient Tokens'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -135,7 +135,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC5: :root に 4px 基準スペーシング --space-1〜8 が定義されている ---
+  # --- AC5: 4px-based spacing --space-1 through --space-8 are defined on :root ---
   Describe 'AC5: :root Spacing Tokens (4px Base)'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -182,7 +182,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC6: :root にシャドウトークンが定義されている ---
+  # --- AC6: Shadow tokens are defined on :root ---
   Describe 'AC6: :root Shadow Tokens'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -219,7 +219,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC7: :root にボーダー半径トークンが定義されている ---
+  # --- AC7: Border radius tokens are defined on :root ---
   Describe 'AC7: :root Border Radius Tokens'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -251,7 +251,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC8: :root にタイプスケール --text-2xs〜--text-4xl が定義されている ---
+  # --- AC8: Type scale --text-2xs through --text-4xl are defined on :root ---
   Describe 'AC8: :root Type Scale'
     root_block() {
       sed -n '/:root[[:space:]]*{/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -308,7 +308,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC9: prefers-color-scheme: light でライトモード変数がオーバーライドされている ---
+  # --- AC9: Light mode variables are overridden via prefers-color-scheme: light ---
   Describe 'AC9: Light Mode (prefers-color-scheme: light) Overrides'
     light_block() {
       sed -n '/prefers-color-scheme:[[:space:]]*light/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -349,7 +349,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     End
   End
 
-  # --- AC10: ライトモードのカラー値がダークの単純反転ではなく独立最適化されている ---
+  # --- AC10: Light mode color values are independently optimized, not simple inversions of dark ---
   Describe 'AC10: Light Mode Color Values Are Independently Optimized'
     light_block() {
       sed -n '/prefers-color-scheme:[[:space:]]*light/,/^[[:space:]]*}/p' "$TEMPLATE"
@@ -369,7 +369,7 @@ Describe 'dashboard.html: Dark-first Design Token System v2 (Task 1)'
     It 'uses lighter opacity for --shadow-sm in light mode than dark'
       When call light_block
       The output should include '--shadow-sm:'
-      # ダークモードは rgba(0,0,0,0.3) だがライトモードはそれより小さい値であるべき
+      # Dark mode is rgba(0,0,0,0.3) but light mode should have a smaller value
       The output should not include 'rgba(0, 0, 0, 0.3)'
     End
   End

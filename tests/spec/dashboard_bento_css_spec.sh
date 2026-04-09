@@ -1,7 +1,7 @@
 Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # ── 完了条件1: .sidebar に position:fixed と width:48px ──
+  # -- AC1: .sidebar has position:fixed and width:48px --
 
   It 'defines position: fixed on .sidebar'
     extract_sidebar_position() {
@@ -19,7 +19,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件2: .sidebar に backdrop-filter と -webkit-backdrop-filter ──
+  # -- AC2: .sidebar has backdrop-filter and -webkit-backdrop-filter --
 
   It 'defines backdrop-filter on .sidebar'
     extract_sidebar_backdrop() {
@@ -37,7 +37,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件3: .bento-grid に display:grid と grid-template-columns:repeat(12,1fr) ──
+  # -- AC3: .bento-grid has display:grid and grid-template-columns:repeat(12,1fr) --
 
   It 'defines display: grid on .bento-grid'
     extract_bentogrid_display() {
@@ -55,7 +55,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件4: .bento-grid に margin-left: 48px ──
+  # -- AC4: .bento-grid has margin-left: 48px --
 
   It 'defines margin-left: 48px on .bento-grid'
     extract_bentogrid_margin() {
@@ -65,7 +65,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件5: .bento-card.card-backlog-velocity に grid-column: 1 / -1 (統合カード) ──
+  # -- AC5: .bento-card.card-backlog-velocity has grid-column: 1 / -1 (unified card) --
 
   It 'defines grid-column: 1 / -1 on .bento-card.card-backlog-velocity'
     extract_backlog_velocity_col() {
@@ -83,7 +83,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件6: .bento-card.card-story に grid-column: 1 / -1 ──
+  # -- AC6: .bento-card.card-story has grid-column: 1 / -1 --
 
   It 'defines grid-column: 1 / -1 on .bento-card.card-story'
     extract_story_col() {
@@ -93,7 +93,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件7: .bento-card.card-messages に grid-column: 1 / -1 ──
+  # -- AC7: .bento-card.card-messages has grid-column: 1 / -1 --
 
   It 'defines grid-column: 1 / -1 on .bento-card.card-messages'
     extract_messages_full_width() {
@@ -103,7 +103,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件8: .sidebar-icon に transition + :hover でスタイル変化 ──
+  # -- AC8: .sidebar-icon has transition + style change on :hover --
 
   It 'defines transition on .sidebar-icon'
     extract_sidebar_icon_transition() {
@@ -121,7 +121,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 完了条件9: .sidebar-icon.active::before に擬似要素がある ──
+  # -- AC9: .sidebar-icon.active::before has a pseudo-element --
 
   It 'defines a pseudo-element on .sidebar-icon.active::before'
     check_sidebar_active_before() {
@@ -131,7 +131,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 追加検証: .bento-card に overflow:hidden ──
+  # -- Additional: .bento-card has overflow:hidden --
 
   It 'defines overflow: hidden on .bento-card'
     extract_bento_card_overflow() {
@@ -141,7 +141,7 @@ Describe 'dashboard.html: Bento Grid + Sidebar CSS Implementation (Task 3)'
     The output should equal "ok"
   End
 
-  # ── 追加検証: .hero-metrics に display:flex または display:grid ──
+  # -- Additional: .hero-metrics has display:flex or display:grid --
 
   It 'defines display: flex or grid on .hero-metrics'
     extract_hero_metrics_display() {

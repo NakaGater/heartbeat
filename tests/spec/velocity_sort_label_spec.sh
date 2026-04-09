@@ -13,11 +13,11 @@ Describe 'Velocity Chart Sort and Label Display With YYYY-Wnn Format (Task 4)'
     return 0
   }
 
-  # AC-9: X軸ラベルが "YYYY-Wnn" 形式で表示されること
-  # AC-10: 週が時系列順にソートされていること
+  # AC-9: X-axis labels should be displayed in "YYYY-Wnn" format
+  # AC-10: Weeks should be sorted in chronological order
   #
-  # 検証方法: 入力データの completed を意図的に逆順にし、
-  # SVG出力でラベルが昇順(時系列順)に並ぶことを確認する。
+  # Verification: Intentionally reverse the order of input completed dates,
+  # and confirm labels appear in ascending (chronological) order in SVG output.
   check_sort_and_label_format() {
     command -v node >/dev/null 2>&1 || return 1
     extract_dashboard_functions || return 1

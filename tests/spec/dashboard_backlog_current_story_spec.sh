@@ -5,13 +5,13 @@ Describe 'generate-dashboard.sh Dashboard Regeneration and Current Story Display
     mkdir -p "$TEST_HEARTBEAT/stories/story-active"
     mkdir -p "$TEST_HEARTBEAT/stories/story-finished"
 
-    # backlog.jsonl: in_progress 1件 + done 1件
+    # backlog.jsonl: 1 in_progress + 1 done entry
     cat > "$TEST_HEARTBEAT/backlog.jsonl" <<'JSONL'
 {"story_id":"story-active","title":"Active Feature","status":"in_progress","priority":1,"points":2}
 {"story_id":"story-finished","title":"Finished Feature","status":"done","priority":2,"points":1}
 JSONL
 
-    # stories ディレクトリに最小限の board.jsonl / tasks.jsonl を用意
+    # Prepare minimal board.jsonl / tasks.jsonl in stories directory
     echo '{"from":"tester","to":"implementer","action":"make_green","status":"done","note":"test","timestamp":"2026-04-03T00:00:00Z"}' \
       > "$TEST_HEARTBEAT/stories/story-active/board.jsonl"
     echo '{"task_id":1,"name":"Task A","status":"in_progress"}' \
@@ -33,11 +33,11 @@ JSONL
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The output should include 'Dashboard generated'
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist
-      # in_progress ストーリーのstory_idがBACKLOG_DATAに含まれる
+      # in_progress story's story_id is included in BACKLOG_DATA
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'story-active'
-      # done ストーリーも含まれる
+      # done story is also included
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'story-finished'
-      # populateStorySelectが in_progress を検出できるようデータに status が含まれる
+      # Data includes status so populateStorySelect can detect in_progress
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'in_progress'
     End
   End

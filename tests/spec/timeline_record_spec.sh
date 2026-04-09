@@ -3,7 +3,7 @@ Describe 'timeline-record.sh'
     STORIES_DIR=$(mktemp -d)
     STORY_DIR="${STORIES_DIR}/.heartbeat/stories/test-story"
     mkdir -p "$STORY_DIR"
-    # board.jsonl を用意して find_board_jsonl() がストーリーディレクトリを特定できるようにする
+    # Prepare board.jsonl so find_board_jsonl() can locate the story directory
     echo '{"from":"tester","to":"implementer","action":"make_green","status":"ok","note":"test","timestamp":"2026-01-01T00:00:00Z"}' \
       > "$STORY_DIR/board.jsonl"
     export HEARTBEAT_ROOT="${STORIES_DIR}"
@@ -57,7 +57,7 @@ Describe 'timeline-record.sh'
 
   Describe 'When Story Directory Is Not Found'
     It 'exits 0 without error when find_board_jsonl returns empty'
-      # board.jsonl を削除して find_board_jsonl が空を返す状態にする
+      # Delete board.jsonl so find_board_jsonl returns empty
       setup_no_story() {
         NO_STORY_DIR=$(mktemp -d)
         export HEARTBEAT_ROOT="${NO_STORY_DIR}"
@@ -76,7 +76,7 @@ Describe 'timeline-record.sh'
 
   Describe 'Non-write Guarantee for board.jsonl'
     It 'does not change board.jsonl contents after timeline-record.sh execution'
-      # 実行前の board.jsonl の内容を記録
+      # Record board.jsonl contents before execution
       save_board() {
         BOARD_BEFORE=$(cat "$STORY_DIR/board.jsonl")
       }

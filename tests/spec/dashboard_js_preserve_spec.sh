@@ -1,25 +1,25 @@
 Describe 'dashboard.html: JavaScript Addition + Existing Asset Preservation (Task 9)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # ── 完了条件1: function animateCounter が定義されていること ──
+  # -- AC1: function animateCounter is defined --
 
   It 'defines JS function animateCounter'
     The contents of file "$TEMPLATE" should include 'function animateCounter'
   End
 
-  # ── 完了条件2: function renderHeroMetrics が定義されていること ──
+  # -- AC2: function renderHeroMetrics is defined --
 
   It 'defines JS function renderHeroMetrics'
     The contents of file "$TEMPLATE" should include 'function renderHeroMetrics'
   End
 
-  # ── 完了条件3: function initSidebar が定義されていること ──
+  # -- AC3: function initSidebar is defined --
 
   It 'defines JS function initSidebar'
     The contents of file "$TEMPLATE" should include 'function initSidebar'
   End
 
-  # ── 完了条件4: ES5準拠（let, const, =>, class をJS内で使用していないこと） ──
+  # -- AC4: ES5 compliant (no let, const, =>, class in JS) --
 
   It 'has no let declarations in script block (ES5 compliant)'
     extract_js_let() {
@@ -53,7 +53,7 @@ Describe 'dashboard.html: JavaScript Addition + Existing Asset Preservation (Tas
     The output should equal "0"
   End
 
-  # ── 完了条件5: 既存 render 関数が全て維持されていること ──
+  # -- AC5: All existing render functions are preserved --
 
   It 'preserves existing JS function renderBacklog'
     The contents of file "$TEMPLATE" should include 'function renderBacklog()'
@@ -75,7 +75,7 @@ Describe 'dashboard.html: JavaScript Addition + Existing Asset Preservation (Tas
     The contents of file "$TEMPLATE" should include 'function renderMessages()'
   End
 
-  # ── 完了条件6: テンプレートプレースホルダーが全て維持されていること ──
+  # -- AC6: All template placeholders are preserved --
 
   It 'preserves placeholder {{BACKLOG_DATA}}'
     The contents of file "$TEMPLATE" should include '{{BACKLOG_DATA}}'
@@ -93,7 +93,7 @@ Describe 'dashboard.html: JavaScript Addition + Existing Asset Preservation (Tas
     The contents of file "$TEMPLATE" should include '{{INSIGHTS_DATA}}'
   End
 
-  # ── 完了条件7: 全HTML IDが維持されていること ──
+  # -- AC7: All HTML IDs are preserved --
 
   It 'preserves HTML ID #backlog-board'
     The contents of file "$TEMPLATE" should include 'id="backlog-board"'

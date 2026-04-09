@@ -1,13 +1,13 @@
 Describe 'dashboard.html: Responsive Improvements (Task 6)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- タッチターゲット 44px 確保 ---
+  # --- Touch target 44px minimum ---
   It 'sets min-height: 48px on .refresh-btn'
     The contents of file "$TEMPLATE" should include 'min-height: 48px'
   End
 
   It 'sets min-height: 48px on .done-toggle-btn'
-    # design.md: 全インタラクティブ要素のタッチターゲットは 44px 以上
+    # design.md: All interactive elements must have a touch target of at least 44px
     The contents of file "$TEMPLATE" should match pattern '*.done-toggle-btn*min-height: 48px*'
   End
 
@@ -15,7 +15,7 @@ Describe 'dashboard.html: Responsive Improvements (Task 6)'
     The contents of file "$TEMPLATE" should match pattern '*.story-select*min-height: 48px*'
   End
 
-  # --- 768px ブレークポイントのフォントサイズ調整 ---
+  # --- 768px breakpoint font size adjustment ---
   It 'fixes header h1 font-size to --text-xl in 768px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 768px)*font-size: var(--text-xl)*'
   End
@@ -24,7 +24,7 @@ Describe 'dashboard.html: Responsive Improvements (Task 6)'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 768px)*padding: var(--space-3)*'
   End
 
-  # --- 480px ブレークポイントのフォントサイズ調整 ---
+  # --- 480px breakpoint font size adjustment ---
   It 'reduces header h1 font-size to --text-lg in 480px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 480px)*font-size: var(--text-lg)*'
   End

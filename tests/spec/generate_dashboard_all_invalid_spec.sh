@@ -4,7 +4,7 @@ Describe 'generate-dashboard.sh Fallback When All Lines Are Invalid JSON'
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
     mkdir -p "$TEST_HEARTBEAT/stories/dummy-story"
 
-    # backlog.jsonl: 全行が不正なJSON
+    # backlog.jsonl: all lines are invalid JSON
     cat > "$TEST_HEARTBEAT/backlog.jsonl" <<'JSONL'
 "{"story_id":"broken-1","title":"Broken 1","status":"draft","priority":1,"points":1}
 not json at all
@@ -25,7 +25,7 @@ JSONL
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The output should include 'Dashboard generated'
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist
-      # BACKLOG_DATAが空配列[]であること（不正なstory_idが含まれない）
+      # BACKLOG_DATA should be empty array [] (no invalid story_id included)
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should not include 'broken-1'
       The contents of file "$TEST_HEARTBEAT/dashboard.html" should not include 'missing-closing-brace'
     End

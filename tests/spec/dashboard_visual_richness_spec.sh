@@ -1,7 +1,7 @@
 Describe 'dashboard.html: Visual Richness and Depth (Task 5)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # --- グラスモーフィズム効果（ヘッダー） ---
+  # --- Glassmorphism effect (header) ---
   It 'applies backdrop-filter to header (token or literal)'
     check_header_backdrop() {
       awk '/^header[ \t]*\{/{found=1} found && /[^-]backdrop-filter[ \t]*:/{print "ok"; exit} found && /\}/{found=0}' "$TEMPLATE"
@@ -18,24 +18,24 @@ Describe 'dashboard.html: Visual Richness and Depth (Task 5)'
     The output should equal "ok"
   End
 
-  # --- サブテルグラデーション背景 (タスク4でメッシュグラデーションに変更) ---
+  # --- Subtle gradient background (changed to mesh gradient in Task 4) ---
   It 'applies gradient-mesh as background-image on body'
     The contents of file "$TEMPLATE" should include 'background-image: var(--gradient-mesh)'
   End
 
-  # --- パネルのシャドウトークン適用 ---
+  # --- Panel shadow token application ---
   It 'uses --shadow-sm token for default box-shadow on .panel'
-    # design.md: パネル共通の shadow は var(--shadow-sm)
+    # design.md: Common panel shadow is var(--shadow-sm)
     The contents of file "$TEMPLATE" should match pattern '*.panel {*box-shadow: var(--shadow-sm)*'
   End
 
-  # --- パネルの border-radius 改善 ---
+  # --- Panel border-radius improvement ---
   It 'uses --radius-lg token for border-radius on .panel'
-    # design.md: パネル共通の border-radius は var(--radius-lg) = 14px
+    # design.md: Common panel border-radius is var(--radius-lg) = 14px
     The contents of file "$TEMPLATE" should match pattern '*.panel {*border-radius: var(--radius-lg)*'
   End
 
-  # --- ヘッダーのグラスモーフィズム背景（半透明） ---
+  # --- Header glassmorphism background (semi-transparent) ---
   It 'changes header background to semi-transparent rgba'
     The contents of file "$TEMPLATE" should include 'background: rgba('
   End

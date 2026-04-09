@@ -9,26 +9,26 @@ Describe 'board-write.sh'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  # Helper: パイプ経由で board-write.sh を呼び出す
+  # Helper: invoke board-write.sh via pipe
   run_board_write() {
     echo "$1" | ./core/scripts/board-write.sh "$2"
   }
 
-  # Helper: 最終行のタイムスタンプが現在時刻から5秒以内か検証
+  # Helper: verify that the last line's timestamp is within 5 seconds of now
   assert_timestamp_recent() {
     local target_file="${1:-$TEST_BOARD_FILE}"
     local ts
     ts=$(tail -1 "$target_file" | jq -r '.timestamp')
 
-    # ISO 8601 UTC 形式であること
+    # Must be in ISO 8601 UTC format
     echo "$ts" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$' || return 1
 
     local injected_epoch now_epoch diff
-    # macOS date 変換
+    # macOS date conversion
     if TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s" >/dev/null 2>&1; then
       injected_epoch=$(TZ=UTC0 date -j -f "%Y-%m-%dT%H:%M:%SZ" "$ts" "+%s")
     else
-      # Linux date 変換
+      # Linux date conversion
       injected_epoch=$(date -d "$ts" "+%s")
     fi
     now_epoch=$(date -u "+%s")
@@ -39,7 +39,7 @@ Describe 'board-write.sh'
 
   timestamp_is_recent() { assert_timestamp_recent "$TEST_BOARD_FILE"; }
 
-  # Helper: ファイルが存在しないか空であることを検証
+  # Helper: verify that the file does not exist or is empty
   assert_file_not_exists_or_empty() {
     [ ! -f "$TEST_BOARD_FILE" ] || [ ! -s "$TEST_BOARD_FILE" ]
   }

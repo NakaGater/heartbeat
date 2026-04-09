@@ -23,7 +23,7 @@ Describe 'generate-dashboard.sh: Dashboard Integration - INSIGHTS_DATA Injection
   AfterEach 'cleanup'
 
   It 'replaces INSIGHTS_DATA placeholder with 4-layer integrated JSON'
-    # 4層のテストデータを用意
+    # Prepare 4-layer test data
     echo '{"id":"RAW-001","source_type":"interview","source_ref":"test.md","title":"テスト","excerpt":"要約","created_by":"insight-analyst","timestamp":"2026-04-04T10:00:00Z"}' \
       > "$TEST_HEARTBEAT/insights/raw.jsonl"
     echo '{"id":"FND-001","source_raw":"RAW-001","type":"statement","content":"発言内容","created_by":"insight-analyst","timestamp":"2026-04-04T10:00:00Z"}' \
@@ -35,9 +35,9 @@ Describe 'generate-dashboard.sh: Dashboard Integration - INSIGHTS_DATA Injection
 
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
-    # INSIGHTS_DATAが置換されており、プレースホルダーが残っていないこと
+    # INSIGHTS_DATA is replaced and no placeholder remains
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should not include '{{INSIGHTS_DATA}}'
-    # 4層のデータ構造がJSONとして注入されていること
+    # 4-layer data structure is injected as JSON
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include '"raw"'
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include '"findings"'
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include '"insights"'
@@ -50,7 +50,7 @@ Describe 'generate-dashboard.sh: Dashboard Integration - INSIGHTS_DATA Injection
 
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
-    # User Insightsパネルの存在確認
+    # Verify User Insights panel exists
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'User Insights'
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'id="insights-panel"'
   End
@@ -61,20 +61,20 @@ Describe 'generate-dashboard.sh: Dashboard Integration - INSIGHTS_DATA Injection
 
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
-    # INSIGHTS_DATAの宣言がvar（ES5）であること
+    # INSIGHTS_DATA declaration uses var (ES5 compliant)
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'var INSIGHTS_DATA'
-    # renderInsights関数がfunction宣言であること
+    # renderInsights is a function declaration
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'function renderInsights()'
   End
 
   It 'does not error and displays no-data message when JSONL files are missing'
-    # insightsディレクトリは空（JSONLファイルなし）
+    # insights directory is empty (no JSONL files)
     rm -rf "$TEST_HEARTBEAT/insights"
 
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The status should eq 0
     The output should include 'Dashboard generated'
-    # データなし表示のための空配列またはデータなし文字列が含まれること
+    # Should contain empty array or no-data string for empty state display
     The contents of file "$TEST_HEARTBEAT/dashboard.html" should include 'データなし'
   End
 End

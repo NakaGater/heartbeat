@@ -1,7 +1,7 @@
 Describe 'dashboard.html: Hero Metrics Section CSS (Task 5)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # ── 完了条件1: .hero-metrics に display: grid ──
+  # -- AC1: .hero-metrics has display: grid --
 
   It 'defines display: grid on .hero-metrics'
     extract_hero_display() {
@@ -11,7 +11,7 @@ Describe 'dashboard.html: Hero Metrics Section CSS (Task 5)'
     The output should equal "ok"
   End
 
-  # ── 完了条件2: .metric-card に border-radius と padding ──
+  # -- AC2: .metric-card has border-radius and padding --
 
   It 'defines border-radius on .metric-card'
     extract_metric_card_radius() {
@@ -29,7 +29,7 @@ Describe 'dashboard.html: Hero Metrics Section CSS (Task 5)'
     The output should equal "ok"
   End
 
-  # ── 完了条件3: .metric-card:hover で transform: translateY(-2px) ──
+  # -- AC3: .metric-card:hover has transform: translateY(-2px) --
 
   It 'defines transform: translateY(-2px) on .metric-card:hover'
     extract_metric_card_hover() {
@@ -39,7 +39,7 @@ Describe 'dashboard.html: Hero Metrics Section CSS (Task 5)'
     The output should equal "ok"
   End
 
-  # ── 完了条件4: .metric-value に font-size: 3rem と font-weight: 800 ──
+  # -- AC4: .metric-value has font-size: 3rem and font-weight: 800 --
 
   It 'defines font-size on .metric-value'
     extract_metric_value_font_size() {
@@ -57,7 +57,7 @@ Describe 'dashboard.html: Hero Metrics Section CSS (Task 5)'
     The output should equal "ok"
   End
 
-  # ── 完了条件5: .metric-value にグラデーションテキスト ──
+  # -- AC5: .metric-value has gradient text --
 
   It 'defines -webkit-background-clip: text on .metric-value'
     extract_metric_value_bg_clip() {
@@ -75,7 +75,7 @@ Describe 'dashboard.html: Hero Metrics Section CSS (Task 5)'
     The output should equal "ok"
   End
 
-  # ── 完了条件6: .metric-label に text-transform: uppercase と letter-spacing ──
+  # -- AC6: .metric-label has text-transform: uppercase and letter-spacing --
 
   It 'defines text-transform: uppercase on .metric-label'
     extract_metric_label_transform() {
@@ -93,7 +93,7 @@ Describe 'dashboard.html: Hero Metrics Section CSS (Task 5)'
     The output should equal "ok"
   End
 
-  # ── 完了条件7: .metric-ring circle.progress に stroke-linecap: round ──
+  # -- AC7: .metric-ring circle.progress has stroke-linecap: round --
 
   It 'defines stroke-linecap: round on .metric-ring circle.progress'
     extract_metric_ring_stroke() {

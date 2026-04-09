@@ -10,13 +10,13 @@ Describe 'getISOWeekNumber(): UTC-based Calculation and YYYY-Wnn Format Return (
     return 0
   }
 
-  # AC-7: getISOWeekNumber()が"YYYY-Wnn"形式の文字列を返すこと
-  # AC-5: UTCベースで週番号が計算されること
-  # AC-6: 同一UTC日のZ表記と+09:00表記が同一週に集計されること
-  # AC-8: 年末年始の週番号が正しい年に属すること
+  # AC-7: getISOWeekNumber() should return a string in "YYYY-Wnn" format
+  # AC-5: Week numbers should be calculated based on UTC
+  # AC-6: Z notation and +09:00 notation for the same UTC day should aggregate to the same week
+  # AC-8: Year-end/new-year week numbers should belong to the correct year
   #
-  # 現状: 整数(例: 14)を返す。"YYYY-Wnn"形式ではない。
-  # 期待: "2026-W14" のような文字列を返す。
+  # Current: Returns integer (e.g., 14). Not in "YYYY-Wnn" format.
+  # Expected: Returns a string like "2026-W14".
   check_week_format_and_utc() {
     command -v node >/dev/null 2>&1 || return 1
     extract_week_function || return 1

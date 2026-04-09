@@ -16,7 +16,7 @@ Describe 'generate-dashboard.sh Lock Mechanism'
 
   Describe 'Lock Directory Lifecycle'
     It 'contains lock mechanism code (mkdir .dashboard-lock) in the script'
-      # generate-dashboard.sh が排他制御を実装しているかをソースコードレベルで検証
+      # Verify at source code level that generate-dashboard.sh implements mutual exclusion
       check_lock_code() {
         grep -q 'dashboard-lock' ./core/scripts/generate-dashboard.sh && echo "HAS_LOCK_CODE" || echo "NO_LOCK_CODE"
       }
@@ -25,7 +25,7 @@ Describe 'generate-dashboard.sh Lock Mechanism'
     End
 
     It 'auto-cleans up lock directory after successful completion'
-      # EXIT trapによりロックが確実に解放されることを検証
+      # Verify that the lock is reliably released via EXIT trap
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The status should equal 0
       The output should include 'Dashboard generated'
@@ -35,11 +35,11 @@ Describe 'generate-dashboard.sh Lock Mechanism'
 
   Describe 'Graceful Exit on Lock Contention'
     It 'exits 0 hook-safe after timeout when another process holds the lock'
-      # 先にロックディレクトリを作成して他プロセスが保持している状態をシミュレート
+      # Create lock directory first to simulate another process holding the lock
       mkdir -p "$TEST_HEARTBEAT/.dashboard-lock"
       echo "99999" > "$TEST_HEARTBEAT/.dashboard-lock/pid"
-      # MAX_RETRIES=10, RETRY_INTERVAL=1 だが、テスト用に環境変数でオーバーライド
-      # オーバーライドが効かない場合でもタイムアウトで終了するはず
+      # MAX_RETRIES=10, RETRY_INTERVAL=1, but overridden via env vars for testing
+      # Even if override does not work, it should exit on timeout
       export DASHBOARD_LOCK_MAX_RETRIES=2
       export DASHBOARD_LOCK_RETRY_INTERVAL=0
 
@@ -49,12 +49,12 @@ Describe 'generate-dashboard.sh Lock Mechanism'
     End
 
     It 'does not corrupt the output file when lock contention times out'
-      # 既存のダッシュボードを事前生成
+      # Pre-generate an existing dashboard
       ./core/scripts/generate-dashboard.sh "$TEST_PROJECT" >/dev/null 2>&1
       local original_hash
       original_hash=$(md5sum "$TEST_HEARTBEAT/dashboard.html" 2>/dev/null || md5 -q "$TEST_HEARTBEAT/dashboard.html" 2>/dev/null)
 
-      # ロックを取得して競合させる
+      # Acquire lock to create contention
       mkdir -p "$TEST_HEARTBEAT/.dashboard-lock"
       echo "99999" > "$TEST_HEARTBEAT/.dashboard-lock/pid"
       export DASHBOARD_LOCK_MAX_RETRIES=2
@@ -63,7 +63,7 @@ Describe 'generate-dashboard.sh Lock Mechanism'
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The status should equal 0
       The stderr should include 'lock'
-      # 既存のdashboard.htmlが変更されていないことを確認
+      # Confirm existing dashboard.html was not modified
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist
     End
   End

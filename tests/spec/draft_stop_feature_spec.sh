@@ -1,10 +1,10 @@
 Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
-  # Workflow 1 の PdM ヒアリング後・context-manager 前に
-  # 「計画に進む / ドラフトで止める」の選択肢が提示されることを検証する
+  # After PdM hearing in Workflow 1, before context-manager,
+  # verify that "Continue to planning / Stop at draft" options are presented
 
   SKILL_FILE="core/skills/heartbeat/SKILL.md"
 
-  # ヘルパー: Workflow 1 セクション全体を抽出
+  # Helper: Extract the entire Workflow 1 section
   extract_wf1() {
     local wf1_start wf1_stop
     wf1_start=$(grep -n 'Workflow 1: Create a Story' "$SKILL_FILE" | head -1 | cut -d: -f1)
@@ -13,8 +13,8 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
   }
 
   It 'contains a "Stop at draft" text option after PdM hearing'
-    # pdm (hearing) 行と context-manager 行の間に
-    # "Stop at draft" が含まれること
+    # Between the pdm (hearing) line and the context-manager line
+    # "Stop at draft" should be present
     check_stop_at_draft_text() {
       local wf1_section
       wf1_section=$(extract_wf1)
@@ -26,7 +26,7 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
       context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
       [ -n "$context_line" ] || return 1
 
-      # pdm (hearing) 行と context-manager 行の間に "Stop at draft" があること
+      # "Stop at draft" should be between pdm (hearing) and context-manager lines
       echo "$wf1_section" \
         | sed -n "${hearing_line},${context_line}p" \
         | grep -qi 'stop at draft'
@@ -36,8 +36,8 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
   End
 
   It 'contains a draft stop choice block after PdM hearing and before context-manager'
-    # pdm (hearing) と context-manager の間に選択肢提示パターンと
-    # "Continue to planning" と "Stop at draft" の両方が含まれること
+    # Between pdm (hearing) and context-manager, a choice block containing
+    # both "Continue to planning" and "Stop at draft" should exist
     check_draft_stop_choice_block() {
       local wf1_section
       wf1_section=$(extract_wf1)
@@ -51,7 +51,7 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
 
       between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
-      # "Continue to planning" と "Stop at draft" の両方が存在すること
+      # both "Continue to planning" and "Stop at draft" should exist
       echo "$between" | grep -qi 'continue to planning' || return 1
       echo "$between" | grep -qi 'stop at draft' || return 1
     }
@@ -60,13 +60,13 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
   End
 
   It 'contains a note about skipping the draft stop option in Workflow 3'
-    # Workflow 3 セクション内に draft-stop の選択肢をスキップする NOTE がある
+    # Workflow 3 section contains a NOTE about skipping the draft stop option
     check_wf3_skip_draft_stop() {
       local wf3_start wf3_end wf3_section
       wf3_start=$(grep -n 'Workflow 3: Create and Implement' "$SKILL_FILE" | head -1 | cut -d: -f1)
       [ -n "$wf3_start" ] || return 1
 
-      # Workflow 3 の終了は次の "## Workflow" か "## " セクション
+      # Workflow 3 ends at the next "## Workflow" or "## " section
       wf3_end=$(tail -n +"$((wf3_start + 1))" "$SKILL_FILE" | grep -n '^## ' | head -1 | cut -d: -f1)
       if [ -n "$wf3_end" ]; then
         wf3_end=$((wf3_start + wf3_end))
@@ -76,8 +76,8 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
 
       wf3_section=$(sed -n "${wf3_start},${wf3_end}p" "$SKILL_FILE")
 
-      # ドラフト停止選択肢のスキップに関する記述があること
-      # "draft" と "skip" (または IGNORE) が同じ NOTE/文脈に含まれること
+      # Should contain a description about skipping the draft stop option
+      # "draft" and "skip" (or IGNORE) should appear in the same NOTE/context
       echo "$wf3_section" | grep -qi 'draft.*skip\|skip.*draft\|IGNORE.*draft.*stop\|draft.*stop.*IGNORE\|draft.*choice.*skip\|skip.*draft.*choice'
     }
     When call check_wf3_skip_draft_stop
@@ -85,7 +85,7 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
   End
 
   It 'contains a STOP directive in the draft stop path'
-    # "Stop at draft" を選択した場合にワークフローが終了する STOP 指示があること
+    # A STOP directive should exist for when "Stop at draft" is selected
     check_draft_stop_directive() {
       local wf1_section
       wf1_section=$(extract_wf1)
@@ -99,8 +99,8 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
 
       between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
-      # STOP または "Return control" や "end" のようなワークフロー終了指示が
-      # ドラフト停止パスに含まれること
+      # A workflow termination directive like STOP, "Return control", or "end"
+      # should be present in the draft stop path
       echo "$between" | grep -qiE 'STOP|return control|end of workflow|workflow complete'
     }
     When call check_draft_stop_directive
@@ -109,12 +109,12 @@ Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
 End
 
 Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
-  # Copilot 版 SKILL.md の PdM ヒアリング後・context-manager 前に
-  # ドラフト停止選択肢が正しく配置されていることを検証する
+  # In the Copilot version SKILL.md, after PdM hearing and before context-manager,
+  # verify that the draft stop option is correctly positioned
 
   COPILOT_SKILL_FILE="adapters/copilot/skills/heartbeat/SKILL.md"
 
-  # ヘルパー: Workflow 1 セクション全体を抽出
+  # Helper: Extract the entire Workflow 1 section
   extract_copilot_wf1() {
     local wf1_start wf1_stop
     wf1_start=$(grep -n 'Workflow 1: Create a Story' "$COPILOT_SKILL_FILE" | head -1 | cut -d: -f1)
@@ -123,15 +123,15 @@ Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
   }
 
   It 'contains Phase 0 section (draft registration) in Copilot version'
-    # Workflow 1 内に Phase 0 の記述があり、draft 登録に関する内容を含むこと
+    # Workflow 1 should contain a Phase 0 description with draft registration content
     check_copilot_phase0() {
       local wf1_section
       wf1_section=$(extract_copilot_wf1)
 
-      # Phase 0 の見出しが存在すること
+      # Phase 0 heading should exist
       echo "$wf1_section" | grep -qi 'Phase 0' || return 1
 
-      # draft に関する記述が Phase 0 付近にあること
+      # draft-related content should exist near Phase 0
       echo "$wf1_section" | grep -qi 'draft' || return 1
     }
     When call check_copilot_phase0
@@ -139,7 +139,7 @@ Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
   End
 
   It 'presents a "Stop at draft" option after PdM hearing'
-    # pdm (hearing) と context-manager の間に "Stop at draft" が含まれること
+    # "Stop at draft" should be between pdm (hearing) and context-manager
     check_copilot_stop_at_draft() {
       local wf1_section
       wf1_section=$(extract_copilot_wf1)
@@ -153,7 +153,7 @@ Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
 
       between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
-      # "Continue to planning" と "Stop at draft" の両方が存在すること
+      # both "Continue to planning" and "Stop at draft" should exist
       echo "$between" | grep -qi 'continue to planning' || return 1
       echo "$between" | grep -qi 'stop at draft' || return 1
     }
@@ -162,13 +162,13 @@ Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
   End
 
   It 'contains a note about skipping the draft stop option in Workflow 3'
-    # Copilot 版 Workflow 3 セクション内に draft-stop 選択肢のスキップ注記があること
+    # Copilot Workflow 3 section should contain a skip note for the draft stop option
     check_copilot_wf3_skip_draft_stop() {
       local wf3_start wf3_end wf3_section
       wf3_start=$(grep -n 'Workflow 3: Create and Implement' "$COPILOT_SKILL_FILE" | head -1 | cut -d: -f1)
       [ -n "$wf3_start" ] || return 1
 
-      # Workflow 3 の終了は次の "## " セクション
+      # Workflow 3 ends at the next "## " section
       wf3_end=$(tail -n +"$((wf3_start + 1))" "$COPILOT_SKILL_FILE" | grep -n '^## ' | head -1 | cut -d: -f1)
       if [ -n "$wf3_end" ]; then
         wf3_end=$((wf3_start + wf3_end))
@@ -178,7 +178,7 @@ Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
 
       wf3_section=$(sed -n "${wf3_start},${wf3_end}p" "$COPILOT_SKILL_FILE")
 
-      # ドラフト停止選択肢のスキップに関する記述があること
+      # Should contain a description about skipping the draft stop option
       echo "$wf3_section" | grep -qi 'draft.*skip\|skip.*draft\|IGNORE.*draft.*stop\|draft.*stop.*IGNORE\|draft.*choice.*skip\|skip.*draft.*choice'
     }
     When call check_copilot_wf3_skip_draft_stop
@@ -186,7 +186,7 @@ Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
   End
 
   It 'contains a STOP directive in the draft stop path'
-    # "Stop at draft" を選択した場合にワークフローが終了する STOP 指示があること
+    # A STOP directive should exist for when "Stop at draft" is selected
     check_copilot_draft_stop_directive() {
       local wf1_section
       wf1_section=$(extract_copilot_wf1)
@@ -200,8 +200,8 @@ Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
 
       between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
-      # STOP または "Return control" のようなワークフロー終了指示が
-      # ドラフト停止パスに含まれること
+      # A workflow termination directive like STOP or "Return control"
+      # should be present in the draft stop path
       echo "$between" | grep -qiE 'STOP|return control|end of workflow|workflow complete'
     }
     When call check_copilot_draft_stop_directive

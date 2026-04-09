@@ -1,7 +1,7 @@
 Describe 'dashboard.html: Existing Asset Preservation Verification (Task 7)'
   TEMPLATE="core/templates/dashboard.html"
 
-  # ── HTML ID の存在確認 ──
+  # -- HTML ID existence check --
 
   It 'contains HTML ID #app'
     The contents of file "$TEMPLATE" should include 'id="app"'
@@ -35,7 +35,7 @@ Describe 'dashboard.html: Existing Asset Preservation Verification (Task 7)'
     The contents of file "$TEMPLATE" should include 'id="story-select"'
   End
 
-  # ── CSS クラス名の存在確認 ──
+  # -- CSS class name existence check --
 
   It 'contains CSS class .panel'
     The contents of file "$TEMPLATE" should include '.panel'
@@ -85,7 +85,7 @@ Describe 'dashboard.html: Existing Asset Preservation Verification (Task 7)'
     The contents of file "$TEMPLATE" should include '.msg-time'
   End
 
-  # ── JS 関数宣言の存在確認 ──
+  # -- JS function declaration existence check --
 
   It 'declares JS function renderBacklog'
     The contents of file "$TEMPLATE" should include 'function renderBacklog()'
@@ -115,7 +115,7 @@ Describe 'dashboard.html: Existing Asset Preservation Verification (Task 7)'
     The contents of file "$TEMPLATE" should include 'function renderTasks()'
   End
 
-  # ── テンプレートプレースホルダーの存在確認 ──
+  # -- Template placeholder existence check --
 
   It 'contains template placeholder {{BACKLOG_DATA}}'
     The contents of file "$TEMPLATE" should include '{{BACKLOG_DATA}}'

@@ -1,7 +1,7 @@
 Describe 'lib/commit-message.sh Extraction (AC-4)'
-  # Task 4, CC1: core/scripts/lib/commit-message.sh が存在し source で読み込み可能
-  # Task 4, CC3: auto-commit.sh が source で lib/commit-message.sh を読み込んでいる
-  # Task 4, CC4-CC5: 主要関数が lib/commit-message.sh に定義されている
+  # Task 4, CC1: core/scripts/lib/commit-message.sh exists and can be sourced
+  # Task 4, CC3: auto-commit.sh sources lib/commit-message.sh
+  # Task 4, CC4-CC5: Main functions are defined in lib/commit-message.sh
 
   Describe 'CC1: lib/commit-message.sh Existence and Sourceability'
     It 'verifies that core/scripts/lib/commit-message.sh exists'

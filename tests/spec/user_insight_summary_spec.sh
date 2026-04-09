@@ -12,22 +12,22 @@ Describe 'user-insight-summary.sh UCD 4-layer Cross-cutting Markdown Summary Gen
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  # --- テストデータ生成ヘルパー ---
+  # --- Test data generation helper ---
   create_full_test_data() {
-    # Raw層
+    # Raw layer
     echo '{"id":"RAW-001","source_type":"interview","source_ref":"interview_A.md","title":"ユーザーAインタビュー","excerpt":"検索機能についての聞き取り","participant_count":1,"created_by":"insight-analyst","timestamp":"2026-04-04T10:00:00Z"}' >> "${TEST_INSIGHTS_DIR}/raw.jsonl"
     echo '{"id":"RAW-002","source_type":"survey","source_ref":"survey_results.md","title":"アンケート結果","excerpt":"検索機能の利用状況調査","participant_count":10,"created_by":"insight-analyst","timestamp":"2026-04-04T10:01:00Z"}' >> "${TEST_INSIGHTS_DIR}/raw.jsonl"
 
-    # Findings層
+    # Findings layer
     echo '{"id":"FND-001","source_raw":"RAW-001","type":"statement","content":"詳細検索を使わないと発言","participant":"ユーザーA","context":"検索機能の質問時","created_by":"insight-analyst","timestamp":"2026-04-04T10:10:00Z"}' >> "${TEST_INSIGHTS_DIR}/findings.jsonl"
     echo '{"id":"FND-002","source_raw":"RAW-001","type":"behavior","content":"全文検索のみ利用","participant":"ユーザーA","context":"操作観察時","created_by":"insight-analyst","timestamp":"2026-04-04T10:11:00Z"}' >> "${TEST_INSIGHTS_DIR}/findings.jsonl"
     echo '{"id":"FND-003","source_raw":"RAW-002","type":"statement","content":"8割が詳細検索を使わないと回答","participant":"","context":"アンケート集計","created_by":"insight-analyst","timestamp":"2026-04-04T10:12:00Z"}' >> "${TEST_INSIGHTS_DIR}/findings.jsonl"
 
-    # Insights層
+    # Insights layer
     echo '{"id":"INS-001","source_findings":["FND-001","FND-002","FND-003"],"category":"pain","theme":"検索機能の複雑さ","insight":"ユーザーは詳細検索よりシンプルな全文検索を好む","evidence_summary":"複数ユーザーが詳細検索を使わないと回答","severity":"high","confidence":"high","created_by":"insight-analyst","timestamp":"2026-04-04T10:20:00Z"}' >> "${TEST_INSIGHTS_DIR}/insights.jsonl"
     echo '{"id":"INS-002","source_findings":["FND-002"],"category":"need","theme":"検索結果の即時性","insight":"検索結果が即座に表示されることを期待している","evidence_summary":"操作中に待機を嫌う行動が観察された","severity":"medium","confidence":"medium","created_by":"insight-analyst","timestamp":"2026-04-04T10:21:00Z"}' >> "${TEST_INSIGHTS_DIR}/insights.jsonl"
 
-    # Opportunities層
+    # Opportunities layer
     echo '{"id":"OPP-001","source_insights":["INS-001","INS-002"],"title":"検索体験の簡素化","description":"詳細検索を廃止し高精度な全文検索に一本化","impact":"high","effort":"medium","related_stories":[],"created_by":"insight-analyst","timestamp":"2026-04-04T10:30:00Z"}' >> "${TEST_INSIGHTS_DIR}/opportunities.jsonl"
     echo '{"id":"OPP-002","source_insights":["INS-002"],"title":"検索速度の改善","description":"検索応答時間を500ms以内に短縮","impact":"low","effort":"high","related_stories":[],"created_by":"insight-analyst","timestamp":"2026-04-04T10:31:00Z"}' >> "${TEST_INSIGHTS_DIR}/opportunities.jsonl"
   }
