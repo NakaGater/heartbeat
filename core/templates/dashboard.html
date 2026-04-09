@@ -1331,6 +1331,37 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       svg += '<line x1="' + tx + '" y1="' + padT + '" x2="' + tx + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="0.5" opacity="0.5"/>';
     }
 
+    // --- Break symbols for compressed gaps (0065-T3) ---
+    // Draw a zigzag/wave SVG path in each compressed gap region (AC-1).
+    if (gaps.length > 0) {
+      var gapCompressedW = chartW * GAP_WIDTH_RATIO;
+      var bsSegStart = tMin;
+      var bsOffset = 0;
+      var actScale = segments.length > 0 ? segments[0].scale : tScale;
+      for (var bi = 0; bi < gaps.length; bi++) {
+        var bGap = gaps[bi];
+        // Advance offset past the activity segment before this gap
+        if (bGap.start > bsSegStart) {
+          bsOffset += (bGap.start - bsSegStart) * actScale;
+        }
+        // bsOffset now points to the start of this compressed gap region
+        var gapCenterX = padL + bsOffset + gapCompressedW / 2;
+        var zigTop = padT;
+        var zigBot = h - padB;
+        // Build zigzag path: amplitude 3px, period 6px
+        var amp = 3;
+        var period = 6;
+        var zigPath = 'M ' + gapCenterX + ',' + zigTop;
+        for (var zy = zigTop; zy < zigBot; zy += period) {
+          zigPath += ' L ' + (gapCenterX + amp) + ',' + (zy + period / 2);
+          zigPath += ' L ' + (gapCenterX - amp) + ',' + Math.min(zy + period, zigBot);
+        }
+        svg += '<path class="gap-break" d="' + zigPath + '" fill="none" stroke="var(--text-muted)" stroke-width="1" role="presentation"/>';
+        bsOffset += gapCompressedW;
+        bsSegStart = bGap.end;
+      }
+    }
+
     // Bars: each entry spans from its timestamp to the next entry's timestamp (or tMax)
     for (var ei = 0; ei < entries.length; ei++) {
       var e = entries[ei];
