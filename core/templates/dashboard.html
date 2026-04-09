@@ -1322,13 +1322,29 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       svg += '<text x="' + (padL - 8) + '" y="' + (y + rowH / 2 + 4) + '" text-anchor="end" font-size="11" fill="' + agentColor(agent) + '">' + esc(agent) + '</text>';
     });
 
-    // Time axis labels
+    // Time axis labels (0065-T4)
+    // Distribute ticks proportionally across activity segments based on
+    // each segment's duration (seg.end - seg.start). No ticks in gap regions.
     var ticks = 5;
-    for (var t = 0; t <= ticks; t++) {
-      var tx = padL + (chartW / ticks) * t;
-      var tVal = new Date(tMin + ((tMax - tMin) / ticks) * t);
-      svg += '<text x="' + tx + '" y="' + (h - 8) + '" text-anchor="middle" font-size="9" fill="var(--text-muted)">' + formatTime(tVal) + '</text>';
-      svg += '<line x1="' + tx + '" y1="' + padT + '" x2="' + tx + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="0.5" opacity="0.5"/>';
+    var totalSegDuration = 0;
+    for (var sd = 0; sd < segments.length; sd++) {
+      totalSegDuration += segments[sd].end - segments[sd].start;
+    }
+    var ticksPlaced = 0;
+    for (var si2 = 0; si2 < segments.length; si2++) {
+      var seg = segments[si2];
+      var segDuration = seg.end - seg.start;
+      var segTicks = Math.round((segDuration / totalSegDuration) * ticks);
+      if (si2 === segments.length - 1) segTicks = ticks - ticksPlaced;
+      for (var st = 0; st <= segTicks; st++) {
+        var frac = segTicks > 0 ? st / segTicks : 0;
+        var tsVal = seg.start + frac * segDuration;
+        var tx = padL + mapX(tsVal);
+        var tVal = new Date(tsVal);
+        svg += '<text x="' + tx + '" y="' + (h - 8) + '" text-anchor="middle" font-size="9" fill="var(--text-muted)">' + formatTime(tVal) + '</text>';
+        svg += '<line x1="' + tx + '" y1="' + padT + '" x2="' + tx + '" y2="' + (h - padB) + '" stroke="var(--border)" stroke-width="0.5" opacity="0.5"/>';
+      }
+      ticksPlaced += segTicks;
     }
 
     // --- Break symbols for compressed gaps (0065-T3) ---
