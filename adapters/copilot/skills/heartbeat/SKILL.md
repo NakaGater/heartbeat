@@ -148,12 +148,15 @@ Show backlog.jsonl stories with status: "ready"
 User selects a story (Use vscode_askQuestions)
 
 Phase 2 - Design:
-  designer
+  IMPORTANT: designer MUST be executed before architect. This order is mandatory.
+  designer produces design.md, which is a required input for architect.
+
+  Step 1: designer
     input: story.md + context.md
     output: design.md
 
-  architect
-    input: story.md + design.md
+  Step 2: architect
+    input: story.md + design.md (design.md is produced by designer in Step 1)
     output: tasks.md + tasks.jsonl (only if not yet created)
     Approval: Ask user to confirm task decomposition
       Present choices: ["Approve", "Request changes"]
