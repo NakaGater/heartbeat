@@ -1242,9 +1242,11 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
     var tScale = chartW / (tMax - tMin);
 
     // --- Gap detection (0065-T1) ---
-    // Scan adjacent timestamps for gaps >= 20% of total range (AC-1 threshold)
+    // Scan adjacent timestamps for gaps >= 20% of total range (AC-1 threshold).
+    var GAP_THRESHOLD_RATIO = 0.2;
+    var GAP_WIDTH_RATIO = 0.05;
     var totalRange = tMax - tMin;
-    var gapThreshold = totalRange * 0.2;
+    var gapThreshold = totalRange * GAP_THRESHOLD_RATIO;
     var timestamps = entries.map(function(e){ return new Date(e.timestamp).getTime(); });
     timestamps.sort(function(a,b){ return a - b; });
 
@@ -1258,13 +1260,14 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       }
     }
 
-    // Build segments array: each segment is a continuous activity period
+    // Build segments array: each segment is a continuous activity period.
+    // When gaps exist, each gap is compressed to a fixed narrow width and the
+    // remaining chart width is distributed proportionally across activity segments.
     var segments = [];
     if (gaps.length === 0) {
       // No gaps detected -- single segment covers entire range (AC-4)
       segments.push({ start: tMin, end: tMax, offsetX: 0, scale: tScale });
     } else {
-      var GAP_WIDTH_RATIO = 0.05;
       var gapCompressedWidth = chartW * GAP_WIDTH_RATIO;
       var activityWidth = chartW - gaps.length * gapCompressedWidth;
       var totalActivity = totalRange - totalGapSize;
@@ -1274,22 +1277,27 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       var currentOffset = 0;
       for (var gk = 0; gk < gaps.length; gk++) {
         var gap = gaps[gk];
-        // Activity segment before this gap (skip if gap starts at tMin)
         if (gap.start > segStart) {
           segments.push({ start: segStart, end: gap.start, offsetX: currentOffset, scale: activityScale });
           currentOffset += (gap.start - segStart) * activityScale;
         }
-        currentOffset += gapCompressedWidth; // compressed gap
+        currentOffset += gapCompressedWidth;
         segStart = gap.end;
       }
       // Final activity segment after last gap
       if (segStart < tMax) {
         segments.push({ start: segStart, end: tMax, offsetX: currentOffset, scale: activityScale });
       }
+      // Safety: if no activity segments were created, fall back to linear scale
+      if (segments.length === 0) {
+        segments.push({ start: tMin, end: tMax, offsetX: 0, scale: tScale });
+      }
     }
 
     // --- mapX: compressed coordinate mapping (0065-T2) ---
     // Converts an original timestamp (ms) to a compressed X offset within chartW.
+    // Walks the segments array to find which activity segment contains the
+    // timestamp, then returns the pixel offset within that segment.
     function mapX(ts) {
       for (var si = 0; si < segments.length; si++) {
         var seg = segments[si];
@@ -1298,6 +1306,8 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
           return seg.offsetX + (clamped - seg.start) * seg.scale;
         }
       }
+      // Unreachable: the last-segment guard above ensures a return.
+      // Defensive fallback for robustness.
       return 0;
     }
 
@@ -1327,10 +1337,9 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       var agentIdx = agents.indexOf(e.from);
       var start = new Date(e.timestamp).getTime();
       var end = tMax;
-      // Find next entry from same agent or global next entry
-      for (var ni = ei + 1; ni < entries.length; ni++) {
-        end = new Date(entries[ni].timestamp).getTime();
-        break;
+      // Bar extends to the next entry's timestamp (or tMax for the last entry)
+      if (ei + 1 < entries.length) {
+        end = new Date(entries[ei + 1].timestamp).getTime();
       }
       var x = padL + mapX(start);
       var bw = Math.max(mapX(end) - mapX(start), 2);
