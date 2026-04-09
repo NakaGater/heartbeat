@@ -1,6 +1,6 @@
 SKILL_FILE="core/skills/heartbeat/SKILL.md"
 
-# ヘルパー: Workflow 1 セクション全体を抽出
+# Helper: extract the entire Workflow 1 section
 extract_wf1() {
   local wf1_start wf1_stop
   wf1_start=$(grep -n 'Workflow 1: Create a Story' "$SKILL_FILE" | head -1 | cut -d: -f1)
@@ -8,30 +8,30 @@ extract_wf1() {
   sed -n "${wf1_start},${wf1_stop}p" "$SKILL_FILE"
 }
 
-# Draft-stop choice が pdm (hearing) 行と context-manager 行の間に存在することを検証
+# Verify Draft-stop choice exists between pdm (hearing) and context-manager lines
 check_draft_stop_between_hearing_and_context() {
   local wf1_section
   wf1_section=$(extract_wf1)
 
-  # pdm (hearing) 行の行番号を取得
+  # Get line number of pdm (hearing)
   local hearing_line
   hearing_line=$(echo "$wf1_section" | grep -n 'pdm.*hearing\|hearing.*brief' | head -1 | cut -d: -f1)
   [ -n "$hearing_line" ] || return 1
 
-  # context-manager 行の行番号を取得
+  # Get line number of context-manager
   local context_line
   context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
   [ -n "$context_line" ] || return 1
 
-  # pdm (hearing) と context-manager の間に "Draft-stop choice" または "Stop at draft" が存在すること
+  # Verify "Draft-stop choice" or "Stop at draft" exists between pdm (hearing) and context-manager
   local between
   between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
   echo "$between" | grep -qi 'draft.*stop\|stop.*draft'
 }
 
-Describe 'Draft-stop choice は PdM ヒアリング後・context-manager 前に配置される（0052 Task 1）'
-  It 'pdm (hearing) と context-manager の間に Draft-stop choice が存在する'
+Describe 'Draft-stop Choice Placed After PdM Hearing and Before context-manager (0052 Task 1)'
+  It 'Draft-stop choice exists between pdm (hearing) and context-manager'
     When call check_draft_stop_between_hearing_and_context
     The status should be success
   End
@@ -39,7 +39,7 @@ End
 
 COPILOT_SKILL_FILE="adapters/copilot/skills/heartbeat/SKILL.md"
 
-# ヘルパー: Copilot 版 Workflow 1 セクション全体を抽出
+# Helper: extract the entire Copilot Workflow 1 section
 extract_copilot_wf1() {
   local wf1_start wf1_stop
   wf1_start=$(grep -n 'Workflow 1: Create a Story' "$COPILOT_SKILL_FILE" | head -1 | cut -d: -f1)
@@ -47,30 +47,30 @@ extract_copilot_wf1() {
   sed -n "${wf1_start},${wf1_stop}p" "$COPILOT_SKILL_FILE"
 }
 
-# Copilot 版: Draft-stop choice が pdm (hearing) 行と context-manager 行の間に存在することを検証
+# Copilot: Verify Draft-stop choice exists between pdm (hearing) and context-manager lines
 check_copilot_draft_stop_between_hearing_and_context() {
   local wf1_section
   wf1_section=$(extract_copilot_wf1)
 
-  # pdm (hearing) 行の行番号を取得
+  # Get line number of pdm (hearing)
   local hearing_line
   hearing_line=$(echo "$wf1_section" | grep -n 'pdm.*hearing\|hearing.*brief' | head -1 | cut -d: -f1)
   [ -n "$hearing_line" ] || return 1
 
-  # context-manager 行の行番号を取得
+  # Get line number of context-manager
   local context_line
   context_line=$(echo "$wf1_section" | grep -n 'context-manager' | head -1 | cut -d: -f1)
   [ -n "$context_line" ] || return 1
 
-  # pdm (hearing) と context-manager の間に "Draft-stop choice" または "Stop at draft" が存在すること
+  # Verify "Draft-stop choice" or "Stop at draft" exists between pdm (hearing) and context-manager
   local between
   between=$(echo "$wf1_section" | sed -n "${hearing_line},${context_line}p")
 
   echo "$between" | grep -qi 'draft.*stop\|stop.*draft'
 }
 
-Describe 'Copilot 版 Draft-stop choice は PdM ヒアリング後・context-manager 前に配置される（0052 Task 2）'
-  It 'Copilot SKILL.md で pdm (hearing) と context-manager の間に Draft-stop choice が存在する'
+Describe 'Copilot Draft-stop Choice Placed After PdM Hearing and Before context-manager (0052 Task 2)'
+  It 'Draft-stop choice exists between pdm (hearing) and context-manager in Copilot SKILL.md'
     When call check_copilot_draft_stop_between_hearing_and_context
     The status should be success
   End

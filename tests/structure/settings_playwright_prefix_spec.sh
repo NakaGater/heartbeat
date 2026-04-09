@@ -1,17 +1,17 @@
 SETTINGS_FILE=".claude/settings.local.json"
 
-# permissions.allow から全エントリを抽出する
+# Extract all entries from permissions.allow
 extract_allow_entries() {
   jq -r '.permissions.allow[]' "$SETTINGS_FILE"
 }
 
-# 正しいプレフィックス mcp__plugin_heartbeat_playwright__* が含まれていることを検証
+# Verify correct prefix mcp__plugin_heartbeat_playwright__* is present
 check_correct_playwright_prefix() {
   extract_allow_entries | grep -qx 'mcp__plugin_heartbeat_playwright__\*'
 }
 
-# 誤ったプレフィックス mcp__playwright__* が単独で存在しないことを検証
-# mcp__plugin_heartbeat_playwright__* は許可するが mcp__playwright__* 単独は不可
+# Verify incorrect prefix mcp__playwright__* does not exist alone
+# mcp__plugin_heartbeat_playwright__* is allowed but mcp__playwright__* alone is not
 check_no_wrong_playwright_prefix() {
   if extract_allow_entries | grep -qx 'mcp__playwright__\*'; then
     return 1
@@ -19,13 +19,13 @@ check_no_wrong_playwright_prefix() {
   return 0
 }
 
-Describe 'settings.local.json permissions.allow: Playwright MCPプレフィックス'
-  It 'permissions.allow に正しいプレフィックス mcp__plugin_heartbeat_playwright__* が含まれている'
+Describe 'settings.local.json permissions.allow: Playwright MCP Prefix'
+  It 'permissions.allow contains the correct prefix mcp__plugin_heartbeat_playwright__*'
     When call check_correct_playwright_prefix
     The status should be success
   End
 
-  It 'permissions.allow に誤ったプレフィックス mcp__playwright__* が単独で存在しない'
+  It 'permissions.allow does not have the incorrect prefix mcp__playwright__* alone'
     When call check_no_wrong_playwright_prefix
     The status should be success
   End

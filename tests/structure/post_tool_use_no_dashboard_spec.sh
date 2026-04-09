@@ -44,40 +44,40 @@ check_subagent_stop_has_dashboard() {
     "$CLAUDE_SETTINGS" >/dev/null 2>&1
 }
 
-Describe 'PostToolUse から generate-dashboard.sh が削除されている (Task 2)'
+Describe 'generate-dashboard.sh Removed from PostToolUse (Task 2)'
   Describe 'settings.json'
-    It 'PostToolUse 配列に generate-dashboard.sh が存在しない'
+    It 'PostToolUse array does not contain generate-dashboard.sh'
       When call check_settings_json_post_tool_use_no_dashboard
       The status should be success
     End
 
-    It 'JSON として有効である'
+    It 'is valid JSON'
       When call check_settings_json_valid
       The status should be success
     End
   End
 
   Describe 'settings.local.json'
-    It 'PostToolUse 配列に generate-dashboard.sh が存在しない'
+    It 'PostToolUse array does not contain generate-dashboard.sh'
       When call check_settings_local_post_tool_use_no_dashboard
       The status should be success
     End
   End
 
   Describe 'hooks.json'
-    It 'postToolUse 配列に generate-dashboard.sh が存在しない'
+    It 'postToolUse array does not contain generate-dashboard.sh'
       When call check_copilot_hooks_post_tool_use_no_dashboard
       The status should be success
     End
 
-    It 'JSON として有効である'
+    It 'is valid JSON'
       When call check_copilot_hooks_valid
       The status should be success
     End
   End
 
-  Describe 'SubagentStop (変更なし確認)'
-    It 'SubagentStop 配列に generate-dashboard.sh が存在する'
+  Describe 'SubagentStop (Unchanged Verification)'
+    It 'SubagentStop array contains generate-dashboard.sh'
       When call check_subagent_stop_has_dashboard
       The status should be success
     End

@@ -1,133 +1,133 @@
-# タスク7: lib/ ディレクトリの構造テスト (AC-6)
-# core/scripts/lib/ ディレクトリの存在・ファイル構成・ライブラリパターンを検証する
+# Task 7: lib/ directory structure test (AC-6)
+# Verify existence, file layout, and library patterns of core/scripts/lib/
 
 LIB_DIR="core/scripts/lib"
 COMMON_SH="$LIB_DIR/common.sh"
 COMMIT_MSG_SH="$LIB_DIR/commit-message.sh"
 
-# --- ヘルパー関数 ---
+# --- Helper functions ---
 
-# lib/ ディレクトリが存在するか
+# Check lib/ directory exists
 check_lib_dir_exists() {
   [ -d "$LIB_DIR" ]
 }
 
-# common.sh が存在するか
+# Check common.sh exists
 check_common_sh_exists() {
   [ -f "$COMMON_SH" ]
 }
 
-# commit-message.sh が存在するか
+# Check commit-message.sh exists
 check_commit_message_sh_exists() {
   [ -f "$COMMIT_MSG_SH" ]
 }
 
-# common.sh が構文エラーなく source 可能か
+# Check common.sh can be sourced without syntax errors
 check_common_sh_sourceable() {
   bash -n "$COMMON_SH"
 }
 
-# commit-message.sh が構文エラーなく source 可能か
+# Check commit-message.sh can be sourced without syntax errors
 check_commit_message_sh_sourceable() {
   bash -n "$COMMIT_MSG_SH"
 }
 
-# common.sh に find_board_jsonl が定義されているか
+# Check common.sh defines find_board_jsonl
 check_common_has_find_board_jsonl() {
   grep -q '^find_board_jsonl()' "$COMMON_SH"
 }
 
-# common.sh に acquire_lock が定義されているか
+# Check common.sh defines acquire_lock
 check_common_has_acquire_lock() {
   grep -q '^acquire_lock()' "$COMMON_SH"
 }
 
-# common.sh に release_lock が定義されているか
+# Check common.sh defines release_lock
 check_common_has_release_lock() {
   grep -q '^release_lock()' "$COMMON_SH"
 }
 
-# commit-message.sh に format_commit_message が定義されているか
+# Check commit-message.sh defines format_commit_message
 check_commit_msg_has_format() {
   grep -q '^format_commit_message()' "$COMMIT_MSG_SH"
 }
 
-# common.sh が source 時に副作用（標準出力）を起こさないか
+# Check common.sh has no side effects (no stdout) when sourced
 check_common_no_side_effects() {
   local output
   output=$(bash -c 'source "'"$COMMON_SH"'"' 2>&1)
   [ -z "$output" ]
 }
 
-# commit-message.sh が source 時に副作用（標準出力）を起こさないか
+# Check commit-message.sh has no side effects (no stdout) when sourced
 check_commit_message_no_side_effects() {
   local output
   output=$(bash -c 'source "'"$COMMIT_MSG_SH"'"' 2>&1)
   [ -z "$output" ]
 }
 
-Describe 'lib/ ディレクトリの構造テスト (AC-6)'
+Describe 'lib/ Directory Structure Test (AC-6)'
 
-  Describe 'ディレクトリとファイルの存在 (CC1/CC2)'
-    It 'core/scripts/lib/ ディレクトリが存在する'
+  Describe 'Directory and File Existence (CC1/CC2)'
+    It 'core/scripts/lib/ directory exists'
       When call check_lib_dir_exists
       The status should be success
     End
 
-    It 'lib/common.sh が存在する'
+    It 'lib/common.sh exists'
       When call check_common_sh_exists
       The status should be success
     End
 
-    It 'lib/commit-message.sh が存在する'
+    It 'lib/commit-message.sh exists'
       When call check_commit_message_sh_exists
       The status should be success
     End
   End
 
-  Describe 'ファイルの source 可能性 (CC1/CC2)'
-    It 'common.sh が構文エラーなく source できる'
+  Describe 'File Sourceability (CC1/CC2)'
+    It 'common.sh can be sourced without syntax errors'
       When call check_common_sh_sourceable
       The status should be success
     End
 
-    It 'commit-message.sh が構文エラーなく source できる'
+    It 'commit-message.sh can be sourced without syntax errors'
       When call check_commit_message_sh_sourceable
       The status should be success
     End
   End
 
-  Describe 'common.sh の必須関数定義 (CC3)'
-    It 'find_board_jsonl 関数が定義されている'
+  Describe 'common.sh Required Function Definitions (CC3)'
+    It 'find_board_jsonl function is defined'
       When call check_common_has_find_board_jsonl
       The status should be success
     End
 
-    It 'acquire_lock 関数が定義されている'
+    It 'acquire_lock function is defined'
       When call check_common_has_acquire_lock
       The status should be success
     End
 
-    It 'release_lock 関数が定義されている'
+    It 'release_lock function is defined'
       When call check_common_has_release_lock
       The status should be success
     End
   End
 
-  Describe 'commit-message.sh の必須関数定義 (CC3)'
-    It 'format_commit_message 関数が定義されている'
+  Describe 'commit-message.sh Required Function Definitions (CC3)'
+    It 'format_commit_message function is defined'
       When call check_commit_msg_has_format
       The status should be success
     End
   End
 
-  Describe 'ライブラリパターン — source 時の副作用がない (CC4)'
-    It 'common.sh は source 時に何も出力しない'
+  Describe 'Library Pattern -- No Side Effects on Source (CC4)'
+    It 'common.sh produces no output when sourced'
       When call check_common_no_side_effects
       The status should be success
     End
 
-    It 'commit-message.sh は source 時に何も出力しない'
+    It 'commit-message.sh produces no output when sourced'
       When call check_commit_message_no_side_effects
       The status should be success
     End

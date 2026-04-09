@@ -1,13 +1,13 @@
 PLUGIN_JSON=".claude-plugin/plugin.json"
 
-# --- ヘルパー関数 ---
+# --- Helper functions ---
 
-# hooksフィールドがSSoTテンプレートを参照していること
+# hooks field references the SSoT template
 check_hooks_references_ssot_template() {
   jq -e '.hooks == "./adapters/claude-code/hooks/settings.json"' "$PLUGIN_JSON" >/dev/null 2>&1
 }
 
-# 既存フィールドが変更されていないこと
+# Existing fields are unchanged
 check_existing_fields_unchanged() {
   jq -e '
     .name == "heartbeat"
@@ -17,28 +17,28 @@ check_existing_fields_unchanged() {
   ' "$PLUGIN_JSON" >/dev/null 2>&1
 }
 
-# JSONとして有効であること
+# Valid JSON
 check_valid_json() {
   jq empty "$PLUGIN_JSON" >/dev/null 2>&1
 }
 
-Describe 'plugin.json hooks フィールド (AC-2)'
-  Describe 'hooks フィールドの追加'
-    It 'hooks が adapters/claude-code/hooks/settings.json を参照している'
+Describe 'plugin.json hooks Field (AC-2)'
+  Describe 'Hooks Field Addition'
+    It 'hooks references adapters/claude-code/hooks/settings.json'
       When call check_hooks_references_ssot_template
       The status should be success
     End
   End
 
-  Describe '既存フィールドの保全'
-    It 'name, description, version, author が変更されていない'
+  Describe 'Existing Field Preservation'
+    It 'name, description, version, author are unchanged'
       When call check_existing_fields_unchanged
       The status should be success
     End
   End
 
-  Describe 'JSON の妥当性'
-    It 'JSONとして有効である'
+  Describe 'JSON Validity'
+    It 'is valid JSON'
       When call check_valid_json
       The status should be success
     End

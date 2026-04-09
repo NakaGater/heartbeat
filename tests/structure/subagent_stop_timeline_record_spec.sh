@@ -19,7 +19,7 @@ check_timeline_record_is_first_in_subagent_stop() {
 }
 
 check_existing_hooks_order_preserved() {
-  # board-stamp -> retrospective-record -> generate-dashboard -> auto-commit の順序が維持されていること
+  # Verify board-stamp -> retrospective-record -> generate-dashboard -> auto-commit order is preserved
   stamp_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("board-stamp.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   retro_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("retrospective-record.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
   dash_idx=$(jq '[.hooks.SubagentStop[0].hooks[] | .command] | to_entries[] | select(.value | contains("generate-dashboard.sh")) | .key' "$CLAUDE_SETTINGS" 2>/dev/null)
@@ -29,22 +29,22 @@ check_existing_hooks_order_preserved() {
 }
 
 Describe 'SubagentStop hook wiring for timeline-record.sh'
-  It 'settings.json の SubagentStop フックに timeline-record.sh が登録されていること'
+  It 'settings.json SubagentStop hooks contain timeline-record.sh'
     When call check_subagent_stop_has_timeline_record
     The status should be success
   End
 
-  It 'settings.json で timeline-record.sh が SubagentStop フックの先頭（インデックス 0）であること'
+  It 'timeline-record.sh is first (index 0) in SubagentStop hooks'
     When call check_timeline_record_is_first_in_subagent_stop
     The status should be success
   End
 
-  It 'timeline-record.sh が board-stamp.sh の前に配置されていること'
+  It 'timeline-record.sh is placed before board-stamp.sh'
     When call check_timeline_record_before_board_stamp
     The status should be success
   End
 
-  It '既存4フック（board-stamp -> retrospective-record -> generate-dashboard -> auto-commit）の相対順序が維持されていること'
+  It 'existing 4 hooks (board-stamp -> retrospective-record -> generate-dashboard -> auto-commit) relative order is preserved'
     When call check_existing_hooks_order_preserved
     The status should be success
   End

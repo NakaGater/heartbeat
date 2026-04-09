@@ -1,29 +1,29 @@
 SKILL="core/skills/heartbeat/SKILL.md"
 
-# Phase 3 TDDサイクルのエージェント (tester, implementer, refactor) が
-# Agent tool 経由で起動されることを検証する。
-# Agent tool 経由で起動されたサブエージェントは完了時にオーケストレーターに
-# 制御が戻り、Orchestrator responsibilities が適用される。
+# Verify Phase 3 TDD cycle agents (tester, implementer, refactor) are
+# launched via Agent tool dispatch.
+# Subagents launched via Agent tool return control to the orchestrator
+# on completion, so Orchestrator responsibilities apply.
 
 check_tester_uses_agent_tool_dispatch() {
-  # tester が Agent tool invocation パターンで起動されていることを確認
-  # これにより、完了時に Orchestrator responsibilities が適用される
+  # Verify tester is launched via Agent tool invocation pattern
+  # This ensures Orchestrator responsibilities apply on completion
   grep -q 'subagent_type:.*heartbeat:tester\.agent' "$SKILL" || return 1
 }
 
 check_implementer_uses_agent_tool_dispatch() {
-  # implementer が Agent tool invocation パターンで起動されていることを確認
+  # Verify implementer is launched via Agent tool invocation pattern
   grep -q 'subagent_type:.*heartbeat:implementer\.agent' "$SKILL" || return 1
 }
 
 check_refactor_uses_agent_tool_dispatch() {
-  # refactor が Agent tool invocation パターンで起動されていることを確認
+  # Verify refactor is launched via Agent tool invocation pattern
   grep -q 'subagent_type:.*heartbeat:refactor\.agent' "$SKILL" || return 1
 }
 
 check_phase3_agents_in_tdd_cycle_flow() {
-  # Phase 3 の TDD サイクル記述に tester, implementer, refactor の全3エージェントが
-  # 含まれていることを確認（= Orchestrator responsibilities の適用対象）
+  # Verify Phase 3 TDD cycle description includes all 3 agents
+  # (= targets for Orchestrator responsibilities)
   phase3_section=$(sed -n '/^Phase 3 - Implementation/,/^Phase 4/p' "$SKILL")
   [ -z "$phase3_section" ] && return 1
   echo "$phase3_section" | grep -q "tester" || return 1
@@ -32,35 +32,35 @@ check_phase3_agents_in_tdd_cycle_flow() {
 }
 
 check_orchestrator_responsibilities_section_exists() {
-  # Orchestrator responsibilities セクションがフェーズ条件なしで適用されることを確認
-  # （"after subagent returns" = 全サブエージェント完了後に適用）
+  # Verify Orchestrator responsibilities section exists and applies unconditionally
+  # ("after subagent returns" = applies after all subagent completions)
   section=$(sed -n '/^### Orchestrator responsibilities (after subagent returns)/,/^## /p' "$SKILL")
   [ -z "$section" ] && return 1
   return 0
 }
 
-Describe 'Phase 3 TDDサイクルエージェントへの dashboard 更新カバレッジ'
-  It 'tester は Agent tool dispatch パターンで起動される'
+Describe 'Phase 3 TDD Cycle Agent Dashboard Update Coverage'
+  It 'tester is launched via Agent tool dispatch pattern'
     When call check_tester_uses_agent_tool_dispatch
     The status should be success
   End
 
-  It 'implementer は Agent tool dispatch パターンで起動される'
+  It 'implementer is launched via Agent tool dispatch pattern'
     When call check_implementer_uses_agent_tool_dispatch
     The status should be success
   End
 
-  It 'refactor は Agent tool dispatch パターンで起動される'
+  It 'refactor is launched via Agent tool dispatch pattern'
     When call check_refactor_uses_agent_tool_dispatch
     The status should be success
   End
 
-  It 'Phase 3 TDDサイクルに tester/implementer/refactor の全エージェントが含まれる'
+  It 'Phase 3 TDD cycle includes all agents: tester/implementer/refactor'
     When call check_phase3_agents_in_tdd_cycle_flow
     The status should be success
   End
 
-  It 'Orchestrator responsibilities セクションが存在しフェーズ条件なしで全サブエージェントに適用される'
+  It 'Orchestrator responsibilities section exists and applies to all subagents unconditionally'
     When call check_orchestrator_responsibilities_section_exists
     The status should be success
   End

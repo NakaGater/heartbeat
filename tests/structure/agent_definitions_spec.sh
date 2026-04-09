@@ -18,7 +18,7 @@ check_agents_board_protocol() {
 
 check_copilot_adapters() {
   for adapter in adapters/copilot/agents/*.agent.md; do
-    # Skip orchestrator (heartbeat) — it delegates to sub-agents, not a core persona
+    # Skip orchestrator (heartbeat) -- it delegates to sub-agents, not a core persona
     case "$adapter" in
       */heartbeat.agent.md) continue ;;
     esac

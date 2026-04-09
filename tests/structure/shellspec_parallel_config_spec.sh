@@ -1,49 +1,49 @@
 SHELLSPEC_CONFIG=".shellspec"
 
-# --- ヘルパー関数 ---
+# --- Helper functions ---
 
-# --jobs 4 が含まれていること
+# --jobs 4 is present
 check_jobs_option() {
   grep -q '^--jobs 4$' "$SHELLSPEC_CONFIG"
 }
 
-# --format が progress であること
+# --format is progress
 check_format_progress() {
   grep -q '^--format progress$' "$SHELLSPEC_CONFIG"
 }
 
-# --require spec_helper が維持されていること
+# --require spec_helper is preserved
 check_require_spec_helper() {
   grep -q '^--require spec_helper$' "$SHELLSPEC_CONFIG"
 }
 
-# --warning-as-failure が維持されていること
+# --warning-as-failure is preserved
 check_warning_as_failure() {
   grep -q '^--warning-as-failure$' "$SHELLSPEC_CONFIG"
 }
 
-Describe '.shellspec 並列実行設定 (Task 1)'
-  Describe '並列実行オプション'
-    It '.shellspec に --jobs 4 が含まれている'
+Describe '.shellspec Parallel Execution Configuration (Task 1)'
+  Describe 'Parallel Execution Options'
+    It '.shellspec contains --jobs 4'
       When call check_jobs_option
       The status should be success
     End
   End
 
-  Describe '出力フォーマット'
-    It '.shellspec の --format が progress である'
+  Describe 'Output Format'
+    It '.shellspec --format is progress'
       When call check_format_progress
       The status should be success
     End
   End
 
-  Describe '既存オプションの保全'
-    It '--require spec_helper が維持されている'
+  Describe 'Existing Options Preservation'
+    It '--require spec_helper is preserved'
       When call check_require_spec_helper
       The status should be success
     End
 
-    It '--warning-as-failure が維持されている'
+    It '--warning-as-failure is preserved'
       When call check_warning_as_failure
       The status should be success
     End

@@ -3,8 +3,8 @@
 TESTER_EVAL="tests/evals/tester.yaml"
 IMPLEMENTER_EVAL="tests/evals/implementer.yaml"
 
-# --- ヘルパー: YAML eval ファイルから指定ケース名のブロックを抽出する ---
-# 引数: $1=ファイルパス, $2=ケース名
+# --- Helper: extract a named case block from a YAML eval file ---
+# Args: $1=file path, $2=case name
 extract_eval_case_block() {
   _file="$1"
   _case_name="$2"
@@ -62,7 +62,7 @@ Describe 'Implementer eval single test Green criteria'
   End
 End
 
-# --- CC3: 既存の eval ケースが変更されていないことを検証する ---
+# --- CC3: Verify existing eval cases are preserved ---
 
 check_tester_eval_has_one_test_per_behavior_case() {
   grep -q 'name:.*"One test per behavior"' "$TESTER_EVAL" || return 1
@@ -91,33 +91,33 @@ check_implementer_eval_minimal_implementation_criteria() {
   echo "$case_block" | grep -q "Only minimum code needed to pass tests is written" || return 1
 }
 
-Describe '既存 eval ケースの保全検証'
-  It 'tester.yaml に "One test per behavior" ケースが存在する'
+Describe 'Existing Eval Case Preservation'
+  It 'tester.yaml has a "One test per behavior" case'
     When call check_tester_eval_has_one_test_per_behavior_case
     The status should be success
   End
 
-  It '"One test per behavior" の criteria に "Each test function verifies exactly one behavior" を含む'
+  It '"One test per behavior" criteria includes "Each test function verifies exactly one behavior"'
     When call check_tester_eval_one_test_per_behavior_criteria
     The status should be success
   End
 
-  It 'tester.yaml に "YAGNI compliance" ケースが存在する'
+  It 'tester.yaml has a "YAGNI compliance" case'
     When call check_tester_eval_has_yagni_compliance_case
     The status should be success
   End
 
-  It '"YAGNI compliance" の criteria に "Does not write tests for features not yet requested" を含む'
+  It '"YAGNI compliance" criteria includes "Does not write tests for features not yet requested"'
     When call check_tester_eval_yagni_compliance_criteria
     The status should be success
   End
 
-  It 'implementer.yaml に "Minimal implementation principle" ケースが存在する'
+  It 'implementer.yaml has a "Minimal implementation principle" case'
     When call check_implementer_eval_has_minimal_implementation_case
     The status should be success
   End
 
-  It '"Minimal implementation principle" の criteria に "Only minimum code needed to pass tests is written" を含む'
+  It '"Minimal implementation principle" criteria includes "Only minimum code needed to pass tests is written"'
     When call check_implementer_eval_minimal_implementation_criteria
     The status should be success
   End

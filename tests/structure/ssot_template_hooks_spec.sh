@@ -1,13 +1,13 @@
 SETTINGS_TEMPLATE="adapters/claude-code/hooks/settings.json"
 
-# --- ヘルパー関数 ---
+# --- Helper functions ---
 
-# SSoTテンプレートが存在するか確認
+# Check SSoT template exists
 check_template_exists() {
   [ -f "$SETTINGS_TEMPLATE" ]
 }
 
-# SubagentStart に timeline-record.sh が1件定義されていること
+# SubagentStart has exactly 1 timeline-record.sh defined
 check_subagent_start_has_timeline_record() {
   count=$(jq '[.hooks.SubagentStart[0].hooks[] | select(.command | contains("timeline-record.sh"))] | length' "$SETTINGS_TEMPLATE" 2>/dev/null)
   [ "$count" = "1" ]
@@ -18,7 +18,7 @@ check_subagent_start_hook_count() {
   [ "$count" = "1" ]
 }
 
-# PostToolUse (Write|Edit) に board-stamp.sh, retrospective-record.sh が順序通り定義
+# PostToolUse (Write|Edit) has board-stamp.sh, retrospective-record.sh in order
 check_post_tool_use_matcher() {
   jq -e '.hooks.PostToolUse[0].matcher == "Write|Edit"' "$SETTINGS_TEMPLATE" >/dev/null 2>&1
 }
@@ -35,7 +35,7 @@ check_post_tool_use_hook_count() {
   [ "$count" = "2" ]
 }
 
-# WorktreeCreate に worktree-env-setup.sh が1件定義されていること
+# WorktreeCreate has exactly 1 worktree-env-setup.sh defined
 check_worktree_create_has_setup() {
   jq -e '.hooks.WorktreeCreate[0].hooks[] | select(.command | contains("worktree-env-setup.sh"))' "$SETTINGS_TEMPLATE" >/dev/null 2>&1
 }
@@ -45,7 +45,7 @@ check_worktree_create_hook_count() {
   [ "$count" = "1" ]
 }
 
-# SubagentStop に5件が順序通り定義されていること
+# SubagentStop has 5 hooks in correct order
 check_subagent_stop_order() {
   scripts=$(jq -r '[.hooks.SubagentStop[0].hooks[] | .command | capture("(?<name>[^/]+\\.sh)$") | .name] | join(",")' "$SETTINGS_TEMPLATE" 2>/dev/null)
   [ "$scripts" = "timeline-record.sh,board-stamp.sh,retrospective-record.sh,generate-dashboard.sh,auto-commit.sh" ]
@@ -56,9 +56,9 @@ check_subagent_stop_hook_count() {
   [ "$count" = "5" ]
 }
 
-# 全スクリプトパスが bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/... 形式であること
+# All script paths use bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/... format
 check_all_paths_use_plugin_root() {
-  # 全commandフィールドを取得し、bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/ で始まらないものがあれば失敗
+  # Get all command fields and fail if any do not start with the expected prefix
   non_matching=$(jq -r '
     [.hooks[][].hooks[] | .command]
     | map(select(startswith("bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/") | not))
@@ -67,69 +67,69 @@ check_all_paths_use_plugin_root() {
   [ "$non_matching" = "0" ]
 }
 
-Describe 'SSoTテンプレート hooks定義 (AC-1)'
-  Describe 'ファイルの存在'
-    It 'SSoTテンプレートが存在する'
+Describe 'SSoT Template hooks Definition (AC-1)'
+  Describe 'File Existence'
+    It 'SSoT template exists'
       When call check_template_exists
       The status should be success
     End
   End
 
-  Describe 'SubagentStart フック'
-    It 'timeline-record.sh が1件定義されている'
+  Describe 'SubagentStart Hook'
+    It 'timeline-record.sh is defined with 1 entry'
       When call check_subagent_start_has_timeline_record
       The status should be success
     End
 
-    It 'フックが1件のみ定義されている'
+    It 'exactly 1 hook is defined'
       When call check_subagent_start_hook_count
       The status should be success
     End
   End
 
-  Describe 'PostToolUse フック'
-    It 'matcher が Write|Edit である'
+  Describe 'PostToolUse Hook'
+    It 'matcher is Write|Edit'
       When call check_post_tool_use_matcher
       The status should be success
     End
 
-    It 'board-stamp.sh -> retrospective-record.sh の順序で定義されている'
+    It 'hooks are defined in order: board-stamp.sh -> retrospective-record.sh'
       When call check_post_tool_use_order
       The status should be success
     End
 
-    It 'フックが2件定義されている'
+    It 'exactly 2 hooks are defined'
       When call check_post_tool_use_hook_count
       The status should be success
     End
   End
 
-  Describe 'WorktreeCreate フック'
-    It 'worktree-env-setup.sh が定義されている'
+  Describe 'WorktreeCreate Hook'
+    It 'worktree-env-setup.sh is defined'
       When call check_worktree_create_has_setup
       The status should be success
     End
 
-    It 'フックが1件のみ定義されている'
+    It 'exactly 1 hook is defined'
       When call check_worktree_create_hook_count
       The status should be success
     End
   End
 
-  Describe 'SubagentStop フック'
-    It 'timeline-record.sh, board-stamp.sh, retrospective-record.sh, generate-dashboard.sh, auto-commit.sh が順序通り定義されている'
+  Describe 'SubagentStop Hook'
+    It 'hooks are defined in order: timeline-record, board-stamp, retrospective-record, generate-dashboard, auto-commit'
       When call check_subagent_stop_order
       The status should be success
     End
 
-    It 'フックが5件定義されている'
+    It 'exactly 5 hooks are defined'
       When call check_subagent_stop_hook_count
       The status should be success
     End
   End
 
-  Describe 'スクリプトパス形式'
-    It '全パスが bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/... 形式である'
+  Describe 'Script Path Format'
+    It 'all paths use bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/... format'
       When call check_all_paths_use_plugin_root
       The status should be success
     End

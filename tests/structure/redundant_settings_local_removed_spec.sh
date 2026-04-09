@@ -1,15 +1,15 @@
 REDUNDANT_FILE="adapters/claude-code/hooks/settings.local.json"
 
-# --- ヘルパー関数 ---
+# --- Helper functions ---
 
-# 冗長ファイルが存在しないこと
+# Verify redundant file does not exist
 check_redundant_file_absent() {
   [ ! -f "$REDUNDANT_FILE" ]
 }
 
-Describe '冗長ファイルの削除 (AC-4)'
-  Describe 'adapters/claude-code/hooks/settings.local.json の除去'
-    It 'settings.local.json が存在しない'
+Describe 'Redundant File Removal (AC-4)'
+  Describe 'adapters/claude-code/hooks/settings.local.json Removal'
+    It 'settings.local.json does not exist'
       When call check_redundant_file_absent
       The status should be success
     End

@@ -16,7 +16,7 @@ Describe 'Board protocol documentation references'
   }
 
   check_protocol_instructs_pipe_invocation() {
-    # board-write.sh のパイプ呼び出し例が記載されていること
+    # Verify board-write.sh pipe invocation example is documented
     grep -q "board-write\.sh" "$PROTOCOL_MD" &&
     grep -q "board\.jsonl" "$PROTOCOL_MD"
   }

@@ -1,37 +1,37 @@
 QA_AGENT="adapters/claude-code/agents/qa.agent.md"
 
-# allowed-tools 行を抽出する
+# Extract allowed-tools line
 extract_allowed_tools() {
   sed -n '/^---$/,/^---$/p' "$QA_AGENT" \
     | grep '^allowed-tools:' \
     | sed 's/^allowed-tools: *//'
 }
 
-# 正しいプレフィックス mcp__plugin_heartbeat_playwright__ が含まれていることを検証
+# Verify correct prefix mcp__plugin_heartbeat_playwright__ is present
 check_correct_playwright_prefix() {
   local tools
   tools=$(extract_allowed_tools)
   echo "$tools" | grep -q 'mcp__plugin_heartbeat_playwright__'
 }
 
-# 誤ったプレフィックス mcp__playwright が含まれていないことを検証
+# Verify incorrect prefix mcp__playwright is not used alone
 check_no_wrong_playwright_prefix() {
   local tools
   tools=$(extract_allowed_tools)
-  # mcp__playwright にマッチするが mcp__plugin_heartbeat_playwright__ にはマッチしないパターン
+  # Matches mcp__playwright but not mcp__plugin_heartbeat_playwright__
   if echo "$tools" | grep -q 'mcp__playwright' && ! echo "$tools" | grep -q 'mcp__plugin_heartbeat_playwright__'; then
     return 1
   fi
   return 0
 }
 
-Describe 'QA agent allowed-tools: Playwright MCPプレフィックス'
-  It 'allowed-tools に正しいプレフィックス mcp__plugin_heartbeat_playwright__ が含まれている'
+Describe 'QA Agent allowed-tools: Playwright MCP Prefix'
+  It 'allowed-tools contains the correct prefix mcp__plugin_heartbeat_playwright__'
     When call check_correct_playwright_prefix
     The status should be success
   End
 
-  It 'allowed-tools に誤ったプレフィックス mcp__playwright が単独で使われていない'
+  It 'allowed-tools does not use the incorrect prefix mcp__playwright alone'
     When call check_no_wrong_playwright_prefix
     The status should be success
   End

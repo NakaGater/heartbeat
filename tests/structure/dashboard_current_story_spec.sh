@@ -52,7 +52,7 @@ Describe 'dashboard.html populateStorySelect() in_progress auto-selection'
   End
 End
 
-# Task 2: changeイベントハンドラの非退行検証
+# Task 2: change event handler non-regression verification
 
 # Task 2 completion condition 2:
 # story-select has onchange="renderStoryDetail()" attribute (unchanged)

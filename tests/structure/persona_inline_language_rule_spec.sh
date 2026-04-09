@@ -80,7 +80,7 @@ Describe 'Persona Output Language reference (batch 3)'
   End
 End
 
-# Cross-persona consistency — all 9 Output Language sections must be identical.
+# Cross-persona consistency -- all 9 Output Language sections must be identical.
 check_all_sections_identical() {
   personas="pdm context-manager designer architect tester implementer refactor reviewer qa"
   reference=""

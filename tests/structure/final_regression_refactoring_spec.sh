@@ -1,109 +1,109 @@
-# タスク8: 全体回帰テストと最終確認 (AC-6/AC-8)
-# リファクタリング全体の目標達成を検証する最終回帰テスト
-# - auto-commit.sh が 120 行以下（目標 ~100、実績 ~52）
-# - インラインのロック定義が backlog-update.sh / generate-dashboard.sh に残っていない
-# - インラインの _find_board_jsonl が auto-commit.sh に残っていない
-# - テストケース数が 294 以上（リファクタリング前のベースライン）
+# Task 8: Final regression test and verification (AC-6/AC-8)
+# Final regression test to verify overall refactoring goals are met
+# - auto-commit.sh is 120 lines or fewer (target ~100, actual ~52)
+# - No inline lock definitions remain in backlog-update.sh / generate-dashboard.sh
+# - No inline _find_board_jsonl remains in auto-commit.sh
+# - Test case count is 294 or more (pre-refactoring baseline)
 
 AUTO_COMMIT="core/scripts/auto-commit.sh"
 BACKLOG_UPDATE="core/scripts/backlog-update.sh"
 GENERATE_DASHBOARD="core/scripts/generate-dashboard.sh"
 BOARD_STAMP="core/scripts/board-stamp.sh"
 
-# --- ヘルパー関数 ---
+# --- Helper functions ---
 
-# auto-commit.sh の行数が 120 以下であるか
+# Check auto-commit.sh line count is 120 or fewer
 check_auto_commit_line_count() {
   local lines
   lines=$(wc -l < "$AUTO_COMMIT" | tr -d ' ')
   [ "$lines" -le 120 ]
 }
 
-# auto-commit.sh の行数を取得（デバッグ用）
+# Get auto-commit.sh line count (for debugging)
 get_auto_commit_line_count() {
   wc -l < "$AUTO_COMMIT" | tr -d ' '
 }
 
-# backlog-update.sh にインラインの acquire_lock/release_lock 定義が存在しないか
+# Check backlog-update.sh has no inline acquire_lock/release_lock definitions
 check_backlog_no_inline_lock() {
   ! grep -qE '^(acquire_lock|release_lock)\(\)' "$BACKLOG_UPDATE"
 }
 
-# generate-dashboard.sh にインラインの acquire_lock/cleanup/is_lock_stale 定義が存在しないか
+# Check generate-dashboard.sh has no inline acquire_lock/cleanup/is_lock_stale definitions
 check_dashboard_no_inline_lock() {
   ! grep -qE '^(acquire_lock|release_lock|cleanup|is_lock_stale)\(\)' "$GENERATE_DASHBOARD"
 }
 
-# auto-commit.sh にインラインの _find_board_jsonl 定義が存在しないか
+# Check auto-commit.sh has no inline _find_board_jsonl definition
 check_auto_commit_no_inline_find_board() {
   ! grep -q '^_find_board_jsonl()' "$AUTO_COMMIT"
 }
 
-# board-stamp.sh にインラインの ls -t board.jsonl 探索が存在しないか
+# Check board-stamp.sh has no inline ls -t board.jsonl search
 check_board_stamp_no_inline_board_search() {
   ! grep -q 'ls -t.*board\.jsonl' "$BOARD_STAMP"
 }
 
-# core/scripts/ 直下のスクリプトに board.jsonl 検索の重複がないか
-# (lib/common.sh のみが ls -t board.jsonl パターンを持つべき)
+# Check no duplicate board.jsonl search in core/scripts/ top-level scripts
+# (only lib/common.sh should have the ls -t board.jsonl pattern)
 check_no_duplicate_board_search() {
   local count
   count=$(grep -rl 'ls -t.*board\.jsonl' core/scripts/*.sh 2>/dev/null | wc -l | tr -d ' ')
   [ "$count" -eq 0 ]
 }
 
-# テストケース数（It ブロック）が 294 以上あるか
+# Check test case count (It blocks) is 294 or more
 check_test_count_not_decreased() {
   local count
   count=$(grep -r '^\s*It ' tests/spec/ tests/structure/ | wc -l | tr -d ' ')
   [ "$count" -ge 294 ]
 }
 
-# テストケース数を取得（デバッグ用）
+# Get test case count (for debugging)
 get_test_count() {
   grep -r '^\s*It ' tests/spec/ tests/structure/ | wc -l | tr -d ' '
 }
 
-Describe '全体回帰テストと最終確認 (AC-6)'
+Describe 'Final Regression Test and Verification (AC-6)'
 
-  Describe 'auto-commit.sh の行数削減 (CC3)'
-    It 'auto-commit.sh が 120 行以下である'
+  Describe 'auto-commit.sh Line Count Reduction (CC3)'
+    It 'auto-commit.sh is 120 lines or fewer'
       When call check_auto_commit_line_count
       The status should be success
     End
   End
 
-  Describe 'インラインロック定義の排除 (CC5)'
-    It 'backlog-update.sh にインラインのロック定義が存在しない'
+  Describe 'Inline Lock Definition Removal (CC5)'
+    It 'backlog-update.sh has no inline lock definitions'
       When call check_backlog_no_inline_lock
       The status should be success
     End
 
-    It 'generate-dashboard.sh にインラインのロック定義が存在しない'
+    It 'generate-dashboard.sh has no inline lock definitions'
       When call check_dashboard_no_inline_lock
       The status should be success
     End
   End
 
-  Describe 'インライン board.jsonl 検索の排除 (CC4)'
-    It 'auto-commit.sh にインラインの _find_board_jsonl が存在しない'
+  Describe 'Inline board.jsonl Search Removal (CC4)'
+    It 'auto-commit.sh has no inline _find_board_jsonl'
       When call check_auto_commit_no_inline_find_board
       The status should be success
     End
 
-    It 'board-stamp.sh にインラインの board.jsonl 探索コードが存在しない'
+    It 'board-stamp.sh has no inline board.jsonl search code'
       When call check_board_stamp_no_inline_board_search
       The status should be success
     End
 
-    It 'core/scripts/ 直下に board.jsonl 検索の重複がない'
+    It 'no duplicate board.jsonl search in core/scripts/'
       When call check_no_duplicate_board_search
       The status should be success
     End
   End
 
-  Describe 'テストケース数の維持 (CC2)'
-    It 'テストケース数がリファクタリング前のベースライン 294 以上である'
+  Describe 'Test Case Count Preservation (CC2)'
+    It 'test case count is at or above pre-refactoring baseline of 294'
       When call check_test_count_not_decreased
       The status should be success
     End

@@ -1,32 +1,32 @@
-# 構造テスト: SKILL.md に選択式質問ガイドラインセクションが存在し、
-# 必要な原則がすべて含まれていることを検証する
-# タスク5: 選択式質問ガイドラインセクションの追加 (core SKILL.md)
+# Structure test: Verify SKILL.md has Question Style Guidelines section
+# with all required principles
+# Task 5: Add Question Style Guidelines section (core SKILL.md)
 
 SKILL_MD="core/skills/heartbeat/SKILL.md"
 
-# ガイドラインセクション見出しが存在する
+# Guidelines section heading exists
 check_section_exists() {
   grep -q '## Question Style Guidelines' "$SKILL_MD"
 }
 
-# 選択肢数の上限ルール（最大5個）が記載されている
+# Max choices rule (max 5) is documented
 check_max_choices_rule() {
   grep -q '5' "$SKILL_MD" | grep -qi 'choice\|選択' "$SKILL_MD"
-  # 5個以下の制約が Question Style Guidelines セクション内に存在する
+  # Max 5 constraint exists within Question Style Guidelines section
   sed -n '/## Question Style Guidelines/,/^## /p' "$SKILL_MD" | grep -q '5'
 }
 
-# 動詞始まりで統一するルールが記載されている
+# Verb-first choice text rule is documented
 check_verb_first_rule() {
   sed -n '/## Question Style Guidelines/,/^## /p' "$SKILL_MD" | grep -qi 'verb'
 }
 
-# 「その他（自由記述）」は常に最後に配置するルールが記載されている
+# "Other (free text)" must always be placed last rule is documented
 check_other_last_rule() {
   sed -n '/## Question Style Guidelines/,/^## /p' "$SKILL_MD" | grep -qi 'other.*last\|last.*other'
 }
 
-# ユーザーの言語に合わせるルールが記載されている
+# Match user language rule is documented
 check_language_rule() {
   sed -n '/## Question Style Guidelines/,/^## /p' "$SKILL_MD" | grep -qi 'output-language-rule\|language'
 }

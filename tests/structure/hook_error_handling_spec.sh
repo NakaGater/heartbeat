@@ -1,5 +1,5 @@
-# Task 5, CC1-CC4: フックスクリプトのエラーハンドリング標準化
-# フックスクリプト = set +e + exit 0 保証
+# Task 5, CC1-CC4: Error handling standardization for hook scripts
+# Hook scripts = set +e + guaranteed exit 0
 # Design spec 25-28 (AC-5)
 
 RETRO_RECORD="core/scripts/retrospective-record.sh"
@@ -7,74 +7,74 @@ GENERATE_DASHBOARD="core/scripts/generate-dashboard.sh"
 AUTO_COMMIT="core/scripts/auto-commit.sh"
 BOARD_STAMP="core/scripts/board-stamp.sh"
 
-# --- ヘルパー関数 ---
+# --- Helper functions ---
 
-# retrospective-record.sh に set +e が含まれているか
+# Check retrospective-record.sh contains set +e
 check_retro_has_set_plus_e() {
   grep -q '^set +e' "$RETRO_RECORD"
 }
 
-# retrospective-record.sh に exit 1 が存在しないか（全パス exit 0 保証）
+# Check retrospective-record.sh has no exit 1 (guaranteed exit 0 on all paths)
 check_retro_no_exit_1() {
   ! grep -q 'exit 1' "$RETRO_RECORD"
 }
 
-# generate-dashboard.sh の acquire_lock 失敗時に exit 0 であるか
+# Check generate-dashboard.sh exits 0 on acquire_lock failure
 check_dashboard_acquire_lock_exit_0() {
-  # acquire_lock ... || exit 0 であること（exit 1 ではない）
+  # Must be acquire_lock ... || exit 0 (not exit 1)
   ! grep -q 'acquire_lock.*exit 1' "$GENERATE_DASHBOARD"
 }
 
-# auto-commit.sh の main 内に set -euo pipefail が存在しないか
+# Check auto-commit.sh main does not contain set -euo pipefail
 check_auto_commit_no_set_e_in_main() {
   ! grep -q 'set -euo pipefail' "$AUTO_COMMIT"
 }
 
-# auto-commit.sh の先頭に set +e が含まれているか
+# Check auto-commit.sh has set +e at the top
 check_auto_commit_has_set_plus_e() {
   grep -q '^set +e' "$AUTO_COMMIT"
 }
 
-# board-stamp.sh に set +e が含まれているか（既存パターン維持）
+# Check board-stamp.sh contains set +e (existing pattern preserved)
 check_board_stamp_has_set_plus_e() {
   grep -q '^set +e' "$BOARD_STAMP"
 }
 
-Describe 'フックスクリプトのエラーハンドリング標準化 (AC-5)'
+Describe 'Hook Script Error Handling Standardization (AC-5)'
 
   Describe 'retrospective-record.sh (CC1)'
-    It 'set +e が先頭に存在する'
+    It 'has set +e at the top'
       When call check_retro_has_set_plus_e
       The status should be success
     End
 
-    It 'exit 1 が存在しない（全パス exit 0 保証）'
+    It 'has no exit 1 (guaranteed exit 0 on all paths)'
       When call check_retro_no_exit_1
       The status should be success
     End
   End
 
   Describe 'generate-dashboard.sh (CC2)'
-    It 'acquire_lock 失敗時に exit 1 ではなく exit 0 で終了する'
+    It 'exits 0 instead of 1 on acquire_lock failure'
       When call check_dashboard_acquire_lock_exit_0
       The status should be success
     End
   End
 
   Describe 'auto-commit.sh (CC3)'
-    It 'set -euo pipefail が存在しない'
+    It 'does not contain set -euo pipefail'
       When call check_auto_commit_no_set_e_in_main
       The status should be success
     End
 
-    It 'set +e が先頭に存在する'
+    It 'has set +e at the top'
       When call check_auto_commit_has_set_plus_e
       The status should be success
     End
   End
 
   Describe 'board-stamp.sh (CC4)'
-    It '既存の set +e パターンが維持されている'
+    It 'existing set +e pattern is preserved'
       When call check_board_stamp_has_set_plus_e
       The status should be success
     End

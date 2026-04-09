@@ -14,7 +14,7 @@ check_done_summary_pattern_copilot() {
 }
 
 check_no_individual_done_listing_claude() {
-  # Status Display Example should NOT have individual done items like "✅ login: Login feature (3pt) Done"
+  # Status Display Example should NOT have individual done items like "login: Login feature (3pt) Done"
   ! grep -q '✅.*Done$' "$CLAUDE_SKILL"
 }
 

@@ -8,10 +8,10 @@ check_subagent_stop_has_generate_dashboard() {
 }
 
 check_generate_dashboard_is_sync() {
-  # generate-dashboard.sh が存在し、async プロパティを持たないことを検証
+  # Verify generate-dashboard.sh exists and has no async property
   jq -e '.hooks.SubagentStop[].hooks[] | select(.command | contains("generate-dashboard.sh"))' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1 || return 1
-  # async キーが存在する場合は失敗（同期実行 = async キーなし）
+  # Fail if async key exists (synchronous execution = no async key)
   if jq -e '.hooks.SubagentStop[].hooks[] | select(.command | contains("generate-dashboard.sh")) | select(.async)' \
     "$CLAUDE_SETTINGS" >/dev/null 2>&1; then
     return 1

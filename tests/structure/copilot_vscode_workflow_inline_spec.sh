@@ -1,39 +1,39 @@
-# 構造テスト: Copilot SKILL.md ワークフローセクション内の vscode_askQuestions インライン参照
-# ストーリー: ask-user-tool-fix
-# タスク 1: ワークフローセクション内への vscode_askQuestions 指示の直接埋め込み
-# タスク 2: ワークフロー完了時の継続プロンプト追加
-# タスク 3: 構造テストの追加（本ファイル自体 + 既存テストの回帰確認）
+# Structure test: Copilot SKILL.md inline vscode_askQuestions references in workflow sections
+# Story: ask-user-tool-fix
+# Task 1: Embed vscode_askQuestions instructions directly in workflow sections
+# Task 2: Add continuation prompts at workflow completion
+# Task 3: Add structure tests (this file + regression check of existing tests)
 
 COPILOT_SKILL="adapters/copilot/skills/heartbeat/SKILL.md"
 
-# ===== Helper functions: セクション抽出 =====
+# ===== Helper functions: section extraction =====
 
-# Startup Behavior セクション (## Startup Behavior 〜 ## Workflow 1)
+# Startup Behavior section (## Startup Behavior to ## Workflow 1)
 startup_section() {
   sed -n '/^## Startup Behavior/,/^## Workflow 1/p' "$COPILOT_SKILL"
 }
 
-# Workflow 1 セクション (## Workflow 1 〜 ## Workflow 2)
+# Workflow 1 section (## Workflow 1 to ## Workflow 2)
 workflow1_section() {
   sed -n '/^## Workflow 1/,/^## Workflow 2/p' "$COPILOT_SKILL"
 }
 
-# Workflow 2 セクション (## Workflow 2 〜 ## Post-Completion)
+# Workflow 2 section (## Workflow 2 to ## Post-Completion)
 workflow2_section() {
   sed -n '/^## Workflow 2/,/^## Post-Completion/p' "$COPILOT_SKILL"
 }
 
-# Workflow 3 セクション (## Workflow 3 〜 ## Agent Startup Method)
+# Workflow 3 section (## Workflow 3 to ## Agent Startup Method)
 workflow3_section() {
   sed -n '/^## Workflow 3/,/^## Agent Startup Method/p' "$COPILOT_SKILL"
 }
 
-# Strict Rules セクション (## Strict Rules 〜 ## Copilot-Specific)
+# Strict Rules section (## Strict Rules to ## Copilot-Specific)
 strict_rules_section() {
   sed -n '/^## Strict Rules/,/^## Copilot-Specific/p' "$COPILOT_SKILL"
 }
 
-# ===== Test group 1: インライン vscode_askQuestions 参照 (Task 1) =====
+# ===== Test group 1: inline vscode_askQuestions references (Task 1) =====
 
 check_startup_has_vscode_ask() {
   startup_section | grep -q 'vscode_askQuestions'
@@ -51,29 +51,29 @@ check_strict_rules_has_vscode_ask() {
   strict_rules_section | grep -q 'vscode_askQuestions'
 }
 
-# ===== Test group 2: 継続プロンプト (Task 2) =====
+# ===== Test group 2: continuation prompts (Task 2) =====
 
-# WF1 STOP 前に vscode_askQuestions の継続プロンプトがある
+# WF1 has vscode_askQuestions continuation prompt before STOP
 check_wf1_continuation_prompt() {
   workflow1_section | grep -B 30 '>>> STOP' | grep -q 'vscode_askQuestions'
 }
 
-# WF2 STOP 前に vscode_askQuestions の継続プロンプトがある
+# WF2 has vscode_askQuestions continuation prompt before STOP
 check_wf2_continuation_prompt() {
   workflow2_section | grep -B 30 '>>> STOP' | grep -q 'vscode_askQuestions'
 }
 
-# WF3 STOP 前に vscode_askQuestions の継続プロンプトがある
+# WF3 has vscode_askQuestions continuation prompt before STOP
 check_wf3_continuation_prompt() {
   workflow3_section | grep -B 30 '>>> STOP' | grep -q 'vscode_askQuestions'
 }
 
-# 継続プロンプトに "Exit" (終了する) の選択肢がある
+# Continuation prompt includes "Exit" as a choice option
 check_continuation_has_exit_choice() {
   grep -B 30 '>>> STOP' "$COPILOT_SKILL" | grep -q 'Exit'
 }
 
-# ===== テスト定義 =====
+# ===== Test definitions =====
 
 Describe 'Copilot SKILL.md workflow inline vscode_askQuestions references'
   It 'Startup Behavior section contains vscode_askQuestions reference'

@@ -36,28 +36,28 @@ check_spec_claude_no_dashboard_in_posttooluse() {
   return 0
 }
 
-Describe 'Task 4: ドキュメントから PostToolUse の generate-dashboard.sh を削除'
-  Describe 'conventions.md PostToolUse Hook Ordering セクション'
-    It 'generate-dashboard.sh が含まれない'
+Describe 'Task 4: Remove generate-dashboard.sh from PostToolUse Documentation'
+  Describe 'conventions.md PostToolUse Hook Ordering Section'
+    It 'does not contain generate-dashboard.sh'
       When call check_conventions_no_dashboard_in_posttooluse
       The status should be success
     End
 
-    It 'SubagentStop での実行に言及している'
+    It 'mentions execution in SubagentStop'
       When call check_conventions_mentions_subagent_stop
       The status should be success
     End
   End
 
-  Describe 'heartbeat-spec-en.md Copilot hooks.json セクション'
-    It 'postToolUse に generate-dashboard.sh が含まれない'
+  Describe 'heartbeat-spec-en.md Copilot hooks.json Section'
+    It 'postToolUse does not contain generate-dashboard.sh'
       When call check_spec_copilot_no_dashboard_in_posttooluse
       The status should be success
     End
   End
 
-  Describe 'heartbeat-spec-en.md Claude Code settings.json セクション'
-    It 'PostToolUse に generate-dashboard.sh が含まれない'
+  Describe 'heartbeat-spec-en.md Claude Code settings.json Section'
+    It 'PostToolUse does not contain generate-dashboard.sh'
       When call check_spec_claude_no_dashboard_in_posttooluse
       The status should be success
     End
