@@ -1288,6 +1288,19 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       }
     }
 
+    // --- mapX: compressed coordinate mapping (0065-T2) ---
+    // Converts an original timestamp (ms) to a compressed X offset within chartW.
+    function mapX(ts) {
+      for (var si = 0; si < segments.length; si++) {
+        var seg = segments[si];
+        if (ts <= seg.end || si === segments.length - 1) {
+          var clamped = Math.max(ts, seg.start);
+          return seg.offsetX + (clamped - seg.start) * seg.scale;
+        }
+      }
+      return 0;
+    }
+
     var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" xmlns="http://www.w3.org/2000/svg" style="min-width:' + w + 'px;">';
 
     // Agent labels and rows
@@ -1319,8 +1332,8 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
         end = new Date(entries[ni].timestamp).getTime();
         break;
       }
-      var x = padL + (start - tMin) * tScale;
-      var bw = Math.max((end - start) * tScale, 2);
+      var x = padL + mapX(start);
+      var bw = Math.max(mapX(end) - mapX(start), 2);
       var by = padT + agentIdx * rowH + (rowH - barH) / 2;
       var isRework = e.status === 'rework';
       svg += '<g>';
