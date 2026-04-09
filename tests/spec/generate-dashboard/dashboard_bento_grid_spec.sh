@@ -27,12 +27,12 @@ Describe 'dashboard.html: HTML Structure Bento Grid Layout (Task 2)'
     The contents of file "$TEMPLATE" should include 'class="hero-metrics"'
   End
 
-  It 'contains 4 metric-cards'
+  It 'contains 5 metric-cards'
     count_metric_cards() {
       grep -o 'class="metric-card[^"]*"' "$TEMPLATE" | wc -l | tr -d ' '
     }
     When call count_metric_cards
-    The output should equal "4"
+    The output should equal "5"
   End
 
   # -- AC4: Each metric-card contains metric-value and metric-label --

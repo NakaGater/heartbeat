@@ -1,13 +1,13 @@
 DASHBOARD="core/templates/dashboard.html"
 
-# --- hero-metrics セクション内の Last Release メトリクスカード検証 ---
+# --- Last Release metric card validation inside hero-metrics section ---
 
 check_metric_last_release_id_exists() {
   grep -q 'id="metric-last-release"' "$DASHBOARD" || return 1
 }
 
 check_last_release_card_in_hero_metrics() {
-  # hero-metrics セクション内に metric-last-release が存在することを確認
+  # Verify metric-last-release exists inside hero-metrics section
   local section
   section=$(sed -n '/id="hero-metrics"/,/<\/header>/p' "$DASHBOARD")
   [ -z "$section" ] && return 1
@@ -15,7 +15,7 @@ check_last_release_card_in_hero_metrics() {
 }
 
 check_last_release_label() {
-  # hero-metrics セクション内に "Last Release" ラベルが存在することを確認
+  # Verify "Last Release" label exists inside hero-metrics section
   local section
   section=$(sed -n '/id="hero-metrics"/,/<\/header>/p' "$DASHBOARD")
   [ -z "$section" ] && return 1
@@ -23,7 +23,7 @@ check_last_release_label() {
 }
 
 check_last_release_default_value() {
-  # 初期値が "--" であることを確認
+  # Verify default value is "--"
   local section
   section=$(sed -n '/id="hero-metrics"/,/<\/header>/p' "$DASHBOARD")
   [ -z "$section" ] && return 1
@@ -31,7 +31,7 @@ check_last_release_default_value() {
 }
 
 check_last_release_date_modifier_class() {
-  # metric-value--date 修飾子クラスが適用されていることを確認
+  # Verify metric-value--date modifier class is applied
   local section
   section=$(sed -n '/id="hero-metrics"/,/<\/header>/p' "$DASHBOARD")
   [ -z "$section" ] && return 1
