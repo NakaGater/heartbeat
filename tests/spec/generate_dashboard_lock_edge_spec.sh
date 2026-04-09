@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh 排他制御エッジケース (T5)'
+Describe 'generate-dashboard.sh Lock Mechanism Edge Cases (T5)'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -14,8 +14,8 @@ Describe 'generate-dashboard.sh 排他制御エッジケース (T5)'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Describe 'stale ロック検出と自動除去'
-    It '1分以上前のロックを stale として自動除去し、生成が成功する'
+  Describe 'Stale Lock Detection and Auto-removal'
+    It 'auto-removes locks older than 1 minute as stale and generates successfully'
       # stale ロックを作成し、タイムスタンプを2分前に変更する
       mkdir -p "$TEST_HEARTBEAT/.dashboard-lock"
       echo "99999" > "$TEST_HEARTBEAT/.dashboard-lock/pid"
@@ -32,8 +32,8 @@ Describe 'generate-dashboard.sh 排他制御エッジケース (T5)'
     End
   End
 
-  Describe 'PID ファイルの正確性'
-    It 'ロック取得後の PID ファイルにはスクリプトの PID が記録される'
+  Describe 'PID File Accuracy'
+    It 'records the script PID in the PID file after lock acquisition'
       # generate-dashboard.sh 内部でロック取得後に echo $$ > pid が実行される
       # スクリプトのソースコードレベルで $$ を pid ファイルに書き込むことを検証
       check_pid_write() {
@@ -44,7 +44,7 @@ Describe 'generate-dashboard.sh 排他制御エッジケース (T5)'
       The output should equal 'PID_WRITE_FOUND'
     End
 
-    It 'cleanup 関数は PID ファイルで自プロセスのロックのみ解放する'
+    It 'releases only the own-process lock via PID file check in cleanup'
       # cleanup 関数が PID を確認してから rm -rf することを検証
       check_pid_check_in_cleanup() {
         # PID 照合ロジックは lib/common.sh の release_lock() に共通化済み（CC5/CC6）

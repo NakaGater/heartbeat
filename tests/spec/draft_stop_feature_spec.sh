@@ -1,4 +1,4 @@
-Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
+Describe 'SKILL.md Draft Stop Option (Task 1: Claude Code)'
   # Workflow 1 の PdM ヒアリング後・context-manager 前に
   # 「計画に進む / ドラフトで止める」の選択肢が提示されることを検証する
 
@@ -12,7 +12,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
     sed -n "${wf1_start},${wf1_stop}p" "$SKILL_FILE"
   }
 
-  It 'PdM ヒアリング後に "Stop at draft" テキストを含む選択肢が存在する'
+  It 'contains a "Stop at draft" text option after PdM hearing'
     # pdm (hearing) 行と context-manager 行の間に
     # "Stop at draft" が含まれること
     check_stop_at_draft_text() {
@@ -35,7 +35,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
     The status should be success
   End
 
-  It 'PdM ヒアリング後・context-manager 前にドラフト停止の選択肢ブロックが存在する'
+  It 'contains a draft stop choice block after PdM hearing and before context-manager'
     # pdm (hearing) と context-manager の間に選択肢提示パターンと
     # "Continue to planning" と "Stop at draft" の両方が含まれること
     check_draft_stop_choice_block() {
@@ -59,7 +59,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
     The status should be success
   End
 
-  It 'Workflow 3 にドラフト停止選択肢をスキップする旨の注記がある'
+  It 'contains a note about skipping the draft stop option in Workflow 3'
     # Workflow 3 セクション内に draft-stop の選択肢をスキップする NOTE がある
     check_wf3_skip_draft_stop() {
       local wf3_start wf3_end wf3_section
@@ -84,7 +84,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
     The status should be success
   End
 
-  It 'ドラフト停止パスに STOP ディレクティブが存在する'
+  It 'contains a STOP directive in the draft stop path'
     # "Stop at draft" を選択した場合にワークフローが終了する STOP 指示があること
     check_draft_stop_directive() {
       local wf1_section
@@ -108,7 +108,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 1: Claude Code 版）'
   End
 End
 
-Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
+Describe 'SKILL.md Draft Stop Option (Task 2: Copilot)'
   # Copilot 版 SKILL.md の PdM ヒアリング後・context-manager 前に
   # ドラフト停止選択肢が正しく配置されていることを検証する
 
@@ -122,7 +122,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
     sed -n "${wf1_start},${wf1_stop}p" "$COPILOT_SKILL_FILE"
   }
 
-  It 'Copilot 版に Phase 0 セクション（ドラフト登録）が存在する'
+  It 'contains Phase 0 section (draft registration) in Copilot version'
     # Workflow 1 内に Phase 0 の記述があり、draft 登録に関する内容を含むこと
     check_copilot_phase0() {
       local wf1_section
@@ -138,7 +138,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
     The status should be success
   End
 
-  It 'PdM ヒアリング後に "Stop at draft" を含む選択肢が提示される'
+  It 'presents a "Stop at draft" option after PdM hearing'
     # pdm (hearing) と context-manager の間に "Stop at draft" が含まれること
     check_copilot_stop_at_draft() {
       local wf1_section
@@ -161,7 +161,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
     The status should be success
   End
 
-  It 'Workflow 3 にドラフト停止選択肢をスキップする旨の注記がある'
+  It 'contains a note about skipping the draft stop option in Workflow 3'
     # Copilot 版 Workflow 3 セクション内に draft-stop 選択肢のスキップ注記があること
     check_copilot_wf3_skip_draft_stop() {
       local wf3_start wf3_end wf3_section
@@ -185,7 +185,7 @@ Describe 'SKILL.md ドラフト停止選択肢（Task 2: Copilot 版）'
     The status should be success
   End
 
-  It 'ドラフト停止パスに STOP ディレクティブが存在する'
+  It 'contains a STOP directive in the draft stop path'
     # "Stop at draft" を選択した場合にワークフローが終了する STOP 指示があること
     check_copilot_draft_stop_directive() {
       local wf1_section

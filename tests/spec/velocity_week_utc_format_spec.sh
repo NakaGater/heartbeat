@@ -1,4 +1,4 @@
-Describe 'getISOWeekNumber(): UTCベース化とYYYY-Wnn形式返却 (task 3)'
+Describe 'getISOWeekNumber(): UTC-based Calculation and YYYY-Wnn Format Return (Task 3)'
 
   DASHBOARD="core/templates/dashboard.html"
 
@@ -63,7 +63,7 @@ Describe 'getISOWeekNumber(): UTCベース化とYYYY-Wnn形式返却 (task 3)'
     return $?
   }
 
-  It 'YYYY-Wnn形式を返しUTCベースでタイムゾーン混在・年末年始を正しく処理する'
+  It 'returns YYYY-Wnn format with UTC-based calculation handling mixed timezones and year boundaries'
     When call check_week_format_and_utc
     The status should be success
     The output should not include 'FAIL'

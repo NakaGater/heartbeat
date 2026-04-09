@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh: 統合テスト - orchestratorエントリ付きダッシュボード生成（T6）'
+Describe 'generate-dashboard.sh: Integration Test - Dashboard Generation With Orchestrator Entries (T6)'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -29,7 +29,7 @@ BOARD
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  It '生成されたHTMLのSTORIES_DATAにorchestratorエントリが含まれ、ツールチップ用<title>コードが存在する'
+  It 'includes orchestrator entries in STORIES_DATA and contains tooltip <title> code in generated HTML'
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
     # 統合検証1: STORIES_DATAにorchestratorのboardエントリが埋め込まれている

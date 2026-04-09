@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh: orchestratorがガントチャートに表示される（T4）'
+Describe 'generate-dashboard.sh: Orchestrator Appears in Gantt Chart (T4)'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -27,7 +27,7 @@ BOARD
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  It 'agentsフィルタがorchestratorを除外せず、humanのみ除外する'
+  It 'filters only human from agents, not orchestrator'
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
     # renderGantt()のagentsフィルタにorchestratorの除外条件が含まれていないことを検証

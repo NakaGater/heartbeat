@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh ダッシュボード再生成とCurrent Story表示'
+Describe 'generate-dashboard.sh Dashboard Regeneration and Current Story Display'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -28,8 +28,8 @@ JSONL
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Describe 'in_progressストーリーを含むbacklogでダッシュボード再生成'
-    It 'in_progressのstory_idがダッシュボードHTMLに埋め込まれること'
+  Describe 'Dashboard Regeneration With in_progress Story in Backlog'
+    It 'embeds the in_progress story_id in dashboard HTML'
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The output should include 'Dashboard generated'
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist

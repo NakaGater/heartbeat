@@ -1,6 +1,6 @@
-Describe 'backlog.jsonl pointsフィールドの型検証'
-  Describe 'pointsの型安全性'
-    It 'pointsフィールドが全て数値型(number)またはnullであること'
+Describe 'backlog.jsonl Points Field Type Validation'
+  Describe 'Points Type Safety'
+    It 'verifies that all points fields are number type or null'
       check_points_type() {
         local file=".heartbeat/backlog.jsonl"
         local line_num=0

@@ -1,28 +1,28 @@
-Describe '/heartbeat:insight-analysis Skill定義'
+Describe '/heartbeat:insight-analysis Skill Definition'
   SKILL_DIR="adapters/claude-code/skills/insight-analysis"
 
-  It 'Skillディレクトリが存在すること'
+  It 'verifies that the skill directory exists'
     The path "$SKILL_DIR" should be directory
   End
 
-  It 'エントリポイントファイル SKILL.md が存在すること'
+  It 'verifies that the entry point file SKILL.md exists'
     The path "$SKILL_DIR/SKILL.md" should be file
   End
 
-  It 'SKILL.md に --files 引数仕様が記載されていること'
-    Skip if "SKILL.md が存在しない" [ ! -f "$SKILL_DIR/SKILL.md" ]
+  It 'documents --files argument specification in SKILL.md'
+    Skip if "SKILL.md does not exist" [ ! -f "$SKILL_DIR/SKILL.md" ]
     When run grep -q '\-\-files' "$SKILL_DIR/SKILL.md"
     The status should be success
   End
 
-  It 'SKILL.md に --figma 引数仕様が記載されていること'
-    Skip if "SKILL.md が存在しない" [ ! -f "$SKILL_DIR/SKILL.md" ]
+  It 'documents --figma argument specification in SKILL.md'
+    Skip if "SKILL.md does not exist" [ ! -f "$SKILL_DIR/SKILL.md" ]
     When run grep -q '\-\-figma' "$SKILL_DIR/SKILL.md"
     The status should be success
   End
 
-  It 'SKILL.md に insight-analysis の名前が定義されていること'
-    Skip if "SKILL.md が存在しない" [ ! -f "$SKILL_DIR/SKILL.md" ]
+  It 'defines insight-analysis name in SKILL.md'
+    Skip if "SKILL.md does not exist" [ ! -f "$SKILL_DIR/SKILL.md" ]
     When run grep -qi 'insight-analysis' "$SKILL_DIR/SKILL.md"
     The status should be success
   End

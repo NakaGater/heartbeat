@@ -7,28 +7,28 @@ Describe 'worktree-manager.sh'
 
   SCRIPT="./core/scripts/worktree-manager.sh"
 
-  Describe 'スクリプトの存在と実行権限 (CC1)'
-    It 'core/scripts/worktree-manager.sh が存在する'
+  Describe 'Script Existence and Permissions (CC1)'
+    It 'verifies that core/scripts/worktree-manager.sh exists'
       Path script="$SCRIPT"
       The path script should be exist
     End
 
-    It '実行権限がある'
+    It 'has execute permission'
       Path script="$SCRIPT"
       The path script should be executable
     End
   End
 
-  Describe '引数なし実行 (CC2)'
-    It '使い方をstderrに表示しexit 1を返す'
+  Describe 'No-argument Execution (CC2)'
+    It 'displays usage to stderr and returns exit 1'
       When run "$SCRIPT"
       The status should equal 1
       The stderr should include "usage"
     End
   End
 
-  Describe 'list コマンド (CC3)'
-    It 'exit 0で正常終了する'
+  Describe 'list Command (CC3)'
+    It 'exits 0 successfully'
       When run "$SCRIPT" list
       The status should be success
     End

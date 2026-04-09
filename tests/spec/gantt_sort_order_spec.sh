@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh: ガントチャートの行順保持（T1）'
+Describe 'generate-dashboard.sh: Gantt Chart Row Order Preservation (T1)'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -27,7 +27,7 @@ BOARD
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  It 'board.jsonlの行順がSTORIES_DATAに保持され、タイムスタンプ順ソートが存在しない'
+  It 'preserves board.jsonl row order in STORIES_DATA without timestamp sorting'
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
     # renderGantt()内のentries.sort()が存在しないことを検証する

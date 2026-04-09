@@ -1,4 +1,4 @@
-Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
+Describe 'user-insight-analyze.sh UCD 4-layer JSONL Operation Script'
   SCRIPT="core/scripts/user-insight-analyze.sh"
 
   setup() {
@@ -11,43 +11,43 @@ Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Describe 'スクリプト基本要件'
-    It 'スクリプトファイルが存在すること'
+  Describe 'Script Basic Requirements'
+    It 'verifies that the script file exists'
       The file "$SCRIPT" should be exist
     End
 
-    It 'スクリプトに実行権限があること'
+    It 'verifies that the script has execute permission'
       The file "$SCRIPT" should be executable
     End
 
-    It '--help オプションで使用方法が表示されること'
+    It 'displays usage information with --help option'
       When run bash "$SCRIPT" --help
       The status should be success
       The output should include 'Usage'
     End
 
-    It '引数なしで実行するとエラー終了すること'
+    It 'exits with error when run without arguments'
       When run bash "$SCRIPT"
       The status should be failure
       The stderr should not equal ""
     End
 
-    It '不正なレイヤー名でエラー終了すること'
+    It 'exits with error for invalid layer name'
       When run bash "$SCRIPT" invalid_layer '{"source_type":"interview"}' "$TEST_INSIGHTS_DIR"
       The status should be failure
       The stderr should not equal ""
     End
   End
 
-  Describe 'Raw層: テキストファイル入力で raw.jsonl にエントリ追記'
-    It '有効なJSONエントリを raw 層に追記できること'
+  Describe 'Raw Layer: Appending Entries to raw.jsonl From Text File Input'
+    It 'appends a valid JSON entry to the raw layer'
       json_entry='{"source_type":"interview","source_ref":"test_interview.md","title":"テストインタビュー","excerpt":"テスト用の要約"}'
       When run bash "$SCRIPT" raw "$json_entry" "$TEST_INSIGHTS_DIR"
       The status should be success
       The file "${TEST_INSIGHTS_DIR}/raw.jsonl" should be exist
     End
 
-    It 'raw 層のエントリに RAW-NNN 形式のIDが自動採番されること'
+    It 'auto-assigns RAW-NNN format IDs to raw layer entries'
       json_entry='{"source_type":"interview","source_ref":"test_interview.md","title":"テストインタビュー","excerpt":"テスト用の要約"}'
       run_and_check_id() {
         bash "$SCRIPT" raw "$json_entry" "$TEST_INSIGHTS_DIR" && \
@@ -57,7 +57,7 @@ Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
       The status should be success
     End
 
-    It '最初のエントリのIDが RAW-001 であること'
+    It 'assigns RAW-001 as the first entry ID'
       json_entry='{"source_type":"interview","source_ref":"test_interview.md","title":"テストインタビュー","excerpt":"テスト用の要約"}'
       run_and_get_id() {
         bash "$SCRIPT" raw "$json_entry" "$TEST_INSIGHTS_DIR" && \
@@ -67,7 +67,7 @@ Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
       The output should equal "RAW-001"
     End
 
-    It 'raw 層のエントリに UTC ISO 8601 タイムスタンプが付与されること'
+    It 'assigns UTC ISO 8601 timestamp to raw layer entries'
       json_entry='{"source_type":"interview","source_ref":"test_interview.md","title":"テストインタビュー","excerpt":"テスト用の要約"}'
       run_and_check_timestamp() {
         bash "$SCRIPT" raw "$json_entry" "$TEST_INSIGHTS_DIR" && \
@@ -77,7 +77,7 @@ Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
       The status should be success
     End
 
-    It 'insights ディレクトリが存在しない場合に自動作成されること'
+    It 'auto-creates insights directory when it does not exist'
       json_entry='{"source_type":"interview","source_ref":"test_interview.md","title":"テストインタビュー","excerpt":"テスト用の要約"}'
       run_and_check_dir() {
         bash "$SCRIPT" raw "$json_entry" "$TEST_INSIGHTS_DIR" && \
@@ -87,7 +87,7 @@ Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
       The status should be success
     End
 
-    It 'stdin から JSON エントリを読み取れること（パイプライン対応）'
+    It 'reads JSON entry from stdin (pipeline support)'
       json_entry='{"source_type":"survey","source_ref":"survey_results.md","title":"アンケート結果","excerpt":"テスト用の要約"}'
       run_stdin() {
         echo "$json_entry" | bash "$SCRIPT" raw - "$TEST_INSIGHTS_DIR" && \
@@ -97,7 +97,7 @@ Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
       The output should equal "survey"
     End
 
-    It '既存エントリがある場合にIDが重複しないこと'
+    It 'does not duplicate IDs when existing entries are present'
       json_entry1='{"source_type":"interview","source_ref":"file1.md","title":"インタビュー1","excerpt":"要約1"}'
       json_entry2='{"source_type":"survey","source_ref":"file2.md","title":"アンケート2","excerpt":"要約2"}'
       run_and_check_no_dup() {
@@ -111,7 +111,7 @@ Describe 'user-insight-analyze.sh UCD 4層JSONL操作スクリプト'
       The status should be success
     End
 
-    It '不正なJSONでエラー終了すること'
+    It 'exits with error for invalid JSON'
       When run bash "$SCRIPT" raw "not-valid-json" "$TEST_INSIGHTS_DIR"
       The status should be failure
       The stderr should not equal ""

@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh 排他制御'
+Describe 'generate-dashboard.sh Lock Mechanism'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -14,8 +14,8 @@ Describe 'generate-dashboard.sh 排他制御'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Describe 'ロックディレクトリのライフサイクル'
-    It 'スクリプトにロック機構のコード (mkdir .dashboard-lock) が含まれている'
+  Describe 'Lock Directory Lifecycle'
+    It 'contains lock mechanism code (mkdir .dashboard-lock) in the script'
       # generate-dashboard.sh が排他制御を実装しているかをソースコードレベルで検証
       check_lock_code() {
         grep -q 'dashboard-lock' ./core/scripts/generate-dashboard.sh && echo "HAS_LOCK_CODE" || echo "NO_LOCK_CODE"
@@ -24,7 +24,7 @@ Describe 'generate-dashboard.sh 排他制御'
       The output should equal 'HAS_LOCK_CODE'
     End
 
-    It '正常終了後にロックディレクトリが自動クリーンアップされる'
+    It 'auto-cleans up lock directory after successful completion'
       # EXIT trapによりロックが確実に解放されることを検証
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The status should equal 0
@@ -33,8 +33,8 @@ Describe 'generate-dashboard.sh 排他制御'
     End
   End
 
-  Describe 'ロック競合時のグレースフル終了'
-    It '他プロセスがロックを保持している場合、タイムアウト後にフックセーフで exit 0 する'
+  Describe 'Graceful Exit on Lock Contention'
+    It 'exits 0 hook-safe after timeout when another process holds the lock'
       # 先にロックディレクトリを作成して他プロセスが保持している状態をシミュレート
       mkdir -p "$TEST_HEARTBEAT/.dashboard-lock"
       echo "99999" > "$TEST_HEARTBEAT/.dashboard-lock/pid"
@@ -48,7 +48,7 @@ Describe 'generate-dashboard.sh 排他制御'
       The stderr should include 'lock'
     End
 
-    It 'ロック競合でタイムアウトした場合、出力ファイルを破損させない'
+    It 'does not corrupt the output file when lock contention times out'
       # 既存のダッシュボードを事前生成
       ./core/scripts/generate-dashboard.sh "$TEST_PROJECT" >/dev/null 2>&1
       local original_hash

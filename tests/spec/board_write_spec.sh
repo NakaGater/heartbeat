@@ -45,8 +45,8 @@ Describe 'board-write.sh'
   }
   file_not_exists_or_empty() { assert_file_not_exists_or_empty; }
 
-  Describe '正常系: パイプ入力で JSON エントリが追記される'
-    It 'JSON エントリをパイプで渡すと board.jsonl に正確な UTC タイムスタンプ付きで追記される'
+  Describe 'Normal Cases: Appending JSON Entry via Pipe Input'
+    It 'appends a piped JSON entry to board.jsonl with an accurate UTC timestamp'
       When call run_board_write '{"from":"tester","to":"implementer","action":"make_green","status":"ok","note":"テスト"}' "$TEST_BOARD_FILE"
       The status should be success
       The contents of file "$TEST_BOARD_FILE" should include '"from"'
@@ -55,13 +55,13 @@ Describe 'board-write.sh'
     End
   End
 
-  Describe '正常系: 連続書き込み'
-    It '2回連続で呼び出すと2行が追記され、両方に有効なタイムスタンプがある'
+  Describe 'Normal Cases: Consecutive Writes'
+    It 'appends 2 lines with valid timestamps when called twice consecutively'
       When call run_board_write '{"from":"tester","to":"implementer","action":"first","status":"ok"}' "$TEST_BOARD_FILE"
       The status should be success
     End
 
-    It '2回目の書き込み後にファイルが2行になる'
+    It 'results in 2 lines after the second write'
       run_board_write '{"from":"tester","to":"implementer","action":"first","status":"ok"}' "$TEST_BOARD_FILE"
       When call run_board_write '{"from":"designer","to":"architect","action":"second","status":"ok"}' "$TEST_BOARD_FILE"
       The status should be success
@@ -80,7 +80,7 @@ Describe 'board-write.sh'
     }
     both_lines_have_timestamp() { assert_both_lines_have_timestamp; }
 
-    It '2行とも有効な ISO 8601 タイムスタンプを持つ'
+    It 'verifies that both lines have valid ISO 8601 timestamps'
       run_board_write '{"from":"tester","to":"implementer","action":"first","status":"ok"}' "$TEST_BOARD_FILE"
       When call run_board_write '{"from":"designer","to":"architect","action":"second","status":"ok"}' "$TEST_BOARD_FILE"
       The status should be success
@@ -88,8 +88,8 @@ Describe 'board-write.sh'
     End
   End
 
-  Describe '正常系: timestamp フィールドなし入力'
-    It 'timestamp フィールドがない JSON を渡すと timestamp フィールドが追加される'
+  Describe 'Normal Cases: Input Without Timestamp Field'
+    It 'adds a timestamp field when JSON without timestamp is provided'
       When call run_board_write '{"from":"tester","to":"implementer","action":"test","status":"ok"}' "$TEST_BOARD_FILE"
       The status should be success
       The contents of file "$TEST_BOARD_FILE" should include '"timestamp"'
@@ -97,8 +97,8 @@ Describe 'board-write.sh'
     End
   End
 
-  Describe '正常系: timestamp に空文字入力'
-    It 'timestamp が空文字の JSON を渡すと正確な時刻で上書きされる'
+  Describe 'Normal Cases: Empty String Timestamp Input'
+    It 'overwrites an empty-string timestamp with the current time'
       When call run_board_write '{"from":"tester","to":"implementer","action":"test","status":"ok","timestamp":""}' "$TEST_BOARD_FILE"
       The status should be success
       Assert timestamp_is_recent
@@ -111,39 +111,39 @@ Describe 'board-write.sh'
     }
     timestamp_not_empty() { assert_timestamp_not_empty; }
 
-    It 'timestamp が空文字のまま残らない'
+    It 'does not leave the timestamp as an empty string'
       When call run_board_write '{"from":"tester","to":"implementer","action":"test","status":"ok","timestamp":""}' "$TEST_BOARD_FILE"
       The status should be success
       Assert timestamp_not_empty
     End
   End
 
-  Describe '異常系: stdin が空'
-    It 'stdin が空の場合、何も書き込まれず exit 0'
+  Describe 'Error Cases: Empty Stdin'
+    It 'writes nothing and exits 0 when stdin is empty'
       When call run_board_write '' "$TEST_BOARD_FILE"
       The status should be success
     End
 
-    It 'stdin が空の場合、ファイルが作成されないか空のまま'
+    It 'does not create a file or leaves it empty when stdin is empty'
       When call run_board_write '' "$TEST_BOARD_FILE"
       The status should be success
       Assert file_not_exists_or_empty
     End
   End
 
-  Describe '異常系: 引数なし'
+  Describe 'Error Cases: No Arguments'
     run_board_write_no_args() {
       echo '{"from":"tester","to":"implementer","action":"test","status":"ok"}' | ./core/scripts/board-write.sh
     }
 
-    It '引数なしで呼び出すと何も書き込まれず exit 0'
+    It 'writes nothing and exits 0 when called without arguments'
       When call run_board_write_no_args
       The status should be success
     End
   End
 
-  Describe '異常系: 不正 JSON'
-    It '不正 JSON を渡すと何も書き込まれず exit 0'
+  Describe 'Error Cases: Invalid JSON'
+    It 'writes nothing and exits 0 when given invalid JSON'
       When call run_board_write 'this is not json at all' "$TEST_BOARD_FILE"
       The status should be success
       Assert file_not_exists_or_empty

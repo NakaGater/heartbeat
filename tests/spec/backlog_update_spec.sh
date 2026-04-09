@@ -1,27 +1,27 @@
 Describe 'backlog-update.sh'
   SCRIPT="./core/scripts/backlog-update.sh"
 
-  Describe 'スクリプトの存在と実行権限'
-    It 'core/scripts/backlog-update.sh が存在する'
+  Describe 'Script Existence and Permissions'
+    It 'verifies that core/scripts/backlog-update.sh exists'
       Path script="$SCRIPT"
       The path script should be exist
     End
 
-    It '実行権限がある'
+    It 'has execute permission'
       Path script="$SCRIPT"
       The path script should be executable
     End
   End
 
-  Describe '引数バリデーション'
-    It '引数なしでexit 1を返す'
+  Describe 'Argument Validation'
+    It 'returns exit 1 when called without arguments'
       When run "$SCRIPT"
       The status should equal 1
       The stderr should include "usage"
     End
   End
 
-  Describe 'backlog.jsonl更新'
+  Describe 'backlog.jsonl Update'
     setup_backlog() {
       TEST_DIR=$(mktemp -d)
       mkdir -p "$TEST_DIR/.heartbeat"
@@ -36,7 +36,7 @@ Describe 'backlog-update.sh'
     BeforeEach 'setup_backlog'
     AfterEach 'cleanup_backlog'
 
-    It '指定story-idのstatusを更新できる'
+    It 'updates the status of a specified story-id'
       run_update() {
         HEARTBEAT_MAIN_DIR="$TEST_DIR" "$SCRIPT" "0007-test" "status" "in_progress"
         jq -r 'select(.story_id == "0007-test") | .status' "$TEST_DIR/.heartbeat/backlog.jsonl"

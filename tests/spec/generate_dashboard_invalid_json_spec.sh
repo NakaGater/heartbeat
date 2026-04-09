@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh 不正JSON行の防御的パース'
+Describe 'generate-dashboard.sh Defensive Parsing of Invalid JSON Lines'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -20,8 +20,8 @@ JSONL
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Describe '不正JSON行を含むbacklog.jsonlの処理'
-    It '不正行をスキップして有効行のみでダッシュボードを生成する'
+  Describe 'Handling backlog.jsonl Containing Invalid JSON Lines'
+    It 'skips invalid lines and generates dashboard with valid lines only'
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The output should include 'Dashboard generated'
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist

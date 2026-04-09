@@ -1,4 +1,4 @@
-Describe 'renderVelocity(): pointsの型安全化とnullガード (task 2)'
+Describe 'renderVelocity(): Points Type Safety and Null Guard (Task 2)'
 
   DASHBOARD="core/templates/dashboard.html"
 
@@ -55,7 +55,7 @@ Describe 'renderVelocity(): pointsの型安全化とnullガード (task 2)'
     return $?
   }
 
-  It 'pointsが文字列・null・0混在時に数値加算され正しい合計を表示する'
+  It 'performs numeric addition and displays correct total with mixed string, null, and 0 points'
     When call check_velocity_points_type_coercion
     The status should be success
     The output should not include 'FAIL'

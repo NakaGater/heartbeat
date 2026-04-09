@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh 全行不正JSON時のフォールバック'
+Describe 'generate-dashboard.sh Fallback When All Lines Are Invalid JSON'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -20,8 +20,8 @@ JSONL
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Describe '全行が不正なbacklog.jsonlの処理'
-    It '空の配列にフォールバックしてダッシュボードを正常生成する'
+  Describe 'Handling backlog.jsonl With All Invalid Lines'
+    It 'falls back to an empty array and generates dashboard successfully'
       When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
       The output should include 'Dashboard generated'
       The file "$TEST_HEARTBEAT/dashboard.html" should be exist

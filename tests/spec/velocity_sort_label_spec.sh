@@ -1,4 +1,4 @@
-Describe 'Velocity Chart ソート・ラベル表示の YYYY-Wnn 対応 (task 4)'
+Describe 'Velocity Chart Sort and Label Display With YYYY-Wnn Format (Task 4)'
 
   DASHBOARD="core/templates/dashboard.html"
 
@@ -83,7 +83,7 @@ Describe 'Velocity Chart ソート・ラベル表示の YYYY-Wnn 対応 (task 4)
     return $?
   }
 
-  It 'X軸ラベルがYYYY-Wnn形式で時系列順に表示される（逆順入力データでも正しくソート）'
+  It 'displays X-axis labels in YYYY-Wnn format in chronological order (correctly sorts reverse-ordered input)'
     When call check_sort_and_label_format
     The status should be success
     The output should not include 'FAIL'

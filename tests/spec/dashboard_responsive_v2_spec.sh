@@ -1,39 +1,39 @@
-Describe 'dashboard.html: レスポンシブ対応 v2（タスク8: 3ブレークポイント + タッチターゲット48px）'
+Describe 'dashboard.html: Responsive v2 (Task 8: 3 Breakpoints + 48px Touch Targets)'
   TEMPLATE="core/templates/dashboard.html"
 
   # --- 1024px ブレークポイント: グリッド調整 ---
-  It '1024px メディアクエリ内で .bento-grid が 6カラムグリッドに変更される'
+  It 'changes .bento-grid to 6-column grid in 1024px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 1024px)*.bento-grid*grid-template-columns: repeat(6, 1fr)*'
   End
 
   # --- 768px ブレークポイント: サイドバー非表示 ---
-  It '768px メディアクエリ内で .sidebar が display: none になる'
+  It 'sets .sidebar to display: none in 768px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 768px)*.sidebar*display: none*'
   End
 
-  It '768px メディアクエリ内で .bento-grid の margin-left が 0 になる'
+  It 'sets .bento-grid margin-left to 0 in 768px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 768px)*.bento-grid*margin-left: 0*'
   End
 
-  It '768px メディアクエリ内で .bento-grid が 1カラムグリッドになる'
+  It 'changes .bento-grid to 1-column grid in 768px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 768px)*.bento-grid*grid-template-columns: 1fr*'
   End
 
-  It '768px メディアクエリ内で .metric-value のフォントサイズが縮小される'
+  It 'reduces .metric-value font-size in 768px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 768px)*.metric-value*font-size:*'
   End
 
   # --- 480px ブレークポイント: シングルカラム ---
-  It '480px メディアクエリ内で .kanban が 1カラムになる'
+  It 'changes .kanban to 1-column in 480px media query'
     The contents of file "$TEMPLATE" should match pattern '*@media (max-width: 480px)*.kanban*grid-template-columns: 1fr*'
   End
 
   # --- タッチターゲット 48px（v2仕様: 44px ではなく 48px） ---
-  It 'タッチターゲット要素に min-height: 48px が設定されている'
+  It 'sets min-height: 48px on touch target elements'
     The contents of file "$TEMPLATE" should include 'min-height: 48px'
   End
 
-  It '.sidebar-icon に min-height: 48px が設定されている'
+  It 'sets min-height: 48px on .sidebar-icon'
     The contents of file "$TEMPLATE" should match pattern '*.sidebar-icon*min-height: 48px*'
   End
 End

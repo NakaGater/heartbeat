@@ -1,4 +1,4 @@
-Describe 'Velocity Chart 統合テスト: generate-dashboard.sh による実データ検証 (task 5)'
+Describe 'Velocity Chart Integration Test: Real Data Verification via generate-dashboard.sh (Task 5)'
 
   DASHBOARD_SCRIPT="core/scripts/generate-dashboard.sh"
 
@@ -162,7 +162,7 @@ JSONL
     return $?
   }
 
-  It 'generate-dashboard.shで生成されたHTMLのVelocity Chartが正しい数値で表示される'
+  It 'displays correct numerical values in Velocity Chart of generated HTML'
     When call check_velocity_integration
     The status should be success
     The output should not include 'FAIL'

@@ -21,15 +21,15 @@ Describe 'timeline-record.sh'
     echo "$1" | ./core/scripts/timeline-record.sh
   }
 
-  Describe 'スクリプトの存在と実行権限'
-    It 'core/scripts/timeline-record.sh が存在し実行権限を持つ'
+  Describe 'Script Existence and Permissions'
+    It 'verifies that core/scripts/timeline-record.sh exists and is executable'
       Path script="core/scripts/timeline-record.sh"
       The path script should be executable
     End
   End
 
-  Describe 'SubagentStop イベントの記録'
-    It 'SubagentStop stdin を受け取ると timeline.jsonl に agent-stop エントリを追記する'
+  Describe 'SubagentStop Event Recording'
+    It 'appends agent-stop entry to timeline.jsonl when receiving SubagentStop stdin'
       When call run_timeline_record '{"hook_event_name":"SubagentStop","agent_type":"heartbeat:tester","session_id":"abc123"}'
       The status should be success
       The contents of file "$STORY_DIR/timeline.jsonl" should include '"event":"agent-stop"'
@@ -38,8 +38,8 @@ Describe 'timeline-record.sh'
     End
   End
 
-  Describe 'SubagentStart イベントの記録'
-    It 'SubagentStart stdin を受け取ると timeline.jsonl に agent-start エントリを追記する'
+  Describe 'SubagentStart Event Recording'
+    It 'appends agent-start entry to timeline.jsonl when receiving SubagentStart stdin'
       When call run_timeline_record '{"hook_event_name":"SubagentStart","agent_type":"heartbeat:implementer","session_id":"def456"}'
       The status should be success
       The contents of file "$STORY_DIR/timeline.jsonl" should include '"event":"agent-start"'
@@ -47,16 +47,16 @@ Describe 'timeline-record.sh'
     End
   End
 
-  Describe 'agent_type が空の場合のフォールバック'
-    It 'agent_type が空文字列のとき agent を "unknown" にフォールバックする'
+  Describe 'Fallback When agent_type Is Empty'
+    It 'falls back agent to "unknown" when agent_type is an empty string'
       When call run_timeline_record '{"hook_event_name":"SubagentStop","agent_type":"","session_id":"ghi789"}'
       The status should be success
       The contents of file "$STORY_DIR/timeline.jsonl" should include '"agent":"unknown"'
     End
   End
 
-  Describe 'ストーリーディレクトリが見つからない場合'
-    It 'find_board_jsonl が空を返すとき、エラーなしで exit 0 する'
+  Describe 'When Story Directory Is Not Found'
+    It 'exits 0 without error when find_board_jsonl returns empty'
       # board.jsonl を削除して find_board_jsonl が空を返す状態にする
       setup_no_story() {
         NO_STORY_DIR=$(mktemp -d)
@@ -74,8 +74,8 @@ Describe 'timeline-record.sh'
     End
   End
 
-  Describe 'board.jsonl への非書き込み保証'
-    It 'timeline-record.sh 実行後に board.jsonl の内容が変化しない'
+  Describe 'Non-write Guarantee for board.jsonl'
+    It 'does not change board.jsonl contents after timeline-record.sh execution'
       # 実行前の board.jsonl の内容を記録
       save_board() {
         BOARD_BEFORE=$(cat "$STORY_DIR/board.jsonl")

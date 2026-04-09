@@ -1,68 +1,68 @@
-Describe 'dashboard.html: タイポグラフィの洗練（タスク3 - AC5）'
+Describe 'dashboard.html: Typography Refinement (Task 3 - AC5)'
   TEMPLATE="core/templates/dashboard.html"
 
   # --- システムフォントスタック ---
-  It 'body に SF Pro を含むシステムフォントスタックが定義されている'
+  It 'defines a system font stack including SF Pro on body'
     The contents of file "$TEMPLATE" should include "SF Pro"
   End
 
-  It 'アンチエイリアスレンダリング -webkit-font-smoothing: antialiased が定義されている'
+  It 'defines anti-alias rendering -webkit-font-smoothing: antialiased'
     The contents of file "$TEMPLATE" should include '-webkit-font-smoothing: antialiased'
   End
 
   # --- タイプスケールトークン ---
-  It 'タイプスケールトークン --text-xs が :root に定義されている'
+  It 'defines type scale token --text-xs on :root'
     The contents of file "$TEMPLATE" should include '--text-xs:'
   End
 
-  It 'タイプスケールトークン --text-sm が :root に定義されている'
+  It 'defines type scale token --text-sm on :root'
     The contents of file "$TEMPLATE" should include '--text-sm:'
   End
 
-  It 'タイプスケールトークン --text-base が :root に定義されている'
+  It 'defines type scale token --text-base on :root'
     The contents of file "$TEMPLATE" should include '--text-base:'
   End
 
-  It 'タイプスケールトークン --text-lg が :root に定義されている'
+  It 'defines type scale token --text-lg on :root'
     The contents of file "$TEMPLATE" should include '--text-lg:'
   End
 
-  It 'タイプスケールトークン --text-xl が :root に定義されている'
+  It 'defines type scale token --text-xl on :root'
     The contents of file "$TEMPLATE" should include '--text-xl:'
   End
 
-  It 'タイプスケールトークン --text-2xl が :root に定義されている'
+  It 'defines type scale token --text-2xl on :root'
     The contents of file "$TEMPLATE" should include '--text-2xl:'
   End
 
   # --- Fluid Typography（h1 に clamp() 使用） ---
-  It 'h1 に clamp() を使用した fluid font-size が定義されている'
+  It 'defines fluid font-size using clamp() on h1'
     The contents of file "$TEMPLATE" should include 'clamp('
   End
 
   # --- フォントウェイト階層（4段階の使い分け） ---
-  It 'フォントウェイト 700（Bold）が使用されている'
+  It 'uses font-weight 700 (Bold)'
     The contents of file "$TEMPLATE" should include 'font-weight: 700'
   End
 
-  It 'フォントウェイト 600（Semibold）が使用されている'
+  It 'uses font-weight 600 (Semibold)'
     The contents of file "$TEMPLATE" should include 'font-weight: 600'
   End
 
-  It 'フォントウェイト 500（Medium）が使用されている'
+  It 'uses font-weight 500 (Medium)'
     The contents of file "$TEMPLATE" should include 'font-weight: 500'
   End
 
   # --- Letter-spacing の差別化 ---
-  It '見出し用のタイトな letter-spacing（負値）が定義されている'
+  It 'defines tight letter-spacing (negative value) for headings'
     The contents of file "$TEMPLATE" should include 'letter-spacing: -0.025em'
   End
 
-  It 'ラベル用のワイドな letter-spacing（正値 0.08em）が定義されている'
+  It 'defines wide letter-spacing (positive 0.08em) for labels'
     The contents of file "$TEMPLATE" should include 'letter-spacing: 0.08em'
   End
 
-  It '本文用の letter-spacing（0.01em）が定義されている'
+  It 'defines letter-spacing (0.01em) for body text'
     The contents of file "$TEMPLATE" should include 'letter-spacing: 0.01em'
   End
 End

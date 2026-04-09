@@ -1,7 +1,7 @@
-Describe 'dashboard-backlog-sync board.jsonl タイムスタンプ整合性'
+Describe 'dashboard-backlog-sync board.jsonl Timestamp Consistency'
   BOARD_FILE=".heartbeat/stories/0031-dashboard-backlog-sync/board.jsonl"
 
-  It 'TDDサイクル内でタイムスタンプが単調増加である'
+  It 'verifies that timestamps are monotonically increasing within a TDD cycle'
     # 各行のタイムスタンプを抽出し、隣接する行のペアを比較する。
     # TDDサイクル (red -> green -> refactor) のワークフロー順序で
     # タイムスタンプが逆転している箇所がゼロであることを検証する。

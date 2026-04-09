@@ -13,8 +13,8 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  Describe 'acquire_lock によるロック取得 (CC1)'
-    It 'ロックディレクトリが作成され、pid ファイルに現プロセスの PID が記録される'
+  Describe 'Lock Acquisition via acquire_lock (CC1)'
+    It 'creates a lock directory and records current process PID in pid file'
       acquire_and_check() {
         source ./core/scripts/lib/common.sh
         acquire_lock "$LOCK_DIR"
@@ -49,8 +49,8 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
   # Task 3, CC2: release_lock は PID が一致する場合のみロックを削除する
   # 他プロセスの PID が記録されている場合、削除しない
   # Design spec 13
-  Describe 'release_lock の PID 照合 (CC2)'
-    It '現プロセスの PID が記録されている場合、ロックディレクトリが削除される'
+  Describe 'PID Matching in release_lock (CC2)'
+    It 'removes lock directory when current process PID is recorded'
       release_own_lock() {
         source ./core/scripts/lib/common.sh
         mkdir -p "$LOCK_DIR"
@@ -67,7 +67,7 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
       The status should be success
     End
 
-    It '他プロセスの PID が記録されている場合、ロックディレクトリは削除されない'
+    It 'does not remove lock directory when another process PID is recorded'
       release_other_lock() {
         source ./core/scripts/lib/common.sh
         mkdir -p "$LOCK_DIR"
@@ -87,8 +87,8 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
 
   # Task 3, CC3: acquire_lock はリトライ後に失敗する (return 1)
   # Design spec 14
-  Describe 'acquire_lock のリトライと失敗 (CC3)'
-    It 'ロックが既に取得されている場合、リトライ後に非ゼロで終了する'
+  Describe 'acquire_lock Retry and Failure (CC3)'
+    It 'exits non-zero after retries when lock is already held'
       acquire_with_existing_lock() {
         source ./core/scripts/lib/common.sh
         # 他プロセスのロックをシミュレート
@@ -106,8 +106,8 @@ Describe 'acquire_lock() / release_lock() in lib/common.sh'
 
   # Task 3, CC4: stale ロック検出 (find -mmin による古いロックの除去)
   # Design spec 15
-  Describe 'stale ロック検出 (CC4)'
-    It '1分以上前に作成されたロックが存在する場合、acquire_lock が除去して取得に成功する'
+  Describe 'Stale Lock Detection (CC4)'
+    It 'removes stale lock older than 1 minute and acquires successfully'
       acquire_with_stale_lock() {
         source ./core/scripts/lib/common.sh
         # stale ロックを作成

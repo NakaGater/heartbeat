@@ -224,7 +224,7 @@ Describe 'board-stamp.sh'
     End
   End
 
-  Describe '全行走査・空タイムスタンプのみ補完'
+  Describe 'Full Row Scan: Fill Only Empty Timestamps'
     # 複数行の board.jsonl で、空タイムスタンプの行のみ補完し、
     # 既存の有効なタイムスタンプは上書きしないことを検証する。
 
@@ -251,7 +251,7 @@ Describe 'board-stamp.sh'
     End
   End
 
-  Describe '不正タイムスタンプ値の補完'
+  Describe 'Invalid Timestamp Value Correction'
     # ISO 8601 形式に合致しない不正な値（例: "invalid"）は
     # 空文字と同様に補完対象とし、正確な UTC 時刻で上書きすべき。
 

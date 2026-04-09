@@ -1,4 +1,4 @@
-Describe 'board-stamp.sh 未来タイムスタンプ警告'
+Describe 'board-stamp.sh Future Timestamp Warning'
   setup() {
     TEST_BOARD_DIR=$(mktemp -d)
     export TEST_BOARD_FILE="${TEST_BOARD_DIR}/board.jsonl"
@@ -14,8 +14,8 @@ Describe 'board-stamp.sh 未来タイムスタンプ警告'
     echo "$1" | ./core/scripts/board-stamp.sh
   }
 
-  Describe '未来タイムスタンプが存在する場合'
-    It 'stderrに警告メッセージを出力する'
+  Describe 'When Future Timestamps Exist'
+    It 'outputs a warning message to stderr'
       setup_future_ts() {
         # 2099年のタイムスタンプは確実に未来
         echo '{"from":"tester","to":"implementer","action":"make_green","status":"ok","note":"future","timestamp":"2099-12-31T23:59:59Z"}' > "$TEST_BOARD_FILE"
@@ -29,8 +29,8 @@ Describe 'board-stamp.sh 未来タイムスタンプ警告'
     End
   End
 
-  Describe '過去タイムスタンプのみの場合'
-    It 'stderrに警告を出力しない'
+  Describe 'When Only Past Timestamps Exist'
+    It 'does not output a warning to stderr'
       setup_past_ts() {
         echo '{"from":"tester","to":"implementer","action":"make_green","status":"ok","note":"past","timestamp":"2020-01-01T00:00:00Z"}' > "$TEST_BOARD_FILE"
       }

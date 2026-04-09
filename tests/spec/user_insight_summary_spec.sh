@@ -1,4 +1,4 @@
-Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
+Describe 'user-insight-summary.sh UCD 4-layer Cross-cutting Markdown Summary Generation'
   SCRIPT="core/scripts/user-insight-summary.sh"
 
   setup() {
@@ -32,25 +32,25 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
     echo '{"id":"OPP-002","source_insights":["INS-002"],"title":"検索速度の改善","description":"検索応答時間を500ms以内に短縮","impact":"low","effort":"high","related_stories":[],"created_by":"insight-analyst","timestamp":"2026-04-04T10:31:00Z"}' >> "${TEST_INSIGHTS_DIR}/opportunities.jsonl"
   }
 
-  Describe 'スクリプト基本要件'
-    It 'スクリプトファイルが存在すること'
+  Describe 'Script Basic Requirements'
+    It 'verifies that the script file exists'
       The file "$SCRIPT" should be exist
     End
 
-    It 'スクリプトに実行権限があること'
+    It 'verifies that the script has execute permission'
       The file "$SCRIPT" should be executable
     End
   End
 
-  Describe 'サマリー生成: 正常系'
-    It '4層のJSONLからsummary.mdが生成されること'
+  Describe 'Summary Generation: Normal Cases'
+    It 'generates summary.md from 4-layer JSONL files'
       create_full_test_data
       When run bash "$SCRIPT" "$TEST_INSIGHTS_DIR"
       The status should be success
       The file "${TEST_INSIGHTS_DIR}/summary.md" should be exist
     End
 
-    It 'サマリーにタイトル見出しが含まれること'
+    It 'includes a title heading in the summary'
       run_and_check_title() {
         create_full_test_data
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -60,7 +60,7 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
       The status should be success
     End
 
-    It '概要セクションに各層のエントリ数が含まれること'
+    It 'includes entry counts for each layer in the overview section'
       run_and_check_counts() {
         create_full_test_data
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -75,7 +75,7 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
       The status should be success
     End
 
-    It 'インサイトカテゴリ別集計セクションが含まれること'
+    It 'includes insight category breakdown section'
       run_and_check_category() {
         create_full_test_data
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -87,7 +87,7 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
       The status should be success
     End
 
-    It 'カテゴリ別集計にseverity内訳が含まれること'
+    It 'includes severity breakdown in category aggregation'
       run_and_check_severity() {
         create_full_test_data
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -99,8 +99,8 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
     End
   End
 
-  Describe '主要な改善機会セクション'
-    It 'impact:high のOpportunitiesが「主要な改善機会」セクションに含まれること'
+  Describe 'Key Improvement Opportunities Section'
+    It 'includes impact:high Opportunities in the key improvement opportunities section'
       run_and_check_high_impact() {
         create_full_test_data
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -111,7 +111,7 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
       The status should be success
     End
 
-    It 'impact:low のOpportunitiesが「主要な改善機会」セクションに含まれないこと'
+    It 'excludes impact:low Opportunities from the key improvement opportunities section'
       run_and_check_low_excluded() {
         create_full_test_data
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -123,8 +123,8 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
     End
   End
 
-  Describe 'トレーサビリティ'
-    It 'トレーサビリティセクションにOpportunityの根拠チェーンが含まれること'
+  Describe 'Traceability'
+    It 'includes Opportunity evidence chains in the traceability section'
       run_and_check_trace() {
         create_full_test_data
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -139,8 +139,8 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
     End
   End
 
-  Describe '空ファイル・欠損ファイルの処理'
-    It '全てのJSONLが存在しない場合でもエラーにならず空サマリーが生成されること'
+  Describe 'Empty and Missing File Handling'
+    It 'generates an empty summary without error when all JSONL files are missing'
       run_and_check_empty() {
         rm -f "${TEST_INSIGHTS_DIR}"/*.jsonl
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \
@@ -150,7 +150,7 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
       The status should be success
     End
 
-    It '空のJSONLファイルがある場合でもエラーにならないこと'
+    It 'does not error when empty JSONL files are present'
       run_and_check_empty_files() {
         touch "${TEST_INSIGHTS_DIR}/raw.jsonl"
         touch "${TEST_INSIGHTS_DIR}/findings.jsonl"
@@ -163,7 +163,7 @@ Describe 'user-insight-summary.sh UCD 4層横断Markdownサマリー生成'
       The status should be success
     End
 
-    It '一部の層のみにデータがある場合でもエラーにならないこと'
+    It 'does not error when only some layers have data'
       run_and_check_partial() {
         echo '{"id":"RAW-001","source_type":"interview","source_ref":"file.md","title":"テスト","excerpt":"要約","created_by":"insight-analyst","timestamp":"2026-04-04T10:00:00Z"}' > "${TEST_INSIGHTS_DIR}/raw.jsonl"
         bash "$SCRIPT" "$TEST_INSIGHTS_DIR" && \

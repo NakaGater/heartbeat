@@ -1,4 +1,4 @@
-Describe 'SKILL.md Workflow 3 ステータスライフサイクル'
+Describe 'SKILL.md Workflow 3 Status Lifecycle'
   # Workflow 3 セクションに、Workflow 1 + 2 経由で
   # draft → ready → in_progress → done のステータス遷移が
   # 自動的に継承される旨の NOTE が含まれることを検証する
@@ -13,7 +13,7 @@ Describe 'SKILL.md Workflow 3 ステータスライフサイクル'
     sed -n "${wf3_start},${wf3_end}p" "$SKILL_FILE"
   }
 
-  It 'ステータスライフサイクル（draft → ready → in_progress → done）が Workflow 1 + 2 から継承される旨の記述が含まれる'
+  It 'contains a description that status lifecycle (draft -> ready -> in_progress -> done) is inherited from Workflow 1 + 2'
     check_lifecycle_note() {
       local wf3_section
       wf3_section=$(extract_wf3_section)

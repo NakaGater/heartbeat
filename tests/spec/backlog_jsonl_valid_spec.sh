@@ -1,6 +1,6 @@
-Describe 'backlog.jsonl データ整合性'
-  Describe 'JSON構文バリデーション'
-    It '全行が有効なJSONであること'
+Describe 'backlog.jsonl Data Integrity'
+  Describe 'JSON Syntax Validation'
+    It 'verifies that all lines are valid JSON'
       validate_all_lines() {
         local file=".heartbeat/backlog.jsonl"
         local line_num=0

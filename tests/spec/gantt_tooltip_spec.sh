@@ -1,4 +1,4 @@
-Describe 'generate-dashboard.sh: ガントチャートのバーにツールチップ表示（T5）'
+Describe 'generate-dashboard.sh: Gantt Chart Bar Tooltips (T5)'
   setup() {
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
@@ -26,7 +26,7 @@ BOARD
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
-  It '各バーが<g>でラップされ<title>要素にエージェント名を含むツールチップが付与される'
+  It 'wraps each bar in <g> with a <title> tooltip containing agent name'
     When call ./core/scripts/generate-dashboard.sh "$TEST_PROJECT"
     The output should include 'Dashboard generated'
     # T5: バー描画ループで各<rect>を<g>でラップし、

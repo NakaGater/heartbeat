@@ -1,4 +1,4 @@
-Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タスク6)'
+Describe 'Independent Workflow Integration Test (0045-pdm-insight-analysis Task 6)'
   ANALYZE_SCRIPT="core/scripts/user-insight-analyze.sh"
   SUMMARY_SCRIPT="core/scripts/user-insight-summary.sh"
   PDM_FILE="core/agent-personas/pdm.md"
@@ -54,13 +54,13 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
     bash "$SUMMARY_SCRIPT" "$TEST_INSIGHTS_DIR"
   }
 
-  Describe 'E2E パイプライン: テキスト入力 -> analyze.sh -> summary.sh -> summary.md'
-    It '全パイプラインがエラーなく完走すること'
+  Describe 'E2E Pipeline: Text Input -> analyze.sh -> summary.sh -> summary.md'
+    It 'completes the full pipeline without errors'
       When call run_full_pipeline
       The status should be success
     End
 
-    It '4層すべてのJSONLファイルが生成されること'
+    It 'generates JSONL files for all 4 layers'
       run_and_check_files() {
         run_full_pipeline
         [ -f "${TEST_INSIGHTS_DIR}/raw.jsonl" ] && \
@@ -72,7 +72,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'summary.md が生成されること'
+    It 'generates summary.md'
       run_and_check_summary() {
         run_full_pipeline
         [ -f "${TEST_INSIGHTS_DIR}/summary.md" ]
@@ -81,7 +81,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'summary.md に各層のエントリ数が正しく反映されていること'
+    It 'reflects the correct entry count for each layer in summary.md'
       run_and_check_summary_counts() {
         run_full_pipeline
         grep -q '| Raw | 2 |' "${TEST_INSIGHTS_DIR}/summary.md" && \
@@ -93,7 +93,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'summary.md に主要な改善機会が含まれること'
+    It 'includes key improvement opportunities in summary.md'
       run_and_check_summary_opps() {
         run_full_pipeline
         grep -q '検索体験の簡素化' "${TEST_INSIGHTS_DIR}/summary.md"
@@ -102,7 +102,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'summary.md にトレーサビリティセクションが含まれること'
+    It 'includes a traceability section in summary.md'
       run_and_check_summary_trace() {
         run_full_pipeline
         grep -q 'トレーサビリティ' "${TEST_INSIGHTS_DIR}/summary.md" && \
@@ -113,8 +113,8 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
     End
   End
 
-  Describe 'トレーサビリティ: 層間参照チェーンの整合性 (OPP -> INS -> FND -> RAW)'
-    It 'Opportunities の source_insights が実在する INS-NNN を参照していること'
+  Describe 'Traceability: Cross-layer Reference Chain Consistency (OPP -> INS -> FND -> RAW)'
+    It 'verifies that Opportunities source_insights references existing INS-NNN'
       run_and_verify_opp_refs() {
         run_full_pipeline
         # OPP-001 の source_insights 内の各IDが insights.jsonl に存在するか
@@ -130,7 +130,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'Insights の source_findings が実在する FND-NNN を参照していること'
+    It 'verifies that Insights source_findings references existing FND-NNN'
       run_and_verify_ins_refs() {
         run_full_pipeline
         # パイプ経由の while read はサブシェルで実行されるため return 1 が伝播しない。
@@ -147,7 +147,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'Findings の source_raw が実在する RAW-NNN を参照していること'
+    It 'verifies that Findings source_raw references existing RAW-NNN'
       run_and_verify_fnd_refs() {
         run_full_pipeline
         # パイプ経由の while read はサブシェルで実行されるため return 1 が伝播しない。
@@ -164,7 +164,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It '完全な根拠チェーン OPP -> INS -> FND -> RAW が辿れること'
+    It 'traces the complete evidence chain OPP -> INS -> FND -> RAW'
       run_and_verify_full_chain() {
         run_full_pipeline
         # OPP-001 -> INS-001 -> FND-001 -> RAW-001 のチェーンを検証
@@ -182,8 +182,8 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
     End
   End
 
-  Describe '非破壊検証: pdm.md が変更されていないこと'
-    It 'パイプライン実行後に pdm.md のハッシュが変化しないこと'
+  Describe 'Non-destructive Verification: pdm.md Is Unchanged'
+    It 'verifies that pdm.md hash does not change after pipeline execution'
       run_and_check_pdm_unchanged() {
         run_full_pipeline
         PDM_HASH_AFTER=$(md5 -q "$PDM_FILE" 2>/dev/null || md5sum "$PDM_FILE" | awk '{print $1}')
@@ -193,13 +193,13 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'pdm.md ファイルが存在し続けていること'
+    It 'verifies that pdm.md file continues to exist'
       The file "$PDM_FILE" should be exist
     End
   End
 
-  Describe 'Figma: --figma オプション MCP不在時の graceful degradation'
-    It '--figma オプション付きで analyze.sh raw を実行しても非ゼロ終了しないこと'
+  Describe 'Figma: --figma Option Graceful Degradation Without MCP'
+    It 'does not exit non-zero when running analyze.sh raw with --figma option'
       # analyze.sh は layer + json_entry を受け取る設計のため、
       # --figma はスキルレイヤーが処理する。スクリプト自体は source_type=figjam のエントリを受け付けることを検証
       figma_entry='{"source_type":"figjam","source_ref":"https://figma.com/board/xxx","title":"FigJamボード","excerpt":"テストボード","participant_count":0,"created_by":"insight-analyst"}'
@@ -207,7 +207,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'source_type=figjam のエントリが raw.jsonl に正しく記録されること'
+    It 'correctly records source_type=figjam entry in raw.jsonl'
       run_and_check_figjam() {
         figma_entry='{"source_type":"figjam","source_ref":"https://figma.com/board/xxx","title":"FigJamボード","excerpt":"テストボード","participant_count":0,"created_by":"insight-analyst"}'
         bash "$ANALYZE_SCRIPT" raw "$figma_entry" "$TEST_INSIGHTS_DIR" && \
@@ -218,8 +218,8 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
     End
   End
 
-  Describe 'ID自動採番の一貫性: パイプライン全体を通じた連番'
-    It 'Raw層のIDが RAW-001, RAW-002 の連番であること'
+  Describe 'ID Auto-numbering Consistency: Sequential IDs Across Pipeline'
+    It 'assigns sequential IDs RAW-001, RAW-002 to the Raw layer'
       run_and_check_raw_ids() {
         run_full_pipeline
         id1=$(jq -r '.id' "${TEST_INSIGHTS_DIR}/raw.jsonl" | sed -n '1p')
@@ -230,7 +230,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'Findings層のIDが FND-001, FND-002, FND-003 の連番であること'
+    It 'assigns sequential IDs FND-001, FND-002, FND-003 to the Findings layer'
       run_and_check_fnd_ids() {
         run_full_pipeline
         id1=$(jq -r '.id' "${TEST_INSIGHTS_DIR}/findings.jsonl" | sed -n '1p')
@@ -242,7 +242,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'Insights層のIDが INS-001, INS-002 の連番であること'
+    It 'assigns sequential IDs INS-001, INS-002 to the Insights layer'
       run_and_check_ins_ids() {
         run_full_pipeline
         id1=$(jq -r '.id' "${TEST_INSIGHTS_DIR}/insights.jsonl" | sed -n '1p')
@@ -253,7 +253,7 @@ Describe '独立ワークフロー結合テスト (0045-pdm-insight-analysis タ
       The status should be success
     End
 
-    It 'Opportunities層のIDが OPP-001 であること'
+    It 'assigns ID OPP-001 to the Opportunities layer'
       run_and_check_opp_ids() {
         run_full_pipeline
         id1=$(jq -r '.id' "${TEST_INSIGHTS_DIR}/opportunities.jsonl" | sed -n '1p')
