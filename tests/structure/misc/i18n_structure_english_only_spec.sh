@@ -9,7 +9,7 @@ JAPANESE_PATTERN='[、-龥]'
 check_no_japanese_in_describe_it() {
   # Scan all .sh files for Japanese characters in Describe/It lines
   # Exclude this spec file itself to avoid false positives from the pattern definition
-  found=$(grep -rn '^\s*\(Describe\|It\) ' "$STRUCTURE_DIR"/*.sh \
+  found=$(grep -rn --include='*.sh' '^\s*\(Describe\|It\) ' "$STRUCTURE_DIR" \
     | grep -v 'i18n_structure_english_only_spec\.sh' \
     | grep "$JAPANESE_PATTERN" || true)
   if [ -n "$found" ]; then
@@ -21,7 +21,7 @@ check_no_japanese_in_describe_it() {
 check_no_japanese_in_comments() {
   # Scan all .sh files for Japanese characters in comment lines
   # Exclude this spec file itself to avoid false positives from the pattern definition
-  found=$(grep -rn '^\s*#' "$STRUCTURE_DIR"/*.sh \
+  found=$(grep -rn --include='*.sh' '^\s*#' "$STRUCTURE_DIR" \
     | grep -v 'i18n_structure_english_only_spec\.sh' \
     | grep "$JAPANESE_PATTERN" || true)
   if [ -n "$found" ]; then

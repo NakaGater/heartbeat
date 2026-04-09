@@ -7,7 +7,7 @@ JAPANESE_PATTERN='[、-龥]'
 
 check_no_japanese_in_spec_describe_it() {
   # Scan all .sh files under tests/spec/ for Japanese characters in Describe/It lines
-  found=$(grep -rn '^\s*\(Describe\|It\) ' "$SPEC_DIR"/*.sh \
+  found=$(grep -rn --include='*.sh' '^\s*\(Describe\|It\) ' "$SPEC_DIR" \
     | grep "$JAPANESE_PATTERN" || true)
   if [ -n "$found" ]; then
     printf "Japanese found in Describe/It lines under tests/spec/:\n%s\n" "$found" >&2

@@ -7,7 +7,7 @@ JAPANESE_PATTERN='[、-龥]'
 
 check_no_japanese_in_spec_comments() {
   # Scan all .sh files under tests/spec/ for Japanese characters in comment lines
-  found=$(grep -rn '^\s*#' "$SPEC_DIR"/*.sh \
+  found=$(grep -rn --include='*.sh' '^\s*#' "$SPEC_DIR" \
     | grep "$JAPANESE_PATTERN" || true)
   if [ -n "$found" ]; then
     printf "Japanese found in comment lines under tests/spec/:\n%s\n" "$found" >&2
