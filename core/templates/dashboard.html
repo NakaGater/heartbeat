@@ -1241,46 +1241,48 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
     var h = padT + agents.length * rowH + padB;
     var tScale = chartW / (tMax - tMin);
 
-    // Gap detection: scan adjacent entries for gaps >= 20% of total range
+    // --- Gap detection (0065-T1) ---
+    // Scan adjacent timestamps for gaps >= 20% of total range (AC-1 threshold)
     var totalRange = tMax - tMin;
     var gapThreshold = totalRange * 0.2;
-    var sortedTs = entries.map(function(e){ return new Date(e.timestamp).getTime(); });
-    sortedTs.sort(function(a,b){ return a - b; });
+    var timestamps = entries.map(function(e){ return new Date(e.timestamp).getTime(); });
+    timestamps.sort(function(a,b){ return a - b; });
+
     var gaps = [];
-    for (var gi = 1; gi < sortedTs.length; gi++) {
-      var gapSize = sortedTs[gi] - sortedTs[gi - 1];
-      if (gapSize >= gapThreshold) {
-        gaps.push({ start: sortedTs[gi - 1], end: sortedTs[gi], size: gapSize });
+    var totalGapSize = 0;
+    for (var gi = 1; gi < timestamps.length; gi++) {
+      var delta = timestamps[gi] - timestamps[gi - 1];
+      if (delta >= gapThreshold) {
+        gaps.push({ start: timestamps[gi - 1], end: timestamps[gi] });
+        totalGapSize += delta;
       }
     }
+
     // Build segments array: each segment is a continuous activity period
     var segments = [];
     if (gaps.length === 0) {
-      // No gaps detected — single segment covers entire range (AC-4)
+      // No gaps detected -- single segment covers entire range (AC-4)
       segments.push({ start: tMin, end: tMax, offsetX: 0, scale: tScale });
     } else {
-      // Build segments between gaps
-      var segStart = tMin;
-      var gapCompressedWidth = chartW * 0.05;
-      var totalGapCompressed = gaps.length * gapCompressedWidth;
-      var activityWidth = chartW - totalGapCompressed;
-      var totalActivity = totalRange;
-      for (var gj = 0; gj < gaps.length; gj++) {
-        totalActivity -= gaps[gj].size;
-      }
+      var GAP_WIDTH_RATIO = 0.05;
+      var gapCompressedWidth = chartW * GAP_WIDTH_RATIO;
+      var activityWidth = chartW - gaps.length * gapCompressedWidth;
+      var totalActivity = totalRange - totalGapSize;
       var activityScale = totalActivity > 0 ? activityWidth / totalActivity : tScale;
+
+      var segStart = tMin;
       var currentOffset = 0;
       for (var gk = 0; gk < gaps.length; gk++) {
         var gap = gaps[gk];
+        // Activity segment before this gap (skip if gap starts at tMin)
         if (gap.start > segStart) {
           segments.push({ start: segStart, end: gap.start, offsetX: currentOffset, scale: activityScale });
           currentOffset += (gap.start - segStart) * activityScale;
         }
-        // Gap segment (compressed)
-        currentOffset += gapCompressedWidth;
+        currentOffset += gapCompressedWidth; // compressed gap
         segStart = gap.end;
       }
-      // Final segment after last gap
+      // Final activity segment after last gap
       if (segStart < tMax) {
         segments.push({ start: segStart, end: tMax, offsetX: currentOffset, scale: activityScale });
       }
