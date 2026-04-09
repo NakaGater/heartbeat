@@ -1322,20 +1322,25 @@ var INSIGHTS_DATA = {{INSIGHTS_DATA}};
       svg += '<text x="' + (padL - 8) + '" y="' + (y + rowH / 2 + 4) + '" text-anchor="end" font-size="11" fill="' + agentColor(agent) + '">' + esc(agent) + '</text>';
     });
 
-    // Time axis labels (0065-T4)
+    // --- Time axis labels (0065-T4) ---
     // Distribute ticks proportionally across activity segments based on
     // each segment's duration (seg.end - seg.start). No ticks in gap regions.
-    var ticks = 5;
+    var TOTAL_TICKS = 5;
     var totalSegDuration = 0;
-    for (var sd = 0; sd < segments.length; sd++) {
-      totalSegDuration += segments[sd].end - segments[sd].start;
+    for (var di = 0; di < segments.length; di++) {
+      totalSegDuration += segments[di].end - segments[di].start;
     }
+    // Guard against zero-duration edge case (all entries share the same timestamp)
+    if (totalSegDuration <= 0) totalSegDuration = 1;
+
     var ticksPlaced = 0;
     for (var si2 = 0; si2 < segments.length; si2++) {
       var seg = segments[si2];
       var segDuration = seg.end - seg.start;
-      var segTicks = Math.round((segDuration / totalSegDuration) * ticks);
-      if (si2 === segments.length - 1) segTicks = ticks - ticksPlaced;
+      // Allocate ticks proportionally; last segment absorbs rounding remainder
+      var segTicks = (si2 === segments.length - 1)
+        ? TOTAL_TICKS - ticksPlaced
+        : Math.round((segDuration / totalSegDuration) * TOTAL_TICKS);
       for (var st = 0; st <= segTicks; st++) {
         var frac = segTicks > 0 ? st / segTicks : 0;
         var tsVal = seg.start + frac * segDuration;
