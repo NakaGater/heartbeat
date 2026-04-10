@@ -1,10 +1,8 @@
+import { Placeholder } from '../Placeholder';
+
+// HeroMetrics: Bento グリッドの最上段に横断配置されるメトリクスバンド。
+// design.md「コンポーネント仕様」: grid-column: 1 / -1, .hero-metrics クラス。
+// 0059b で実装差し替え予定。
 export function HeroMetrics() {
-  return (
-    <div className="hero-metrics placeholder-component">
-      <div className="placeholder-label">
-        <span className="placeholder-name">HeroMetrics</span>
-        <span className="placeholder-status">0059b で実装予定</span>
-      </div>
-    </div>
-  );
+  return <Placeholder name="HeroMetrics" className="hero-metrics" />;
 }

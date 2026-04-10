@@ -1,10 +1,8 @@
+import { Placeholder } from '../Placeholder';
+
+// StoryDetail: 単独の bento-card として配置される。
+// design.md「コンポーネント仕様」: grid-column: 1 / -1, .card-story クラス。
+// 0059b で実装差し替え予定。
 export function StoryDetail() {
-  return (
-    <div className="bento-card card-story placeholder-component">
-      <div className="placeholder-label">
-        <span className="placeholder-name">StoryDetail</span>
-        <span className="placeholder-status">0059b で実装予定</span>
-      </div>
-    </div>
-  );
+  return <Placeholder name="StoryDetail" className="bento-card card-story" />;
 }

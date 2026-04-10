@@ -1,10 +1,8 @@
+import { Placeholder } from '../Placeholder';
+
+// InsightsPanel: 単独の bento-card として配置される。
+// design.md「コンポーネント仕様」: grid-column: 1 / -1, .card-insights クラス。
+// 0059b で実装差し替え予定。
 export function InsightsPanel() {
-  return (
-    <div className="bento-card card-insights placeholder-component">
-      <div className="placeholder-label">
-        <span className="placeholder-name">InsightsPanel</span>
-        <span className="placeholder-status">0059b で実装予定</span>
-      </div>
-    </div>
-  );
+  return <Placeholder name="InsightsPanel" className="bento-card card-insights" />;
 }
