@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { App } from './App';
 import './styles/tokens.css';
 import './styles/layout.css';
 import './styles/components.css';
@@ -12,6 +13,6 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <div>Heartbeat Dashboard (0059a foundation)</div>
+    <App />
   </StrictMode>,
 );
