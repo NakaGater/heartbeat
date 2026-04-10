@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Heartbeat Dashboard</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Non-module script: kept outside Vite's bundle so placeholders survive build -->
+    <script>
+      window.BACKLOG_DATA = {{BACKLOG_DATA}};
+      window.STORIES_DATA = {{STORIES_DATA}};
+      window.AGENT_COLORS = {{AGENT_COLORS}};
+      window.INSIGHTS_DATA = {{INSIGHTS_DATA}};
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
