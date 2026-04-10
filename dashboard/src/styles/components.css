@@ -1,0 +1,97 @@
+/* ── Bento Card with glassmorphism + mesh gradient top accent ── */
+.bento-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-3);
+  overflow: hidden;
+  transition: border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+.bento-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bento-card:hover::before {
+  opacity: 1;
+}
+
+.bento-card:hover {
+  border-color: var(--accent-muted);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* ── Panel (glassmorphism) ── */
+.panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-3);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+}
+
+/* ── Hero Metrics ── */
+.hero-metrics {
+  background: var(--gradient-hero);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.metric-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+.metric-value {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Placeholder components (0059a) ── */
+.placeholder-component {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+
+.placeholder-label {
+  text-align: center;
+}
+
+.placeholder-name {
+  display: block;
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.placeholder-status {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--text-subtle);
+  margin-top: var(--space-1);
+}

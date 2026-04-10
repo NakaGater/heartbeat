@@ -1,0 +1,68 @@
+/* --- Micro-interactions & Animations --- */
+@keyframes fadeScaleIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(124, 106, 239, 0.2); }
+  50% { box-shadow: 0 0 20px rgba(124, 106, 239, 0.4); }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes progressFill {
+  from { stroke-dashoffset: var(--progress-circumference, 283); }
+  to   { stroke-dashoffset: var(--progress-offset, 0); }
+}
+
+.panel,
+.hero-metrics,
+.bento-card {
+  animation: fadeScaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Bento card stagger: 60ms intervals */
+.hero-metrics            { animation-delay: 0ms; }
+.bento-card:nth-child(1) { animation-delay: 60ms; }
+.bento-card:nth-child(2) { animation-delay: 120ms; }
+.bento-card:nth-child(3) { animation-delay: 180ms; }
+.bento-card:nth-child(4) { animation-delay: 240ms; }
+.bento-card:nth-child(5) { animation-delay: 300ms; }
+.bento-card:nth-child(6) { animation-delay: 360ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
