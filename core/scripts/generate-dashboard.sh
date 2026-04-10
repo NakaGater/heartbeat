@@ -14,8 +14,24 @@ source "$SCRIPT_DIR/lib/common.sh"
 
 PROJECT_ROOT="${1:-.}"
 HEARTBEAT_DIR="$PROJECT_ROOT/.heartbeat"
-TEMPLATE="$(dirname "$0")/../../dashboard/dist/index.html"
+# Template source (story 0059a):
+#   The dashboard is now authored as a Vite + React + TypeScript project under
+#   dashboard/. `npm run build` (with vite-plugin-singlefile) emits a single
+#   self-contained HTML at dashboard/dist/index.html that still carries the
+#   {{BACKLOG_DATA}} / {{STORIES_DATA}} / {{AGENT_COLORS}} / {{INSIGHTS_DATA}}
+#   placeholders inside a non-module <script> tag. This script injects runtime
+#   data into those placeholders to produce .heartbeat/dashboard.html.
+TEMPLATE="$SCRIPT_DIR/../../dashboard/dist/index.html"
 OUTPUT="$HEARTBEAT_DIR/dashboard.html"
+
+# Fail fast with a helpful hint if the React build artifact is missing.
+# This typically means `npm run build` has not been run inside dashboard/ yet.
+if [ ! -f "$TEMPLATE" ]; then
+  echo "generate-dashboard.sh: template not found: $TEMPLATE" >&2
+  echo "  Hint: run 'npm install && npm run build' inside the dashboard/ directory" >&2
+  echo "  (see story 0059a-dashboard-react-foundation)." >&2
+  exit 1
+fi
 
 # --- Lock mechanism (mkdir-based, via lib/common.sh) ---
 LOCK_DIR="$HEARTBEAT_DIR/.dashboard-lock"
