@@ -14,7 +14,7 @@ source "$SCRIPT_DIR/lib/common.sh"
 
 PROJECT_ROOT="${1:-.}"
 HEARTBEAT_DIR="$PROJECT_ROOT/.heartbeat"
-TEMPLATE="$(dirname "$0")/../templates/dashboard.html"
+TEMPLATE="$(dirname "$0")/../../dashboard/dist/index.html"
 OUTPUT="$HEARTBEAT_DIR/dashboard.html"
 
 # --- Lock mechanism (mkdir-based, via lib/common.sh) ---
