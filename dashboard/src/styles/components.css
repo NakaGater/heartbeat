@@ -60,10 +60,14 @@
 
 /* ── Hero Metrics ── */
 .hero-metrics {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-3);
   background: var(--gradient-hero);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-4);
 }
 
 .metric-card {
