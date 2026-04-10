@@ -8,7 +8,7 @@ export interface BoardEntryLike {
   from: string;
   to?: string;
   action?: string;
-  note?: string;
+  note?: string | null;
   status?: string;
   timestamp: string;
 }

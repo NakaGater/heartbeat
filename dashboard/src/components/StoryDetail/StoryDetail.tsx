@@ -23,6 +23,11 @@ export type AgentColorMap = Record<string, string>;
 interface StoryDetailProps {
   stories: StoryDetailData[];
   agentColors: AgentColorMap;
+  // 任意: App.tsx が選択状態を持って AgentMessages と共有する場合に渡す。
+  // 渡されなかった場合は従来どおり内部 useState にフォールバックする
+  // (既存テストの後方互換性を維持)。
+  selectedStoryId?: string;
+  onSelectStory?: (storyId: string) => void;
 }
 
 // dashboard.html ~line 993-998
@@ -226,7 +231,12 @@ const TASK_ICONS: Record<string, string> = {
   pending: '\u2B1C',
 };
 
-export function StoryDetail({ stories, agentColors }: StoryDetailProps) {
+export function StoryDetail({
+  stories,
+  agentColors,
+  selectedStoryId: selectedStoryIdProp,
+  onSelectStory,
+}: StoryDetailProps) {
   // in_progress ストーリーがあれば初期選択。なければ先頭。
   const initialId = useMemo(() => {
     const inProgress = stories.find(
@@ -236,7 +246,13 @@ export function StoryDetail({ stories, agentColors }: StoryDetailProps) {
     return stories.length > 0 ? stories[0].story_id : '';
   }, [stories]);
 
-  const [selectedStoryId, setSelectedStoryId] = useState<string>(initialId);
+  const [internalId, setInternalId] = useState<string>(initialId);
+  const isControlled = selectedStoryIdProp !== undefined;
+  const selectedStoryId = isControlled ? selectedStoryIdProp! : internalId;
+  const setSelectedStoryId = (id: string) => {
+    if (!isControlled) setInternalId(id);
+    if (onSelectStory) onSelectStory(id);
+  };
 
   const selectedStory = useMemo(
     () => stories.find((s) => s.story_id === selectedStoryId) ?? stories[0],
