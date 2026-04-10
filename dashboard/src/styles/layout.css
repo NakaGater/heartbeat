@@ -1,3 +1,13 @@
+/*
+ * layout.css -- レイアウト層
+ *
+ * 責務: リセット、body タイポグラフィ、Sidebar 固定配置、Bento グリッド、
+ *       card-split、レスポンシブブレークポイント（1024/768/480px）。
+ * 由来: core/templates/dashboard.html のレイアウト関連 CSS（0059a Task 2）。
+ * 備考: `#app`（ID）と `.bento-grid`（クラス）は同一要素に付与されるが、
+ *       ID セレクタの特異性により padding/margin は `#app` が優先される。
+ *       これは元の dashboard.html と同じ振る舞いを保持している。
+ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {

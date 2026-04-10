@@ -1,3 +1,14 @@
+/*
+ * components.css -- コンポーネント層
+ *
+ * 責務: グラスモーフィズムパネル、Bento カード、Hero Metrics、
+ *       0059a プレースホルダー用スタイル。
+ * 由来: core/templates/dashboard.html のコンポーネント CSS（0059a Task 2）。
+ * 備考: 0059b で各コンポーネントの詳細スタイル（kanban, gantt, messages,
+ *       insights 等）を段階的にここから各コンポーネントディレクトリへ
+ *       移設する予定。
+ */
+
 /* ── Bento Card with glassmorphism + mesh gradient top accent ── */
 .bento-card {
   position: relative;

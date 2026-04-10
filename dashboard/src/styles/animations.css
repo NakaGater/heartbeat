@@ -1,3 +1,13 @@
+/*
+ * animations.css -- アニメーション層
+ *
+ * 責務: @keyframes 定義、Bento カードの stagger アニメーション適用、
+ *       `prefers-reduced-motion: reduce` によるアクセシビリティ配慮。
+ * 由来: core/templates/dashboard.html の @keyframes 群（0059a Task 2）。
+ * 順序: main.tsx で最後にインポートすることで、他の CSS より後に
+ *       アニメーション適用ルールが評価される。
+ */
+
 /* --- Micro-interactions & Animations --- */
 @keyframes fadeScaleIn {
   from {

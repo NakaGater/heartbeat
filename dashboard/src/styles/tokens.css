@@ -1,3 +1,11 @@
+/*
+ * tokens.css -- デザイントークン層
+ *
+ * 責務: 色・スペース・タイポ・シャドウ等の CSS カスタムプロパティ定義のみ。
+ *       ダーク/ライトモード切替は `@media (prefers-color-scheme: light)` で行う。
+ * 由来: core/templates/dashboard.html の :root ブロックから抽出（0059a Task 2）。
+ * 注意: 新規トークン追加は避け、既存値の同期を優先する。
+ */
 :root {
   /* 深海ネイビー -- ダークファースト既定 (Vercel/Raycast風) */
   --bg: #080c19;
