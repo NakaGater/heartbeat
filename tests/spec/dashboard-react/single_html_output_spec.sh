@@ -60,24 +60,9 @@ Describe 'dashboard/dist/index.html single-file output (Task 4)'
     The output should equal "ok"
   End
 
-  # -- AC4: All 7 placeholder component names are present in the built HTML --
-
-  It 'includes all 7 placeholder component names in the built HTML'
-    check_placeholder_names_in_html() {
-      [ -f "$DIST_HTML" ] || { echo "no-dist-html"; return 0; }
-      missing=""
-      for name in HeroMetrics BacklogBoard VelocityChart StoryDetail AgentMessages InsightsPanel Sidebar; do
-        if ! grep -q "$name" "$DIST_HTML"; then
-          missing="$missing $name"
-        fi
-      done
-      if [ -z "$missing" ]; then
-        echo "ok"
-      else
-        echo "missing:$missing"
-      fi
-    }
-    When call check_placeholder_names_in_html
-    The output should equal "ok"
-  End
+  # AC4 (placeholder names check) removed in 0059c: after 0059b replaced
+  # Placeholder stubs with real React components, the Vite production build
+  # minifies/mangles component names, so grepping for "HeroMetrics" etc.
+  # against the built HTML became meaningless. Vitest component tests
+  # (dashboard/src/components/*/*.test.tsx) now cover component rendering.
 End
