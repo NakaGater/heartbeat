@@ -18,7 +18,7 @@ check_0064_dependency_documented() {
 }
 
 # --- AC4 supplement: brief.md records evals activation as a future concern ---
-# AC4 requires: "将来の evals 層活性化に向けた課題として brief.md に記録が残っている"
+# AC4 requires: evals layer activation is recorded as a future concern in brief.md
 # The mention must be about future activation, not just listing evals as a test layer.
 
 check_evals_future_concern_in_brief() {
