@@ -1,21 +1,22 @@
 Describe 'tasks-update.sh'
   SCRIPT="./core/scripts/tasks-update.sh"
 
-  Describe 'status フィールドの更新'
-    setup_tasks() {
-      TEST_DIR=$(mktemp -d)
-      TASKS_FILE="${TEST_DIR}/tasks.jsonl"
-      cat > "$TASKS_FILE" <<'JSONL'
+  # 共通ヘルパー: 2行 JSONL のセットアップ
+  setup_standard_tasks() {
+    TEST_DIR=$(mktemp -d)
+    TASKS_FILE="${TEST_DIR}/tasks.jsonl"
+    cat > "$TASKS_FILE" <<'JSONL'
 {"task_id":1,"name":"タスク1","status":"pending","started":null,"completed":null}
 {"task_id":2,"name":"タスク2","status":"pending","started":null,"completed":null}
 JSONL
-    }
+  }
 
-    cleanup_tasks() {
-      rm -rf "$TEST_DIR"
-    }
+  cleanup_tasks() {
+    rm -rf "$TEST_DIR"
+  }
 
-    BeforeEach 'setup_tasks'
+  Describe 'status フィールドの更新'
+    BeforeEach 'setup_standard_tasks'
     AfterEach 'cleanup_tasks'
 
     It 'task_id=1 の status を in_progress に更新する'
@@ -29,20 +30,7 @@ JSONL
   End
 
   Describe '存在しない task_id を指定した場合'
-    setup_tasks() {
-      TEST_DIR=$(mktemp -d)
-      TASKS_FILE="${TEST_DIR}/tasks.jsonl"
-      cat > "$TASKS_FILE" <<'JSONL'
-{"task_id":1,"name":"タスク1","status":"pending","started":null,"completed":null}
-{"task_id":2,"name":"タスク2","status":"pending","started":null,"completed":null}
-JSONL
-    }
-
-    cleanup_tasks() {
-      rm -rf "$TEST_DIR"
-    }
-
-    BeforeEach 'setup_tasks'
+    BeforeEach 'setup_standard_tasks'
     AfterEach 'cleanup_tasks'
 
     It 'エラーメッセージを stderr に出力し exit 1 で終了する'
@@ -61,12 +49,8 @@ JSONL
   End
 
   Describe 'ロック取得のリトライ'
-    setup_tasks() {
-      TEST_DIR=$(mktemp -d)
-      TASKS_FILE="${TEST_DIR}/tasks.jsonl"
-      cat > "$TASKS_FILE" <<'JSONL'
-{"task_id":1,"name":"タスク1","status":"pending","started":null,"completed":null}
-JSONL
+    setup_locked_tasks() {
+      setup_standard_tasks
       # 先にロックディレクトリを作成して別プロセスがロックを保持している状態を模擬
       mkdir -p "${TASKS_FILE}.lock"
       echo 99999 > "${TASKS_FILE}.lock/pid"
@@ -75,13 +59,13 @@ JSONL
       BG_PID=$!
     }
 
-    cleanup_tasks() {
+    cleanup_locked_tasks() {
       kill "$BG_PID" 2>/dev/null || true
-      rm -rf "$TEST_DIR"
+      cleanup_tasks
     }
 
-    BeforeEach 'setup_tasks'
-    AfterEach 'cleanup_tasks'
+    BeforeEach 'setup_locked_tasks'
+    AfterEach 'cleanup_locked_tasks'
 
     It 'リトライ後にロックを取得して更新に成功する'
       run_update() {
@@ -94,17 +78,13 @@ JSONL
   End
 
   Describe '不正な JSON ファイルを指定した場合'
-    setup_tasks() {
+    setup_invalid_tasks() {
       TEST_DIR=$(mktemp -d)
       TASKS_FILE="${TEST_DIR}/tasks.jsonl"
       echo "this is not json at all" > "$TASKS_FILE"
     }
 
-    cleanup_tasks() {
-      rm -rf "$TEST_DIR"
-    }
-
-    BeforeEach 'setup_tasks'
+    BeforeEach 'setup_invalid_tasks'
     AfterEach 'cleanup_tasks'
 
     It 'エラーメッセージを出力し exit 1 で終了する'
@@ -115,20 +95,7 @@ JSONL
   End
 
   Describe 'started フィールドの更新'
-    setup_tasks() {
-      TEST_DIR=$(mktemp -d)
-      TASKS_FILE="${TEST_DIR}/tasks.jsonl"
-      cat > "$TASKS_FILE" <<'JSONL'
-{"task_id":1,"name":"タスク1","status":"pending","started":null,"completed":null}
-{"task_id":2,"name":"タスク2","status":"pending","started":null,"completed":null}
-JSONL
-    }
-
-    cleanup_tasks() {
-      rm -rf "$TEST_DIR"
-    }
-
-    BeforeEach 'setup_tasks'
+    BeforeEach 'setup_standard_tasks'
     AfterEach 'cleanup_tasks'
 
     It 'task_id=1 の started を ISO8601 タイムスタンプに更新する'

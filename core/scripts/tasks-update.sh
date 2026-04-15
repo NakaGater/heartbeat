@@ -1,6 +1,7 @@
 #!/bin/bash
 # tasks-update.sh — Update tasks.jsonl with mkdir-based locking
 # Usage: tasks-update.sh <tasks-jsonl-path> <task-id> <field> <value>
+# Supports concurrent access from multiple agents via mkdir-based locking.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
