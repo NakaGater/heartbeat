@@ -47,6 +47,10 @@ When user enters /heartbeat:
 
 ### Choices
 
+The menu must never exceed 4 choices. Slots 1-3 are fixed; slot 4 is conditional.
+
+#### Always shown (slots 1-3)
+
 1. **Create a story**
    From user problem analysis to story definition and acceptance criteria.
    Adds to backlog but does not implement.
@@ -57,14 +61,19 @@ When user enters /heartbeat:
 3. **Create and implement a story**
    End-to-end from story creation through implementation and verification.
 
-4. **Continue in-progress story**
-   Resume an interrupted story from where it left off.
+#### Conditional slot 4
 
-5. **Manage backlog**
-   Change story points, priorities, or iteration assignments.
+Check backlog.jsonl for stories with status `in_progress`:
 
-6. **Implement in parallel (worktree)**
-   Implement a story in an isolated git worktree for parallel development.
+- If in_progress stories exist → show:
+  4. **Continue in-progress story**
+     Resume an interrupted story from where it left off.
+
+- Else (no in_progress stories) → show:
+  4. **Implement in parallel (worktree)**
+     Implement a story in an isolated git worktree for parallel development.
+
+> Note: Backlog management (points, priorities, iterations) is available via /heartbeat-backlog.
 
 ### Status Display Example
 
@@ -498,7 +507,7 @@ and resume from that point.
 All questions to users must be presented with choices.
 
 ### Principles
-- Keep choices to 5 or fewer (max 5 choices per question)
+- Keep choices to 4 or fewer (max 4 choices per question)
 - Use verb-first style for all choice text (verb-first)
 - Include "Other (free text)" only when needed; always place it as the last option
 - Display choice text in the user's language, following output-language-rule.md
@@ -514,5 +523,5 @@ All questions to users must be presented with choices.
     ["Clarify the spec", "Mark as out of scope",
      "Have the agent reconsider", "Other (free text)"]
   - For orchestrator uncertainty:
-    Present situation-specific choices (max 5).
+    Present situation-specific choices (max 4).
     Always include "Other (free text)" as the last option.
