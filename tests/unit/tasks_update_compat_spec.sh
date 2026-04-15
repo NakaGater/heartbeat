@@ -123,7 +123,7 @@ JSONL
     It 'status 更新後も depends_on フィールドが保持される'
       run_update_check_depends_on() {
         bash "$SCRIPT" "$TASKS_FILE" 2 status in_progress
-        jq -r 'select(.task_id == 2) | .depends_on' "$TASKS_FILE"
+        jq -c 'select(.task_id == 2) | .depends_on' "$TASKS_FILE"
       }
       When call run_update_check_depends_on
       The status should be success
@@ -133,7 +133,7 @@ JSONL
     It '更新対象以外のタスクの depends_on が変更されない'
       run_update_check_others_dep() {
         bash "$SCRIPT" "$TASKS_FILE" 2 status in_progress
-        jq -r 'select(.task_id == 3) | .depends_on' "$TASKS_FILE"
+        jq -c 'select(.task_id == 3) | .depends_on' "$TASKS_FILE"
       }
       When call run_update_check_others_dep
       The status should be success
