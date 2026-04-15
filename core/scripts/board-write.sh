@@ -6,6 +6,10 @@
 # 常に exit 0 で終了する。
 set +e
 
+# 共通ライブラリ（acquire_lock / release_lock）を読み込む
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+. "$SCRIPT_DIR/lib/common.sh"
+
 board_file="$1"
 
 # 引数なし → 何もせず終了
@@ -24,7 +28,14 @@ result=$(echo "$input" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' 2>/dev/nu
 # jq 失敗（不正 JSON など）→ 何もせず終了
 [ -z "$result" ] && exit 0
 
+# ロック取得（失敗しても set +e により続行）
+lock_dir="${board_file}.lock"
+acquire_lock "$lock_dir" 5 0.1
+
 # 追記
 echo "$result" >> "$board_file"
+
+# ロック解放
+release_lock "$lock_dir"
 
 exit 0
