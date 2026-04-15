@@ -3,14 +3,14 @@ Describe 'open-dashboard.sh'
     TEST_PROJECT=$(mktemp -d)
     TEST_HEARTBEAT="$TEST_PROJECT/.heartbeat"
     mkdir -p "$TEST_HEARTBEAT"
-    # ダッシュボード HTML を作成（存在チェック用）
+    # Create dashboard HTML for existence check
     echo '<html></html>' > "$TEST_HEARTBEAT/dashboard.html"
     export HEARTBEAT_ROOT="$TEST_PROJECT"
-    # DASHBOARD 変数を Include 後に再設定（テスト用 tmpdir を反映）
+    # Re-set DASHBOARD variable after Include to reflect test tmpdir
     DASHBOARD="$TEST_PROJECT/.heartbeat/dashboard.html"
-    # worktree ガードを無効化
+    # Disable worktree guard
     unset HEARTBEAT_IN_WORKTREE
-    # xdg-open スタブ用のディレクトリを PATH に追加
+    # Add stub directory for xdg-open to PATH
     TEST_BIN="$TEST_PROJECT/bin"
     mkdir -p "$TEST_BIN"
   }
@@ -23,8 +23,8 @@ Describe 'open-dashboard.sh'
 
   Include ./core/scripts/open-dashboard.sh
 
-  Describe 'macOS 環境での正常系'
-    It 'Darwin 環境で open コマンドが .heartbeat/dashboard.html のパスを引数に呼ばれる'
+  Describe 'Happy path on macOS'
+    It 'calls open command with .heartbeat/dashboard.html path on Darwin'
       uname() { echo "Darwin"; }
       open() { echo "OPEN_CALLED:$*"; }
       When call open_dashboard
@@ -34,11 +34,11 @@ Describe 'open-dashboard.sh'
     End
   End
 
-  Describe 'Linux 環境での正常系'
-    It 'Linux 環境で xdg-open コマンドが .heartbeat/dashboard.html のパスを引数に呼ばれる'
+  Describe 'Happy path on Linux'
+    It 'calls xdg-open command with .heartbeat/dashboard.html path on Linux'
       uname() { echo "Linux"; }
-      # xdg-open はハイフン入りのため関数名として使えない場合がある
-      # PATH 上にスタブスクリプトを配置してコマンドとしてスタブ化
+      # xdg-open contains a hyphen so cannot be used as a function name
+      # Place a stub script on PATH to mock it as a command
       printf '#!/bin/sh\necho "XDG_OPEN_CALLED:$*"\n' > "$TEST_BIN/xdg-open"
       chmod +x "$TEST_BIN/xdg-open"
       PATH="$TEST_BIN:$PATH"
@@ -49,8 +49,8 @@ Describe 'open-dashboard.sh'
     End
   End
 
-  Describe 'エラーハンドリング'
-    It 'open コマンドが失敗しても終了コード 0 で返る'
+  Describe 'Error handling'
+    It 'returns exit code 0 even when open command fails'
       uname() { echo "Darwin"; }
       open() { return 1; }
       When call open_dashboard
@@ -58,8 +58,8 @@ Describe 'open-dashboard.sh'
     End
   End
 
-  Describe '未知の OS'
-    It 'uname が Darwin/Linux 以外を返す場合、何も呼ばず終了コード 0 で返る'
+  Describe 'Unknown OS'
+    It 'returns exit code 0 without calling any open command when uname returns unknown OS'
       uname() { echo "FreeBSD"; }
       open() { echo "OPEN_CALLED:$*"; }
       When call open_dashboard
@@ -68,8 +68,8 @@ Describe 'open-dashboard.sh'
     End
   End
 
-  Describe 'ワークツリーガード'
-    It 'HEARTBEAT_IN_WORKTREE=1 の場合、open/xdg-open を呼ばず終了コード 0 で返る'
+  Describe 'Worktree guard'
+    It 'returns exit code 0 without calling open/xdg-open when HEARTBEAT_IN_WORKTREE=1'
       export HEARTBEAT_IN_WORKTREE=1
       uname() { echo "Darwin"; }
       open() { echo "OPEN_CALLED:$*"; }
@@ -79,8 +79,8 @@ Describe 'open-dashboard.sh'
     End
   End
 
-  Describe 'ファイル未存在'
-    It 'dashboard.html が存在しない場合、open/xdg-open を呼ばず終了コード 0 で返る'
+  Describe 'File not found'
+    It 'returns exit code 0 without calling open/xdg-open when dashboard.html does not exist'
       rm -f "$TEST_HEARTBEAT/dashboard.html"
       uname() { echo "Darwin"; }
       open() { echo "OPEN_CALLED:$*"; }

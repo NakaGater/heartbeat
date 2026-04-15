@@ -1329,6 +1329,10 @@ Read and follow the instructions in ../../core/agent-personas/qa.md
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/timeline-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/open-dashboard.sh"
           }
         ]
       }

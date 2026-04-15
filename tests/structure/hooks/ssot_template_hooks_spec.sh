@@ -15,7 +15,7 @@ check_subagent_start_has_timeline_record() {
 
 check_subagent_start_hook_count() {
   count=$(jq '[.hooks.SubagentStart[0].hooks[]] | length' "$SETTINGS_TEMPLATE" 2>/dev/null)
-  [ "$count" = "1" ]
+  [ "$count" = "2" ]
 }
 
 # PostToolUse (Write|Edit) has board-stamp.sh, retrospective-record.sh in order
@@ -81,7 +81,7 @@ Describe 'SSoT Template hooks Definition (AC-1)'
       The status should be success
     End
 
-    It 'exactly 1 hook is defined'
+    It 'exactly 2 hooks are defined'
       When call check_subagent_start_hook_count
       The status should be success
     End
