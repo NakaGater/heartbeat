@@ -180,24 +180,28 @@ Phase 2 - Design:
     fall back to sequential loop (逐次実行 / sequential fallback).
 
     For each group in parallel_group order (group loop ascending):
-      Launch all tasks in this group as concurrent subagents:
-        For each task in the group:
-          tester → ONE test (Red) → run tasks-update.sh to set "in_progress"
-          Per-test inner loop (TDD cycle: tester -> implementer -> refactor):
-            implementer → minimal implementation to make ONE new test Green
-            refactor → refactored code → evaluate next action:
-              If more completion conditions remain in this task:
-                tester → next ONE test (Red) [action: write_next_test]
-                Continue inner loop
-              If current task complete (all conditions tested):
-                Run tasks-update.sh to set "done"
-                Break inner loop
 
-      Group completion gate:
+      Step A — Launch concurrent subagents (one per task in this group):
+        For each task, run the following TDD cycle as a subagent:
+
+        1. tester → write ONE test (Red)
+           Run tasks-update.sh to set "in_progress"
+
+        2. Per-test inner loop (TDD cycle: tester -> implementer -> refactor):
+           a. implementer → minimal implementation to make ONE new test Green
+           b. refactor → refactored code → evaluate next action:
+              - If more completion conditions remain in this task:
+                  tester → next ONE test (Red) [action: write_next_test]
+                  Continue inner loop
+              - If current task complete (all conditions tested):
+                  Run tasks-update.sh to set "done"
+                  Break inner loop
+
+      Step B — Group completion gate:
         Wait for all subagents in this group to complete before
         proceeding to next group (全タスク完了後に次グループへ進む).
 
-      Error handling:
+      Step C — Error handling:
         If any subagent fails or returns an error status:
           - Log the failure to board.jsonl
           - Present choices to user:
