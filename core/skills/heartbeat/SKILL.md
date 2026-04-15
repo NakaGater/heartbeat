@@ -456,7 +456,7 @@ Machine-readable task progress tracking.
   "started": "{ISO 8601 or null}",
   "completed": "{ISO 8601 or null}",
   "parallel_group": "{group label or null}",
-  "depends_on": ["{task_id, ...} or []"]
+  "depends_on": [1, 2]
 }
 ```
 

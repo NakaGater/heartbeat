@@ -63,19 +63,19 @@ Instead:
 When the estimate is 3pt, do NOT output tasks.md. Output only the board entry
 returning the story to PdM.
 
-## 並列グループ判定基準 (Parallel Group Criteria)
+## Parallel Group Criteria (並列グループ判定基準)
 
-タスクを並列実行グループに分割する際、以下の基準に従う:
+When splitting tasks into parallel execution groups, follow these rules:
 
-1. **同一ファイル Modify 禁止**: 同じファイルを Modify するタスクは同一グループ不可。競合を防ぐため、別グループに分離する。
-2. **依存関係の尊重**: `depends_on` で指定された先行タスクが完了するまで、後続タスクのグループは実行開始しない。
-3. **Create vs Reference の分離**: 新規ファイルを Create するタスクと、そのファイルを Modify するタスクは同一グループに入れない。
-4. **独立タスクの並列化**: 上記制約に該当しないタスクは積極的に同一グループにまとめ、並列実行の恩恵を最大化する。
+1. **No same-file Modify overlap**: Tasks that Modify the same file cannot be in the same group (同じファイルを Modify するタスクは同一グループ不可). Separate them to prevent conflicts.
+2. **Respect dependencies**: A group cannot start until all tasks listed in its `depends_on` have completed.
+3. **Create before Modify**: A task that Creates a file and a task that Modifies that file must be in different groups.
+4. **Maximize parallelism**: Tasks with no constraint overlap should be grouped together.
 
-### 後方互換性 (Backward Compatibility)
+### Backward Compatibility (後方互換性)
 
-`parallel_group` が未設定のタスクは逐次実行（sequential fallback）として扱う。
-既存のストーリーやタスクファイルはそのまま動作し、並列実行機能は任意（opt-in）である。
+Tasks without a `parallel_group` value use sequential fallback (逐次実行).
+Existing stories and task files continue to work unchanged; parallel execution is opt-in.
 
 ## Output Format (tasks.md)
 
