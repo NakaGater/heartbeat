@@ -4,15 +4,15 @@
 CONVENTIONS_FILE=".heartbeat/knowledge/conventions.md"
 
 check_max_4_choices() {
-  # conventions.md must contain "4個以下" (max 4 in Japanese)
+  # conventions.md must contain max 4 rule (Japanese text)
   if ! grep -q '4個以下' "$CONVENTIONS_FILE"; then
-    printf "conventions.md does not contain '4個以下' for choices limit\n" >&2
+    printf "conventions.md does not contain max 4 choices rule\n" >&2
     return 1
   fi
 
-  # Must NOT contain the old "5個以下" (max 5 in Japanese)
+  # Must NOT contain the old max 5 rule
   if grep -q '5個以下' "$CONVENTIONS_FILE"; then
-    printf "conventions.md still contains old '5個以下' limit\n" >&2
+    printf "conventions.md still contains old max 5 limit\n" >&2
     return 1
   fi
 }
