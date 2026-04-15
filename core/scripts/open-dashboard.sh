@@ -3,11 +3,6 @@
 # Called from SubagentStart hook. Must exit 0 on all paths.
 set +e
 
-# Skip inside worktrees
-if [ "${HEARTBEAT_IN_WORKTREE:-}" = "1" ]; then
-  exit 0
-fi
-
 PROJECT_ROOT="${HEARTBEAT_ROOT:-.}"
 DASHBOARD="$PROJECT_ROOT/.heartbeat/dashboard.html"
 
