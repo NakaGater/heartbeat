@@ -11,15 +11,22 @@ fi
 PROJECT_ROOT="${HEARTBEAT_ROOT:-.}"
 DASHBOARD="$PROJECT_ROOT/.heartbeat/dashboard.html"
 
-# Skip if dashboard does not exist yet
-if [ ! -f "$DASHBOARD" ]; then
+open_dashboard() {
+  # Skip if dashboard does not exist yet
+  if [ ! -f "$DASHBOARD" ]; then
+    return 0
+  fi
+
+  # Determine OS and open command
+  case "$(uname -s)" in
+    Darwin) open "$DASHBOARD" ;;
+    Linux)  xdg-open "$DASHBOARD" ;;
+  esac
+
+  return 0
+}
+
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  open_dashboard
   exit 0
 fi
-
-# Determine OS and open command
-case "$(uname -s)" in
-  Darwin) open "$DASHBOARD" ;;
-  Linux)  xdg-open "$DASHBOARD" ;;
-esac
-
-exit 0

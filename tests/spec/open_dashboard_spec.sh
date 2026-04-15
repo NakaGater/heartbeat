@@ -16,13 +16,15 @@ Describe 'open-dashboard.sh'
   BeforeEach 'setup'
   AfterEach 'cleanup'
 
+  Include ./core/scripts/open-dashboard.sh
+
   Describe 'macOS 環境での正常系'
     It 'Darwin 環境で open コマンドが .heartbeat/dashboard.html のパスを引数に呼ばれる'
       # uname をスタブ化して Darwin を返す
       uname() { echo "Darwin"; }
       # open コマンドをスタブ化して引数を記録
       open() { echo "OPEN_CALLED:$*"; }
-      When call ./core/scripts/open-dashboard.sh
+      When call open_dashboard
       The status should be success
       The output should include "OPEN_CALLED:"
       The output should include ".heartbeat/dashboard.html"
