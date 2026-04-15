@@ -9,11 +9,10 @@ check_section_exists() {
   grep -q '## Question Style Guidelines' "$SKILL_MD"
 }
 
-# Max choices rule (max 5) is documented
+# Max choices rule (max 4) is documented
 check_max_choices_rule() {
-  grep -q '5' "$SKILL_MD" | grep -qi 'choice\|選択' "$SKILL_MD"
-  # Max 5 constraint exists within Question Style Guidelines section
-  sed -n '/## Question Style Guidelines/,/^## /p' "$SKILL_MD" | grep -q '5'
+  # Max 4 constraint exists within Question Style Guidelines section
+  sed -n '/## Question Style Guidelines/,/^## /p' "$SKILL_MD" | grep -q 'max 4'
 }
 
 # Verb-first choice text rule is documented
@@ -37,7 +36,7 @@ Describe 'SKILL.md has Question Style Guidelines section with required elements'
     The status should be success
   End
 
-  It 'specifies max 5 choices per question'
+  It 'specifies max 4 choices per question'
     When call check_max_choices_rule
     The status should be success
   End
