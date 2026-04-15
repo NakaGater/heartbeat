@@ -177,7 +177,7 @@ Phase 2 - Design:
   Phase 3 - Implementation (parallel_group-based loop with TDD cycle):
     Group tasks by parallel_group field (ascending order).
     If parallel_group does not exist or is null for all tasks,
-    fall back to sequential loop (逐次実行 / sequential fallback).
+    fall back to sequential loop (sequential fallback).
 
     For each group in parallel_group order (group loop ascending):
 
@@ -199,7 +199,7 @@ Phase 2 - Design:
 
       Step B — Group completion gate:
         Wait for all subagents in this group to complete before
-        proceeding to next group (全タスク完了後に次グループへ進む).
+        proceeding to next group (wait for all tasks to complete before advancing).
 
       Step C — Error handling:
         If any subagent fails or returns an error status:
@@ -483,8 +483,8 @@ Machine-readable task progress tracking.
 ```
 
 Field notes:
-- `parallel_group`: 同じグループラベルを持つタスクは並列実行可能。未設定(null)の場合は逐次実行にフォールバックする(sequential fallback)。後方互換性のため、既存のtasks.jsonlでこのフィールドが存在しない場合もnullと同等に扱う。
-- `depends_on`: このタスクが依存する先行タスクのtask_idリスト。依存タスクがすべてdoneになるまで実行しない。空配列は依存なしを意味する。
+- `parallel_group`: Tasks sharing the same group label can run in parallel. When unset (null), falls back to sequential execution (sequential fallback). For backward compatibility, existing tasks.jsonl entries without this field are treated as null.
+- `depends_on`: List of predecessor task_ids that this task depends on. The task will not execute until all dependencies are done. An empty array means no dependencies.
 
 Architect generates both tasks.md (human-readable) and tasks.jsonl (machine-readable).
 tester/implementer/refactor update tasks.jsonl status and timestamps during TDD cycles.

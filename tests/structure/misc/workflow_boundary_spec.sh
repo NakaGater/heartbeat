@@ -10,7 +10,7 @@ check_workflow1_end() {
 }
 
 check_workflow2_continuation_flow() {
-  grep -A 50 "## Workflow 2" "$SKILL_MD" | grep -q "Continuation Flow"
+  grep -A 100 "## Workflow 2" "$SKILL_MD" | grep -q "Continuation Flow"
 }
 
 check_workflow3_stop_override() {

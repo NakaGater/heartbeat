@@ -24,7 +24,7 @@ check_refactor_uses_agent_tool_dispatch() {
 check_phase3_agents_in_tdd_cycle_flow() {
   # Verify Phase 3 TDD cycle description includes all 3 agents
   # (= targets for Orchestrator responsibilities)
-  phase3_section=$(sed -n '/^Phase 3 - Implementation/,/^Phase 4/p' "$SKILL")
+  phase3_section=$(sed -n '/Phase 3 - Implementation/,/Phase 4/p' "$SKILL")
   [ -z "$phase3_section" ] && return 1
   echo "$phase3_section" | grep -q "tester" || return 1
   echo "$phase3_section" | grep -q "implementer" || return 1
