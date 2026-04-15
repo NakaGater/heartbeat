@@ -119,7 +119,7 @@ Specify which sections of design.md this task corresponds to.
 - Modify: {path} ({summary of additions})
 - Reference only: {path} ({why no changes needed})
 
-## 並列実行グループ (Parallel Execution Group)
+## Parallel Execution Group (並列実行グループ)
 
 | グループ | タスク |
 |-----------|--------|
@@ -144,8 +144,8 @@ Generate alongside tasks.md as machine-readable task tracking:
 }
 ```
 
-- `parallel_group`: 並列実行グループの識別子（"A", "B" 等）。未設定時は逐次実行。
-- `depends_on`: 先行タスクIDの配列。指定タスク完了後に実行可能となる。
+- `parallel_group`: Group identifier ("A", "B", etc.). Omit for sequential execution.
+- `depends_on`: Array of prerequisite task IDs. The task becomes runnable after all listed tasks complete.
 
 ## Phase 2 Input Validation
 
