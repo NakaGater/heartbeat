@@ -454,9 +454,15 @@ Machine-readable task progress tracking.
   "name": "{task name}",
   "status": "pending | in_progress | done",
   "started": "{ISO 8601 or null}",
-  "completed": "{ISO 8601 or null}"
+  "completed": "{ISO 8601 or null}",
+  "parallel_group": "{group label or null}",
+  "depends_on": ["{task_id, ...} or []"]
 }
 ```
+
+Field notes:
+- `parallel_group`: 同じグループラベルを持つタスクは並列実行可能。未設定(null)の場合は逐次実行にフォールバックする(sequential fallback)。後方互換性のため、既存のtasks.jsonlでこのフィールドが存在しない場合もnullと同等に扱う。
+- `depends_on`: このタスクが依存する先行タスクのtask_idリスト。依存タスクがすべてdoneになるまで実行しない。空配列は依存なしを意味する。
 
 Architect generates both tasks.md (human-readable) and tasks.jsonl (machine-readable).
 tester/implementer/refactor update tasks.jsonl status and timestamps during TDD cycles.

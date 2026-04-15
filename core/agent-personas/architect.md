@@ -63,6 +63,20 @@ Instead:
 When the estimate is 3pt, do NOT output tasks.md. Output only the board entry
 returning the story to PdM.
 
+## 並列グループ判定基準 (Parallel Group Criteria)
+
+タスクを並列実行グループに分割する際、以下の基準に従う:
+
+1. **同一ファイル Modify 禁止**: 同じファイルを Modify するタスクは同一グループ不可。競合を防ぐため、別グループに分離する。
+2. **依存関係の尊重**: `depends_on` で指定された先行タスクが完了するまで、後続タスクのグループは実行開始しない。
+3. **Create vs Reference の分離**: 新規ファイルを Create するタスクと、そのファイルを Modify するタスクは同一グループに入れない。
+4. **独立タスクの並列化**: 上記制約に該当しないタスクは積極的に同一グループにまとめ、並列実行の恩恵を最大化する。
+
+### 後方互換性 (Backward Compatibility)
+
+`parallel_group` が未設定のタスクは逐次実行（sequential fallback）として扱う。
+既存のストーリーやタスクファイルはそのまま動作し、並列実行機能は任意（opt-in）である。
+
 ## Output Format (tasks.md)
 
 Each task MUST include all sections below:
@@ -104,6 +118,14 @@ Specify which sections of design.md this task corresponds to.
 - Create: {path} ({purpose})
 - Modify: {path} ({summary of additions})
 - Reference only: {path} ({why no changes needed})
+
+## 並列実行グループ (Parallel Execution Group)
+
+| グループ | タスク |
+|-----------|--------|
+| Group A   | Task 1, Task 3 |
+| Group B   | Task 2 |
+| Sequential| Task 4 (depends on Group A) |
 ```
 
 ## Output Format (tasks.jsonl)
@@ -115,10 +137,15 @@ Generate alongside tasks.md as machine-readable task tracking:
   "task_id": 1,
   "name": "{task name}",
   "status": "pending",
+  "parallel_group": "A",
+  "depends_on": [],
   "started": null,
   "completed": null
 }
 ```
+
+- `parallel_group`: 並列実行グループの識別子（"A", "B" 等）。未設定時は逐次実行。
+- `depends_on`: 先行タスクIDの配列。指定タスク完了後に実行可能となる。
 
 ## Phase 2 Input Validation
 
