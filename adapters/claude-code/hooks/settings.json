@@ -6,6 +6,10 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/timeline-record.sh"
+          },
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/core/scripts/open-dashboard.sh"
           }
         ]
       }
