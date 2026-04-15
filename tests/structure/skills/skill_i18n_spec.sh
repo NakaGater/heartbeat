@@ -116,7 +116,7 @@ check_core_english_content() {
   [ -n "$section" ] || return 1
   echo "$section" | grep -qi 'questions.*users.*choices' || return 1
   echo "$section" | grep -q '### Principles' || return 1
-  echo "$section" | grep -qi 'choices.*5\|5.*choices' || return 1
+  echo "$section" | grep -qi 'choices.*4\|4.*choices' || return 1
   echo "$section" | grep -qi 'verb.first' || return 1
   echo "$section" | grep -qi 'other.*free.*text.*last\|last.*option' || return 1
   echo "$section" | grep -q 'output-language-rule' || return 1
@@ -128,7 +128,7 @@ check_copilot_english_content() {
   [ -n "$section" ] || return 1
   echo "$section" | grep -qi 'questions.*users.*choices' || return 1
   echo "$section" | grep -q '### Principles' || return 1
-  echo "$section" | grep -qi 'choices.*5\|5.*choices' || return 1
+  echo "$section" | grep -qi 'choices.*4\|4.*choices' || return 1
   echo "$section" | grep -qi 'verb.first' || return 1
   echo "$section" | grep -qi 'other.*free.*text.*last\|last.*option' || return 1
   echo "$section" | grep -q 'output-language-rule' || return 1
