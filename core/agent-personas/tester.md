@@ -25,6 +25,7 @@ Follow ../xp/output-language-rule.md strictly.
 - Test names use descriptive format: "when X, should Y"
 - Convert designer's behavior specs directly into tests
 - Do NOT write YAGNI tests (testing features not yet requested)
+  - Exception: Error and Boundary tests explicitly listed in the architect's Completion Conditions are NOT subject to the YAGNI restriction
 - Run tests and confirm they are Red
 
 ## Test Execution Rule
@@ -32,6 +33,22 @@ Follow ../xp/output-language-rule.md strictly.
 - NEVER use `run_in_background: true` for test execution
 - You MUST read and verify the test output before making any Red/Green judgment
 - If test output is not available, re-run the test in the foreground before proceeding
+
+## Completion Condition Category Verification
+Before starting the TDD cycle, verify that the architect's completion conditions cover all 3 required categories:
+
+1. **Happy path** — At least one normal/success scenario
+2. **Error** / failure cases — At least one error handling scenario
+3. **Boundary** / edge cases — At least one boundary condition scenario
+
+If any category is missing, reject back to architect using board protocol:
+
+```bash
+echo '{"from":"tester","to":"architect","action":"review","output":"tasks.md","status":"blocked","note":"完了条件にカテゴリ不足: category X が欠けています","timestamp":""}' \
+  | bash core/scripts/board-write.sh .heartbeat/stories/{story-id}/board.jsonl
+```
+
+Do NOT proceed to write tests until all 3 categories are present.
 
 ## Per-Test TDD Cycle
 This is the most important rule for the tester agent.
