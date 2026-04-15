@@ -39,4 +39,24 @@ Describe 'board-write.sh ロック機構'
       Assert lock_was_used
     End
   End
+
+  Describe 'ロック取得失敗時も exit 0 で終了する'
+    It 'ロックディレクトリが既に存在する場合でも終了コード 0 を返す'
+      # ロックディレクトリを事前に作成してロック取得を失敗させる
+      mkdir -p "$TEST_LOCK_DIR"
+      echo "fake" > "$TEST_LOCK_DIR/pid"
+      When call sh -c 'echo "{\"from\":\"tester\",\"to\":\"implementer\",\"action\":\"test\",\"status\":\"ok\"}" | ./core/scripts/board-write.sh "$TEST_BOARD_FILE"'
+      The status should be success
+      The stderr should include 'Could not acquire lock'
+    End
+
+    It 'ロック取得失敗時はエントリが書き込まれない'
+      mkdir -p "$TEST_LOCK_DIR"
+      echo "fake" > "$TEST_LOCK_DIR/pid"
+      When call sh -c 'echo "{\"from\":\"tester\",\"to\":\"implementer\",\"action\":\"test\",\"status\":\"ok\"}" | ./core/scripts/board-write.sh "$TEST_BOARD_FILE"'
+      The status should be success
+      The stderr should include 'Could not acquire lock'
+      The path "$TEST_BOARD_FILE" should not be exist
+    End
+  End
 End
