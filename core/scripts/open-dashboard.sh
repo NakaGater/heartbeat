@@ -12,6 +12,11 @@ PROJECT_ROOT="${HEARTBEAT_ROOT:-.}"
 DASHBOARD="$PROJECT_ROOT/.heartbeat/dashboard.html"
 
 open_dashboard() {
+  # Skip inside worktrees
+  if [ "${HEARTBEAT_IN_WORKTREE:-}" = "1" ]; then
+    return 0
+  fi
+
   # Skip if dashboard does not exist yet
   if [ ! -f "$DASHBOARD" ]; then
     return 0
