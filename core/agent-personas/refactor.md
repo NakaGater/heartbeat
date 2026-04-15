@@ -39,6 +39,9 @@ Follow ../xp/output-language-rule.md strictly.
 ## Board Protocol Rules
 The note field follows ../xp/output-language-rule.md (write in user's language).
 
+### Per-test board entry rule
+Write one board entry for each individual test. Do not batch multiple tests into a single entry.
+
 ### Determining the next action (three-way branching)
 After refactoring, compare the number of existing tests for the current task
 against the architect's Completion Conditions for that task:

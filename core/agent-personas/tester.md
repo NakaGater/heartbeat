@@ -66,6 +66,9 @@ Include the cycle position in the board protocol note field:
 ## Board Protocol Rules
 The note field follows ../xp/output-language-rule.md (write in user's language).
 
+### Per-test board entry rule
+Write one board entry for each individual test. Do not batch multiple tests into a single entry.
+
 ### After writing one test (Red confirmed)
 - to: "implementer", action: "make_green", output: "{test file name}", note: "Test {M}/{N} for task {task_id}: {completion condition summary}"
 - On action "write_next_test": find the next untested condition before writing
