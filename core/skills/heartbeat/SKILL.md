@@ -174,22 +174,40 @@ Phase 2 - Design:
         Present reason choices: ["Task granularity too large", "Tasks missing",
                                  "Want to change order", "Other (free text)"]
 
-Phase 3 - Implementation (per-test TDD cycle within per-task loop):
-  For each task in tasks.jsonl (outer loop):
-    tester → ONE test (Red) → update tasks.jsonl to "in_progress"
-    Per-test inner loop:
-      implementer → minimal implementation to make ONE new test Green
-      refactor → refactored code → evaluate next action:
-        If more completion conditions remain in this task:
-          tester → next ONE test (Red) [action: write_next_test]
-          Continue inner loop
-        If current task complete (all conditions tested):
-          Update tasks.jsonl to "done"
-          Break inner loop → next task [action: write_test]
-  After all tasks complete:
-    → Phase 4
+  Phase 3 - Implementation (parallel_group-based loop with TDD cycle):
+    Group tasks by parallel_group field (ascending order).
+    If parallel_group does not exist or is null for all tasks,
+    fall back to sequential loop (逐次実行 / sequential fallback).
 
-Phase 4 - Verification:
+    For each group in parallel_group order (group loop ascending):
+      Launch all tasks in this group as concurrent subagents:
+        For each task in the group:
+          tester → ONE test (Red) → run tasks-update.sh to set "in_progress"
+          Per-test inner loop (TDD cycle: tester -> implementer -> refactor):
+            implementer → minimal implementation to make ONE new test Green
+            refactor → refactored code → evaluate next action:
+              If more completion conditions remain in this task:
+                tester → next ONE test (Red) [action: write_next_test]
+                Continue inner loop
+              If current task complete (all conditions tested):
+                Run tasks-update.sh to set "done"
+                Break inner loop
+
+      Group completion gate:
+        Wait for all subagents in this group to complete before
+        proceeding to next group (全タスク完了後に次グループへ進む).
+
+      Error handling:
+        If any subagent fails or returns an error status:
+          - Log the failure to board.jsonl
+          - Present choices to user:
+            ["Retry failed task", "Skip and continue", "Abort implementation"]
+          - Do not proceed to the next group until the failure is resolved
+
+    After all groups complete:
+      → Phase 4
+
+  Phase 4 - Verification:
   reviewer → review.md
   qa → qa-report.md (browser verification via Playwright MCP)
   pdm → verdict.md
