@@ -25,9 +25,12 @@ main() {
     exit 1
   fi
 
+  # Ensure lock is released on exit
   trap 'release_lock "$lock_dir"' EXIT
   acquire_lock "$lock_dir"
 
+  # Verify the target task_id exists before updating
+  local found=false
   local tmp
   tmp=$(mktemp)
   while IFS= read -r line; do
@@ -35,11 +38,19 @@ main() {
     local tid
     tid=$(echo "$line" | jq -r '.task_id')
     if [ "$tid" = "$task_id" ]; then
+      found=true
       echo "$line" | jq -c --arg f "$field" --arg v "$value" '.[$f] = $v'
     else
       echo "$line"
     fi
   done < "$tasks_file" > "$tmp"
+
+  if [ "$found" = false ]; then
+    rm -f "$tmp"
+    echo "error: task_id $task_id not found in $tasks_file" >&2
+    exit 1
+  fi
+
   mv "$tmp" "$tasks_file"
 
   release_lock "$lock_dir"

@@ -28,14 +28,11 @@ result=$(echo "$input" | jq -c --arg ts "$ts" '. + {"timestamp": $ts}' 2>/dev/nu
 # jq 失敗（不正 JSON など）→ 何もせず終了
 [ -z "$result" ] && exit 0
 
-# ロック取得（失敗しても set +e により続行）
+# ロック取得 → 追記 → 解放（取得失敗時はエントリをドロップして終了）
 lock_dir="${board_file}.lock"
-acquire_lock "$lock_dir" 5 0.1
-
-# 追記
-echo "$result" >> "$board_file"
-
-# ロック解放
-release_lock "$lock_dir"
+if acquire_lock "$lock_dir" 5 0.1; then
+  echo "$result" >> "$board_file"
+  release_lock "$lock_dir"
+fi
 
 exit 0
