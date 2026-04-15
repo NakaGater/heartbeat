@@ -107,9 +107,17 @@ Reference knowledge/ and follow the project's existing patterns.
 If introducing a new pattern, state the reason explicitly.
 
 #### Completion Conditions (tester converts these to tests)
-Each condition written in "When X, Y happens" format:
+Each condition written in "When X, Y happens" format.
+All three categories below are mandatory (at least 1 condition per category):
+
+**Happy path**
 1. When {action}, {expected result}
+
+**Error / failure cases**
 2. When {error condition}, {expected error behavior}
+
+**Boundary / edge cases**
+3. When {boundary input}, {expected boundary behavior}
 
 #### Design Reference
 Specify which sections of design.md this task corresponds to.
