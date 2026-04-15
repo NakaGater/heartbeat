@@ -46,6 +46,10 @@ When user enters /heartbeat:
 
 ### Choices
 
+The menu must never exceed 4 choices. Slots 1-3 are fixed; slot 4 is conditional.
+
+#### Always shown (slots 1-3)
+
 1. **Create a story**
    From user problem analysis to story definition and acceptance criteria.
    Adds to backlog but does not implement.
@@ -56,15 +60,20 @@ When user enters /heartbeat:
 3. **Create and implement a story**
    End-to-end from story creation through implementation and verification.
 
-4. **Continue in-progress story**
-   Resume an interrupted story from where it left off.
+#### Conditional slot 4
 
-5. **Manage backlog**
-   Change story points, priorities, or iteration assignments.
+Check backlog.jsonl for stories with status `in_progress`:
 
-6. **Implement in parallel (worktree)**
-   Implement a story in an isolated git worktree for parallel development.
-   (Copilot: requires manual `git worktree add` — see Workflow 6)
+- If in_progress stories exist → show:
+  4. **Continue in-progress story**
+     Resume an interrupted story from where it left off.
+
+- Else (no in_progress stories) → show:
+  4. **Implement in parallel (worktree)**
+     Implement a story in an isolated git worktree for parallel development.
+     (Copilot: requires manual `git worktree add` — see Workflow 6)
+
+> Note: Backlog management (points, priorities, iterations) is available via /heartbeat-backlog.
 
 ### Status Display Example
 
@@ -416,7 +425,7 @@ and resume from that point.
 All questions to users must be presented with choices.
 
 ### Principles
-- Keep choices to 5 or fewer (max 5 choices per question)
+- Keep choices to 4 or fewer (max 4 choices per question)
 - Use verb-first style for all choice text (verb-first)
 - Include "Other (free text)" only when needed; always place it as the last option
 - Display choice text in the user's language, following output-language-rule.md
@@ -432,7 +441,7 @@ All questions to users must be presented with choices.
     ["Clarify the spec", "Mark as out of scope",
      "Have the agent reconsider", "Other (free text)"]
   - For orchestrator uncertainty:
-    Present situation-specific choices (max 5). (Use vscode_askQuestions)
+    Present situation-specific choices (max 4). (Use vscode_askQuestions)
     Always include "Other (free text)" as the last option.
 
 ## Copilot-Specific: Request Optimization
@@ -446,7 +455,7 @@ Applicable interaction points:
 
 | Interaction Point | Question Type | Choices |
 |---|---|---|
-| Workflow selection | Selection | 5 choices (see Startup Behavior Choices) |
+| Workflow selection | Selection | 4 choices (see Startup Behavior Choices) |
 | WF1 category selection | Selection | Category choices (see Workflow 1 Step 1) |
 | WF1 detail input | Free text | None (use free text mode) |
 | Escape hatch | Selection | 2 choices (Continue / Split) |
@@ -456,7 +465,7 @@ Applicable interaction points:
 | AP3 final result report | Selection | ["Pass", "Reject"] |
 | AP3 rejection target phase | Selection | Phase choices (see Workflow 2 AP3) |
 | Block report | Selection | Report choices (see Strict Rules) |
-| Orchestrator uncertainty | Selection | Context-dependent (max 5 choices, see Strict Rules) |
+| Orchestrator uncertainty | Selection | Context-dependent (max 4 choices, see Strict Rules) |
 
 For free text input (WF1 detail input), also use `vscode_askQuestions` without the choices parameter.
 For rejection reason choices, also use `vscode_askQuestions` to collect the reason.
