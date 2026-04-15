@@ -25,6 +25,15 @@ main() {
     exit 1
   fi
 
+  # Validate JSONL: every non-empty line must be valid JSON
+  while IFS= read -r line; do
+    [ -z "$line" ] && continue
+    if ! echo "$line" | jq empty 2>/dev/null; then
+      echo "error: invalid JSONL in $tasks_file" >&2
+      exit 1
+    fi
+  done < "$tasks_file"
+
   # Ensure lock is released on exit
   trap 'release_lock "$lock_dir"' EXIT
   acquire_lock "$lock_dir"
